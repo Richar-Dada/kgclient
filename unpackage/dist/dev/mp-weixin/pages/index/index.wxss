@@ -1,0 +1,16 @@
+
+.container {
+	font-size: 14px;
+	line-height: 24px;
+}
+.content {
+	width: 60%;
+	margin: 20rpx auto;
+}
+button {
+	margin-top: 30rpx;
+}
+image {
+	width: 100%;
+}
+

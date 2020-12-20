@@ -1,0 +1,15 @@
+
+.image {
+	width: 100%;
+}
+.demo {
+	background: #FFF;
+	padding: 50rpx;
+}
+.text-tip {
+	padding-left: 20rpx;
+}
+button {
+	margin-top: 20rpx;
+}
+

@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "空港服务站",
+  "usingComponents": {
+    "uni-swiper-dot": "/components/uni-swiper-dot/uni-swiper-dot"
+  }
+}
