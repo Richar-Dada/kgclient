@@ -39,4 +39,20 @@
 	        transform: scaleY(.5);
 	background-color: #c8c7cc;
 }
+.submit-Button {
+	margin-top: 20rpx;
+}
+.uni-uploader__file {
+	position: relative;
+}
+.delete-btn {
+	position: absolute;
+	top: -8px;
+	right: 18px;
+	width: 20rpx;
+	height: 20rpx;
+}
+.picker-immigrant {
+	margin-left: 20rpx;
+}
 

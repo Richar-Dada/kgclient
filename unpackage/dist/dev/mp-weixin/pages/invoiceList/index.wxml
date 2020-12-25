@@ -1,1 +1,1 @@
-<view>invoice</view>
+<view class="invoiceList"><uni-list vue-id="115f48a1-1" bind:__l="__l" vue-slots="{{['default']}}"><block wx:for="{{list}}" wx:for-item="item" wx:for-index="index"><uni-list-item vue-id="{{('115f48a1-2-'+index)+','+('115f48a1-1')}}" title="{{item.carId+' '+item.carname}}" note="{{item.createAt}}" showArrow="{{true}}" thumb-size="base" rightText="详情" bind:__l="__l"></uni-list-item></block></uni-list></view>

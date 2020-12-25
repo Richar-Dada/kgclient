@@ -9,6 +9,8 @@ Vue.prototype.$request = request
 App.mpType = 'app'
 Vue.prototype.$store = store
 
+Vue.prototype.$baseUrl = 'http://localhost:7001'
+
 
 const app = new Vue({
 	store,

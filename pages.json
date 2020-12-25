@@ -7,12 +7,18 @@
 	},{
 		"path": "pages/invoiceList/index",
 		"style": {
-			"navigationBarTitleText": "空港服务站"
+			"navigationBarTitleText": "空港服务站",
+			"enablePullDownRefresh": true
 		}
 	},{
 		"path": "pages/invoiceRecord/index",
 		"style": {
 			"navigationBarTitleText": "填写发票信息"
+		}
+	},{
+		"path": "pages/invoiceDetail/index",
+		"style": {
+			"navigationBarTitleText": "发票详细信息"
 		}
 	},{
 		"path": "pages/booking/index",

@@ -3,6 +3,7 @@
     "pages/index/index",
     "pages/invoiceList/index",
     "pages/invoiceRecord/index",
+    "pages/invoiceDetail/index",
     "pages/booking/index",
     "pages/user/index",
     "pages/register/index"
