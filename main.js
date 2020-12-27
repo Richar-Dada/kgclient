@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import App from './App'
 import store from './store'
+import { Base64 } from 'js-base64'
 
 import request from './utils/request.js'
 

@@ -35,6 +35,26 @@
 		"style": {
 			"navigationBarTitleText": "关联个人信息"
 		}
+	},{
+		"path": "pages/schedul/index",
+		"style": {
+			"navigationBarTitleText": "空港服务站"
+		}
+	},{
+		"path": "pages/qianchu/index",
+		"style": {
+			"navigationBarTitleText": "迁出提档"
+		}
+	},{
+		"path": "pages/guohu/index",
+		"style": {
+			"navigationBarTitleText": "市内过户"
+		}
+	},{
+		"path": "pages/notice/index",
+		"style": {
+			"navigationBarTitleText": "预约须知"
+		}
 	}],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

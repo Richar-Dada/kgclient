@@ -6,7 +6,11 @@
     "pages/invoiceDetail/index",
     "pages/booking/index",
     "pages/user/index",
-    "pages/register/index"
+    "pages/register/index",
+    "pages/schedul/index",
+    "pages/qianchu/index",
+    "pages/guohu/index",
+    "pages/notice/index"
   ],
   "subPackages": [],
   "window": {

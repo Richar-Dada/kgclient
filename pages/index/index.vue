@@ -10,8 +10,8 @@
 		    </swiper>
 		</uni-swiper-dot>
 		<view class="content">
-			<button type="default">市内过户</button>
-			<button type="default">迁出提档</button>
+			<button type="default" @click="goSchedul('guohu')">市内过户</button>
+			<button type="default" @click="goSchedul('qianchu')">迁出提档</button>
 			<button type="default" @click="goInvoice">发票服务</button>
 		</view>
 	</view>
@@ -40,6 +40,11 @@
 				console.log('ddd')
 				uni.navigateTo({
 					url: '../invoiceRecord/index'
+				})
+			},
+			goSchedul(type) {
+				uni.navigateTo({
+					url: '../schedul/index?type=' + type
 				})
 			}
 		}

@@ -24,17 +24,6 @@
 					<view class="uni-datetime-picker-item" v-for="(item,index) in days" :key="index">{{item < 10 ? '0' + item : item}}</view>
 				</picker-view-column>
 			</picker-view>
-			<picker-view class="uni-datetime-picker-view" :indicator-style="indicatorStyle" :value="hms" @change="bindTimeChange">
-				<picker-view-column class="uni-datetime-picker-colon">
-					<view class="uni-datetime-picker-item" v-for="(item,index) in hours" :key="index">{{item < 10 ? '0' + item : item}}</view>
-				</picker-view-column>
-				<picker-view-column class="uni-datetime-picker-colon">
-					<view class="uni-datetime-picker-item" v-for="(item,index) in minutes" :key="index">{{item < 10 ? '0' + item : item}}</view>
-				</picker-view-column>
-				<picker-view-column>
-					<view class="uni-datetime-picker-item" v-for="(item,index) in seconds" :key="index">{{item < 10 ? '0' + item : item}}</view>
-				</picker-view-column>
-			</picker-view>
 			<view class="uni-datetime-picker-btn">
 				<view class="" @click="clearTime">重置</view>
 				<view class="uni-datetime-picker-btn-group">
@@ -55,15 +44,9 @@
 				years: [],
 				months: [],
 				days: [],
-				hours: [],
-				minutes: [],
-				seconds: [],
 				year: 1900,
 				month: 0,
 				day: 0,
-				hour: 0,
-				minute: 0,
-				second: 0,
 				indicatorStyle: `height: 50px;`,
 			}
 		},
@@ -92,9 +75,6 @@
 		computed: {
 			ymd() {
 				return [this.year - this.minYear, this.month - 1, this.day - 1]
-			},
-			hms() {
-				return [this.hour, this.minute, this.second]
 			}
 		},
 		watch: {
@@ -126,18 +106,6 @@
 
 			for (let i = 1; i <= 31; i++) {
 				this.days.push(i)
-			}
-
-			for (let i = 0; i <= 23; i++) {
-				this.hours.push(i)
-			}
-
-			for (let i = 0; i <= 59; i++) {
-				this.minutes.push(i)
-			}
-
-			for (let i = 0; i <= 59; i++) {
-				this.seconds.push(i)
 			}
 			this.parseValue(this.value)
 			if (this.value) {
@@ -174,9 +142,6 @@
 				}
 				this.month = defaultDate.getMonth() + 1
 				this.day = defaultDate.getDate()
-				this.hour = defaultDate.getHours()
-				this.minute = defaultDate.getMinutes()
-				this.second = defaultDate.getSeconds()
 			},
 			parseValue(defaultTime) {
 				if (Number(defaultTime)) {
@@ -192,9 +157,6 @@
 			},
 			bindTimeChange(e) {
 				const val = e.detail.value
-				this.hour = this.hours[val[0]]
-				this.minute = this.minutes[val[1]]
-				this.second = this.seconds[val[2]]
 			},
 			initTimePicker() {
 				// if (!this.time) {
@@ -232,13 +194,7 @@
 									'-' +
 									(this.month < 10 ? '0' + this.month : this.month) +
 									'-' +
-									(this.day < 10 ? '0' + this.day : this.day) +
-									' ' +
-									(this.hour < 10 ? '0' + this.hour : this.hour) +
-									':' +
-									(this.minute < 10 ? '0' + this.minute : this.minute) +
-									':' +
-									(this.second < 10 ? '0' + this.second : this.second)
+									(this.day < 10 ? '0' + this.day : this.day)
 
 				return yymmdd
 			}

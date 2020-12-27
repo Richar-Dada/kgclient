@@ -3,6 +3,9 @@
 		<uni-list>
 			<uni-list-item v-for="(item, index) in list" :title="item.carId + ' ' + item.carname" :note="item.createAt" showArrow  thumb-size="base" rightText="详情" />
 		</uni-list>
+		<view class="example-body">
+			<uni-load-more :status="status" />
+		</view>
 	</view>
 </template>
 
@@ -13,38 +16,63 @@
 		mapActions
 	} from 'vuex'
 	
+	let count = 0
+	let pageSize = 15
+	let current = 1
+	
 	export default {
 		data () {
 			return {
-				list: []
+				list: [],
+				status: 'more'
 			}
 		},
 		computed: {
 			...mapState(['openid'])
 		},
 		onLoad() {
-			this.fetchData()
+			this.fetchData(false)
 		},
 		onPullDownRefresh() {
-			this.fetchData()
+			this.fetchData(true, () => {
+				uni.stopPullDownRefresh()
+			})
+		},
+		onReachBottom() {
+			console.log("onReachBottom");
+			if (this.list >= count) {
+				this.loadMoreText = "没有更多数据了!"
+				return;
+			}
+			setTimeout(() => {
+				this.status = 'loading'
+				this.fetchData(false, () => {
+				});
+			}, 300);
 		},
 		methods: {
-			fetchData() {
+			fetchData(refresh, callback) {
 				this.$request({
 					url: '/api/v1/admin/invoice/query/wx',
 					method: 'GET',
 					data: {
-						pageSize: 10,
-						current: 1,
+						pageSize: pageSize,
+						current: current,
 						createBy: this.openid
 					}
 				}).then((res) => {
 					console.log('res', res)
 					if (res.code === 200) {
-						this.list = res.data
+						const list = refresh ? res.data.list : this.list.concat(res.data.list)
+						this.list = list
+						pageSize = res.data.pageSize
+						current = res.data.current
+						count = res.data.count
+						this.status = list.length < count ? 'more' : 'noMore'
 					} else {
 						uni.showToast({title: res.msg, icon:"none"})
 					}
+					callback && callback()
 				})
 			}
 		}
