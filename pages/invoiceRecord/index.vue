@@ -1,63 +1,21 @@
 <template>
 	<view class="invoiceRecord">
-		<view class="wrapper">
-			<view class="tips">
-				<text>信息影响业务办理，请认真填写</text>
+		<uni-notice-bar :scrollable="true" :single="true" text="请选择所有权!   选择完成后上传证件照自动填写相关信息!" />
+		<uni-popup id="dialogInput" ref="dialogInput" type="center">
+			<view class="business-panel">
+				<uni-forms labelWidth="105">
+					<uni-forms-item name="oldCarBusinessType" label="原车主所有权">
+						<uni-data-checkbox v-model="oldCarBusinessType" :localdata="businessType"></uni-data-checkbox>
+					</uni-forms-item>
+					<uni-forms-item name="newCarBusinessType" label="新车主所有权">
+						<uni-data-checkbox v-model="newCarBusinessType" :localdata="businessType"></uni-data-checkbox>
+					</uni-forms-item>
+					<button class="button" type="default" @click="businessConfirm">确定</button>
+				</uni-forms>
 			</view>
-			
-			<view class="uni-list list-pd">
-				<view class="uni-list-cell cell-pd">
-					<view class="uni-uploader">
-						<view class="uni-uploader-head upload-header">
-							<view class="uni-uploader-title">点击上传原车主身份证(正面)</view>
-							<view class="uni-uploader-info">1/1</view>
-						</view>
-						<view class="uni-uploader-body upload-body">
-							<view class="uni-uploader__files">
-								<block v-for="(image,index) in oldOwnerImageList" :key="index">
-									<view class="uni-uploader__file">
-										<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImage"></image>
-										<view class="delete-btn" @click="deleteImage(index, oldOwnerImageList)">
-											<uni-icons type="clear" color="#dd524d" size="25" />
-										</view>
-									</view>
-								</block>
-								<view v-if="oldOwnerImageList.length === 0" class="uni-uploader__input-box">
-									<view class="uni-uploader__input" @tap="chooseImageOldOwner"></view>
-								</view>
-							</view>
-						</view>
-					</view>
-				</view>
-			</view>
-			
-			<view class="uni-list list-pd">
-				<view class="uni-list-cell cell-pd">
-					<view class="uni-uploader">
-						<view class="uni-uploader-head upload-header">
-							<view class="uni-uploader-title">点击上传新车主身份证(正面)</view>
-							<view class="uni-uploader-info">1/1</view>
-						</view>
-						<view class="uni-uploader-body upload-body">
-							<view class="uni-uploader__files">
-								<block v-for="(image,index) in newOwnerImageList" :key="index">
-									<view class="uni-uploader__file">
-										<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImage"></image>
-										<view class="delete-btn" @click="deleteImage(index, newOwnerImageList)">
-											<uni-icons type="clear" color="#dd524d" size="25" />
-										</view>
-									</view>
-								</block>
-								<view v-if="newOwnerImageList.length === 0" class="uni-uploader__input-box">
-									<view class="uni-uploader__input" @tap="chooseImageNewOwner"></view>
-								</view>
-							</view>
-						</view>
-					</view>
-				</view>
-			</view>
-			
-			<form @submit="formSubmit" @reset="formReset">
+		</uni-popup>
+			<uni-forms :value="formData" ref="form" validate-trigger="bind" err-show-type="toast" labelWidth="105">
+				
 				<view class="uni-list list-pd">
 					<view class="uni-list-cell cell-pd">
 						<view class="uni-uploader">
@@ -84,7 +42,127 @@
 					</view>
 				</view>
 				
+				<uni-group title="行驶证信息" top="0">
+					<uni-forms-item name="carname" required label="品牌型号">
+						<uni-easyinput type="text" v-model="formData.carname" class="uni-input-border" placeholder="如:本田飞度"></uni-easyinput>
+					</uni-forms-item>
+					<uni-forms-item name="carId" required label="车牌号">
+						<uni-easyinput type="text" v-model="formData.carId" class="uni-input-border" placeholder="请输入车牌号"></uni-easyinput>
+					</uni-forms-item>
+					<uni-forms-item name="carType" required label="车辆类型">
+						<uni-easyinput type="text" v-model="formData.carType" class="uni-input-border" placeholder="请输入车辆类型"></uni-easyinput>
+					</uni-forms-item>
+					<uni-forms-item name="carNumber" required label="车架号">
+						<uni-easyinput type="text" v-model="formData.carNumber" class="uni-input-border" placeholder="请输入车架号"></uni-easyinput>
+					</uni-forms-item>
+				</uni-group>
 				
+				<view class="uni-list list-pd">
+					<view class="uni-list-cell cell-pd">
+						<view class="uni-uploader">
+							<view class="uni-uploader-head upload-header">
+								<view class="uni-uploader-title">点击上传原车主{{oldCarBusinessType === 'personal' ? '身份证(正面)' : '营业执照'}}</view>
+								<view class="uni-uploader-info">1/1</view>
+							</view>
+							<view class="uni-uploader-body upload-body">
+								<view class="uni-uploader__files">
+									<block v-for="(image,index) in oldOwnerImageList" :key="index">
+										<view class="uni-uploader__file">
+											<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImage"></image>
+											<view class="delete-btn" @click="deleteImage(index, oldOwnerImageList)">
+												<uni-icons type="clear" color="#dd524d" size="25" />
+											</view>
+										</view>
+									</block>
+									<view v-if="oldOwnerImageList.length === 0" class="uni-uploader__input-box">
+										<view class="uni-uploader__input" @tap="chooseImageOldOwner"></view>
+									</view>
+								</view>
+							</view>
+						</view>
+					</view>
+				</view>
+				<uni-group title="原车主信息" top="0">
+					<uni-forms-item name="oldCarOwner" required label="姓名">
+						<uni-easyinput type="text" v-model="formData.oldCarOwner" class="uni-input-border" placeholder="请输入原车主姓名"></uni-easyinput>
+					</uni-forms-item>
+					
+					<uni-forms-item name="oldCarDocumentNumber" required label="身份证号码" v-if="oldCarBusinessType === 'personal'">
+						<uni-easyinput type="text" v-model="formData.oldCarDocumentNumber" class="uni-input-border" placeholder="请输入证件号码"></uni-easyinput>
+					</uni-forms-item>
+					<uni-forms-item name="oldCarDocumentNumber" required label="统一社会代码" v-if="oldCarBusinessType === 'company'">
+						<uni-easyinput type="text" v-model="formData.oldCarDocumentNumber" class="uni-input-border" placeholder="请输入证件号码"></uni-easyinput>
+					</uni-forms-item>
+					<uni-forms-item name="oldOwnerPhone" required label="手机号码">
+						<uni-easyinput type="number" v-model="formData.oldOwnerPhone" class="uni-input-border" placeholder="请输入原车主手机号码"></uni-easyinput>
+					</uni-forms-item>
+				</uni-group>
+				
+				<view class="uni-list list-pd">
+					<view class="uni-list-cell cell-pd">
+						<view class="uni-uploader">
+							<view class="uni-uploader-head upload-header">
+								<view class="uni-uploader-title">点击上传新车主{{newCarBusinessType === 'personal' ? '身份证(正面)' : '营业执照'}}</view>
+								<view class="uni-uploader-info">1/1</view>
+							</view>
+							<view class="uni-uploader-body upload-body">
+								<view class="uni-uploader__files">
+									<block v-for="(image,index) in newOwnerImageList" :key="index">
+										<view class="uni-uploader__file">
+											<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImage"></image>
+											<view class="delete-btn" @click="deleteImage(index, newOwnerImageList)">
+												<uni-icons type="clear" color="#dd524d" size="25" />
+											</view>
+										</view>
+									</block>
+									<view v-if="newOwnerImageList.length === 0" class="uni-uploader__input-box">
+										<view class="uni-uploader__input" @tap="chooseImageNewOwner"></view>
+									</view>
+								</view>
+							</view>
+						</view>
+					</view>
+				</view>
+				<uni-group title="新车主信息" top="0">
+					<uni-forms-item name="newCarOwner" required label="姓名">
+						<uni-easyinput type="text" v-model="formData.newCarOwner" class="uni-input-border" placeholder="请输入新车主姓名"></uni-easyinput>
+					</uni-forms-item>
+					
+					<uni-forms-item name="newCarDocumentNumber" v-if="newCarBusinessType === 'personal'" required label="身份证号码">
+						<uni-easyinput type="text" v-model="formData.newCarDocumentNumber" class="uni-input-border" placeholder="请输入证件号码"></uni-easyinput>
+					</uni-forms-item>
+					<uni-forms-item name="newCarDocumentNumber" v-if="newCarBusinessType === 'company'" required label="统一社会代码">
+						<uni-easyinput type="text" v-model="formData.newCarDocumentNumber" class="uni-input-border" placeholder="请输入证件号码"></uni-easyinput>
+					</uni-forms-item>
+					<uni-forms-item name="newOwnerPhone" required label="手机号码">
+						<uni-easyinput type="number" v-model="formData.newOwnerPhone" class="uni-input-border" placeholder="请输入新车主手机号码"></uni-easyinput>
+					</uni-forms-item>
+				</uni-group>
+					
+				<uni-group title="其他信息" top="0">
+					
+					<uni-forms-item name="immigrationAddress" required label="迁入地">
+						<picker
+							mode="multiSelector"
+							@change="bindMultiPickerChange"
+							@columnchange="bindMultiPickerColumnChange"
+							:value="multiIndex"
+							:range="multiArray"
+						>
+							<view class="picker picker-immigrant">
+								{{multiArray[0][multiIndex[0]]}} > {{multiArray[1][multiIndex[1]]}}
+							</view>
+						</picker>
+					</uni-forms-item>
+					
+					<uni-forms-item name="price" required label="发票金额">
+						<uni-easyinput type="number" v-model="formData.price" placeholder="请填写发票金额"></uni-easyinput>
+					</uni-forms-item>
+					
+					<uni-forms-item name="remark" label="备注">
+						<uni-easyinput type="text" v-model="formData.remark" placeholder="如有特殊情况请备注"></uni-easyinput>
+					</uni-forms-item>
+				</uni-group>
 				
 				<view class="uni-list list-pd">
 					<view class="uni-list-cell cell-pd">
@@ -163,86 +241,17 @@
 						</view>
 					</view>
 				</view>
-				
-				<view class="uni-form-item uni-column form-item">
-					<view class="title">迁入地：</view>
-					<view>
-						<picker
-							mode="multiSelector"
-							@change="bindMultiPickerChange"
-							@columnchange="bindMultiPickerColumnChange"
-							:value="multiIndex"
-							:range="multiArray"
-						>
-							<view class="picker picker-immigrant">
-								当前选择：{{multiArray[0][multiIndex[0]]}} > {{multiArray[1][multiIndex[1]]}}
-							</view>
-						</picker>
-					</view>
+			
+				<!-- 直接使用组件自带submit、reset 方法，小程序不生效 -->
+				<!-- 			<button class="button" form-type="submit">Submit</button>
+					<button class="button" form-type="reset">Reset</button> -->
+			
+				<view class="example">
+					<button class="button" type="default" @click="submitForm('form')">提交</button>
+					<button class="button" style="margin-top: 20rpx;" type="default" @click="goNotice">查看预约须知</button>
 				</view>
-				<view class="uni-form-item uni-column form-item">
-					<view class="title">原车主：</view>
-					<input class="uni-input" name="oldOwner" :value="oldOwner" placeholder="上传身份证照片后自动填写" disabled="true"/>
-				</view>
-				
-				<view class="uni-form-item uni-column form-item">
-					<view class="title">原车主身份证号码：</view>
-					<input class="uni-input" name="oldOwnerCardDocument" :value="oldOwnerCardDocument" placeholder="上传身份证照片后自动填写" disabled="true"/>
-				</view>
-				
-				<view class="uni-form-item uni-column form-item">
-					<view class="title">新车主：</view>
-					<input class="uni-input" name="newOwner" :value="newOwner" placeholder="上传身份证照片后自动填写" disabled="true"/>
-				</view>
-				
-				<view class="uni-form-item uni-column form-item">
-					<view class="title">新车主身份证号码：</view>
-					<input class="uni-input" name="newOwnerCardDocument" :value="newOwnerCardDocument" placeholder="上传身份证照片后自动填写" disabled="true"/>
-				</view>
-				
-				<view class="uni-form-item uni-column form-item">
-					<view class="title">车牌：</view>
-					<input class="uni-input" name="carId" :value="carId" placeholder="上传驾驶证照片后自动填写" disabled="true"/>
-				</view>
-				
-				<view class="uni-form-item uni-column form-item">
-					<view class="title">车架号：</view>
-					<input class="uni-input" name="carNumber" :value="carNumber" placeholder="上传驾驶证照片后自动填写" disabled="true"/>
-				</view>
-				
-				<view class="uni-form-item uni-column form-item">
-					<view class="title">汽车品牌：</view>
-					<input class="uni-input" name="carname" :value="carname" placeholder="上传驾驶证照片后自动填写" disabled="true"/>
-				</view>
-				
-				<view class="uni-form-item uni-column form-item">
-					<view class="title">汽车类型：</view>
-					<input class="uni-input" name="carType" :value="carType" placeholder="上传驾驶证照片后自动填写" disabled="true"/>
-				</view>
-				
-				<view class="uni-form-item uni-column form-item">
-					<view class="title">原车主手机号码：</view>
-					<input class="uni-input" name="oldOwnerPhone" v-model="oldOwnerPhone" placeholder="请输入手机号码"/>
-				</view>
-				
-				<view class="uni-form-item uni-column form-item">
-					<view class="title">新车主手机号码：</view>
-					<input class="uni-input" name="newOwnerPhone" v-model="newOwnerPhone" placeholder="请输入手机号码"/>
-				</view>
-				
-				<view class="uni-form-item uni-column form-item">
-					<view class="title">开票金额：</view>
-					<input class="uni-input" type="number" v-model="price" name="price" placeholder="请输入开票金额" />
-				</view>
-				
-				<view class="uni-form-item uni-column form-item">
-					<view class="title">备注：</view>
-					<input class="uni-input" name="remark" :value="remark" placeholder="特殊情况请备注"/>
-				</view>
-				
-				<button class="submit-Button" form-type="submit" type="default" >提 交</button>
-			</form>
-		</view>
+			</uni-forms>
+			
 	</view>
 </template>
 
@@ -271,26 +280,129 @@
 				registerImageList: [],
 				statementImageList: [],
 				taxImageList: [],
+				oldCarBusinessType: '',
+				newCarBusinessType: '',
 				
-				oldOwner: '',
-				oldOwnerCardDocument: '',
-				oldOwnerPhone: '',
-				newOwner: '',
-				newOwnerCardDocument: '',
-				newOwnerPhone: '',
-				carId: '',
-				carNumber: '',
-				carname: '',
-				carType: '',
-				price: '',
-				remark: ''
+				formData: {
+					oldOwnerPhone: '',
+					newOwnerPhone: '',
+					carname: '',
+					carId: "",
+					carType: '',
+					carNumber: '',
+					engineNumber: '',
+					oldCarOwner: "",
+					newCarOwner: '',
+					price: '',
+					remark: '',
+					immigrationAddress: '广东省,广州市',
+					oldCarDocumentNumber: '',
+					newCarDocumentNumber: ''
+				},
+				businessType: [{
+					text: '个人',
+					value: 'personal'
+				},{
+					text: '公司',
+					value: 'company'
+				}],
+				rules: {
+					
+					
+					carname: {
+						rules: [{
+							required: true,
+							errorMessage: '请输入品牌型号',
+						}]
+					},
+					carId: {
+						rules: [{
+							required: true,
+							errorMessage: '请输入车牌号',
+						}]
+					},
+					carType: {
+						rules: [{
+							required: true,
+							errorMessage: '请输入汽车类型',
+						}]
+					},
+					carNumber: {
+						rules: [{
+							required: true,
+							errorMessage: '请输入车架号',
+						}]
+					},
+					oldCarOwner: {
+						rules: [{
+							required: true,
+							errorMessage: '请输入原车主姓名',
+						}]
+					},
+					oldCarDocumentNumber: {
+						rules: [{
+							required: true,
+							errorMessage: '请输入证件号码',
+						}]
+					},
+					oldOwnerPhone: {
+						rules: [{
+							required: true,
+							errorMessage: '请输入原车主手机号码',
+						}, {
+							pattern: /^[1][3,4,5,7,8][0-9]{9}$/,
+							errorMessage: '必须是11位手机号码',
+						}]
+					},
+					newCarOwner: {
+						rules: [{
+							required: true,
+							errorMessage: '请输入新车主姓名',
+						}]
+					},
+					newCarDocumentNumber: {
+						rules: [{
+							required: true,
+							errorMessage: '请输入证件号码',
+						}]
+					},
+					newOwnerPhone: {
+						rules: [{
+							required: true,
+							errorMessage: '请输入新车主手机号码',
+						}, {
+							pattern: /^[1][3,4,5,7,8][0-9]{9}$/,
+							errorMessage: '必须是11位手机号码',
+						}]
+					},
+					immigrationAddress: {
+						rules: [{
+							required: true,
+							errorMessage: '请选择迁入地',
+						}]
+					},
+					
+					price: {
+						rules: [{
+							required: true,
+							errorMessage: '请输入发票金额',
+						}]
+					},
+					remark: {
+						rules: []
+					}
+				}
 			}
 		},
 		computed: {
 			...mapState(['openid'])
 		},
+		onReady() {
+			this.$refs.form.setRules(this.rules)
+			this.initData()
+		},
 		mounted() {
-			this.initData(); //页面一加载调用赋值
+			this.$refs.dialogInput.open()
 		},
 		methods: {
 			initData() { //首次加载渲染 第一列 和 第二列数据
@@ -309,8 +421,8 @@
 						});
 						this.multiArray[0] = arrOne;
 						this.multiArray[1] = arrTwo;
-						this.oneId = res.data[18].id;
-						this.twoId = res.data[18].children[0].id;
+						this.oneId = res.data[18].name;
+						this.twoId = res.data[18].children[0].name;
 					}
 				})
 				
@@ -326,14 +438,13 @@
 					this.multiIndex[1] = e.detail.value;
 					this.twoId = this.address[this.multiIndex[0]].children[
 						this.multiIndex[1]
-					].id;
+					].name;
 				}
-				console.log(this.oneId, "打印第一列id");
-				console.log(this.twoId, "打印第二列id");
+				this.$refs.form.setValue('immigrationAddress', this.oneId + ',' + this.twoId)
 			},
 			// 定义一个传入对应的'下标'为了拿到第一列id 和 第二列的name和id的方法
 			initSelect(index) {
-				this.oneId = this.address[index].id; //拿到第一列id
+				this.oneId = this.address[index].name; //拿到第一列id
 				this.multiIndex[1] = 0; //将右边的数组的下标变回第一个显示
 				this.$set(this.multiArray, 1, []); //清空对应右边数组的数据
 				if (this.address[index].children.length == 0) {
@@ -344,13 +455,11 @@
 						return item.name; // 将第一列的children的数组遍历 name返回到一个新数组接收
 					});
 					this.$set(this.multiArray, 1, arrTwo); //重新 赋值到新的数组里
-					this.twoId = this.address[index].children[0].id; //那么对应的第二列的第index个id也拿到了
+					this.twoId = this.address[index].children[0].name; //那么对应的第二列的第index个id也拿到了
 				}
 			},
 			// 点击确定时触发,这里点击处理自己的业务,应该就是拿到两个个id去请求
 			bindMultiPickerChange(e) {
-				console.log(this.oneId);
-				console.log(this.twoId);
 				// uni.request({
 				//     url: ``,
 				// })
@@ -362,18 +471,20 @@
 			
 			chooseImageOldOwner: function() {
 				const that = this
+				const url = this.oldCarBusinessType === 'personal' ? '/api/v1/upload/idcard' : '/api/v1/upload/bizlicense'
 				uni.chooseImage({
 					count: 1,
 					sizeType: [],
 					success: (res) => {
 						var imageSrc = res.tempFilePaths[0]
-						
+						uni.showLoading()
 						uni.uploadFile({
-							url: this.$baseUrl + '/api/v1/upload/idcard',
+							url: this.$baseUrl + url,
 							filePath: imageSrc,
 							name: 'image',
 							success: (res) => {
 								console.log(res)
+								uni.hideLoading()
 								const resData = JSON.parse(res.data)
 								if (resData.code === 200) {
 									uni.showToast({
@@ -382,8 +493,8 @@
 										duration: 1000
 									})
 									this.oldOwnerImageList.push(resData.data.imageUrl)
-									this.oldOwner = resData.data.Name
-									this.oldOwnerCardDocument = resData.data.IdNum
+									this.formData.oldCarOwner = resData.data.Name
+									this.formData.oldCarDocumentNumber = resData.data.IdNum
 								} else {
 									uni.showToast({title: '图片有误，识别失败', icon:"none"})
 								}
@@ -405,18 +516,20 @@
 			
 			chooseImageNewOwner: function() {
 				const that = this
+				const url = this.oldCarBusinessType === 'personal' ? '/api/v1/upload/idcard' : '/api/v1/upload/bizlicense'
 				uni.chooseImage({
 					count: 1,
 					sizeType: [],
 					success: (res) => {
 						var imageSrc = res.tempFilePaths[0]
-						
+						uni.showLoading()
 						uni.uploadFile({
-							url: this.$baseUrl + '/api/v1/upload/idcard',
+							url: this.$baseUrl + url,
 							filePath: imageSrc,
 							name: 'image',
 							success: (res) => {
 								console.log(res)
+								uni.hideLoading()
 								const resData = JSON.parse(res.data)
 								if (resData.code === 200) {
 									uni.showToast({
@@ -425,8 +538,8 @@
 										duration: 1000
 									})
 									this.newOwnerImageList.push(resData.data.imageUrl)
-									this.newOwner = resData.data.Name
-									this.newOwnerCardDocument = resData.data.IdNum
+									this.formData.newCarOwner = resData.data.Name
+									this.formData.newCarDocumentNumber = resData.data.IdNum
 								} else {
 									uni.showToast({title: '图片有误，识别失败', icon:"none"})
 								}
@@ -453,13 +566,14 @@
 					sizeType: [],
 					success: (res) => {
 						var imageSrc = res.tempFilePaths[0]
-						
+						uni.showLoading()
 						uni.uploadFile({
 							url: this.$baseUrl + '/api/v1/upload/vehiclelicense',
 							filePath: imageSrc,
 							name: 'image',
 							success: (res) => {
 								console.log(res)
+								uni.hideLoading()
 								const resData = JSON.parse(res.data)
 								if (resData.code === 200) {
 									uni.showToast({
@@ -471,10 +585,10 @@
 									console.log(resData)
 									const frontInfo = resData.data.FrontInfo
 									if (frontInfo) {
-										this.carId = frontInfo.PlateNo
-										this.carNumber = frontInfo.Vin
-										this.carname = frontInfo.Model
-										this.carType = frontInfo.VehicleType
+										this.formData.carId = frontInfo.PlateNo
+										this.formData.carNumber = frontInfo.Vin
+										this.formData.carname = frontInfo.Model
+										this.formData.carType = frontInfo.VehicleType
 									}
 								} else {
 									uni.showToast({title: '图片有误，识别失败', icon:"none"})
@@ -501,13 +615,14 @@
 					sizeType: [],
 					success: (res) => {
 						var imageSrc = res.tempFilePaths[0]
-						
+						uni.showLoading()
 						uni.uploadFile({
 							url: this.$baseUrl + '/api/v1/upload',
 							filePath: imageSrc,
 							name: 'image',
 							success: (res) => {
 								console.log(res)
+								uni.hideLoading()
 								const resData = JSON.parse(res.data)
 								if (resData.code === 200) {
 									uni.showToast({
@@ -541,12 +656,13 @@
 					sizeType: [],
 					success: (res) => {
 						var imageSrc = res.tempFilePaths[0]
-						
+						uni.showLoading()
 						uni.uploadFile({
 							url: this.$baseUrl + '/api/v1/upload',
 							filePath: imageSrc,
 							name: 'image',
 							success: (res) => {
+								uni.hideLoading()
 								console.log(res)
 								const resData = JSON.parse(res.data)
 								if (resData.code === 200) {
@@ -581,13 +697,14 @@
 					sizeType: [],
 					success: (res) => {
 						var imageSrc = res.tempFilePaths[0]
-						
+						uni.showLoading()
 						uni.uploadFile({
 							url: this.$baseUrl + '/api/v1/upload',
 							filePath: imageSrc,
 							name: 'image',
 							success: (res) => {
 								console.log(res)
+								uni.hideLoading()
 								const resData = JSON.parse(res.data)
 								if (resData.code === 200) {
 									uni.showToast({
@@ -615,75 +732,69 @@
 				})
 			},
 			
-			formSubmit: function(e) {
-				//定义表单规则
-				var rule = [
-					{name:"oldOwner", checkType : "string", checkRule:"1,20",  errorMsg:"请上传原车主身份证照片"},
-					{name:"oldOwnerCardDocument", checkType : "string", checkRule:"18",  errorMsg:"请上传原车主身份证照片"},
-					{name:"oldOwnerPhone", checkType : "phoneno",  errorMsg:"原车主手机号码有误"},
-					{name:"newOwner", checkType : "string", checkRule:"1,20",  errorMsg:"请上传新车主身份证照片"},
-					{name:"newOwnerCardDocument", checkType : "string", checkRule:"18",  errorMsg:"请上传新车主身份证照片"},
-					{name:"newOwnerPhone", checkType : "phoneno",  errorMsg:"新车主手机号码有误"},
-					{name:"carId", checkType : "notnull",  errorMsg:"请上传行驶证"},
-					{name:"carNumber", checkType : "notnull", errorMsg:"请上传行驶证"},
-					{name:"carType", checkType : "notnull", errorMsg:"请上传行驶证"},
-					{name:"price", checkType : "notnull", errorMsg:"请输入发票金额"},
-				];
-				//进行表单检查
-				var formData = e.detail.value;
-				var checkRes = graceChecker.check(formData, rule);
-				if(checkRes){
-					console.log(this.registerImageList)
-					if(!this.registerImageList.length) { 
-						uni.showToast({ title: '请上传登记证图片', icon: "none" }) 
-						return
-					}
-					
-					if(!this.statementImageList.length) {
-						uni.showToast({ title: '请上传声明照', icon: "none" }) 
-						return
-					}
-					const immAddress = this.multiArray[0][this.multiIndex[0]] + ',' + this.multiArray[1][this.multiIndex[1]]
-					this.$request({
-						url: '/api/v1/admin/invoice/create/wx',
-						method: 'POST',
-						data: {
-							immigrationAddress: immAddress,
-							newOwner: this.newOwner,
-							newOwnerCardDocument: this.newOwnerCardDocument,
-							newOwnerPhone: +this.newOwnerPhone,
-							oldOwner: this.oldOwner,
-							oldOwnerCardDocument: this.oldOwnerCardDocument,
-							oldOwnerPhone: +this.oldOwnerPhone,
-							carType: this.carType,
-							carId: this.carId,
-							carNumber: this.carNumber,
-							carname: this.carname,
-							price: +this.price,
-							remark: this.remark,
-							oldIdCardUrl: this.oldOwnerImageList[0],
-							newIdCardUrl: this.newOwnerImageList[0],
-							vehicleLicenseUrl: this.vehicleLicenseImageList[0],
-							registerUrl: this.registerImageList.join(','),
-							statementUrl: this.statementImageList[0],
-							taxUrl: this.taxImageList[0],
-							creatBy: this.openid
-						}
-					}).then((res) => {
-						if (res.code === 200) {
-							uni.showToast({title:"登记成功", icon:"success"});
-							setTimeout(() => {
-								uni.switchTab({
-									url: '../invoiceList/index'
-								})
-							}, 1000)
-						} else {
-							uni.showToast({title: res.msg, icon:"none"});
-						}
-					})
-				}else{
-					uni.showToast({ title: graceChecker.error, icon: "none" });
+			businessConfirm() {
+				if (this.oldCarBusinessType && this.newCarBusinessType) {
+					this.$refs.dialogInput.close()
+				} else {
+					uni.showToast({title: '请选择所有权', icon:"none"})
 				}
+			},
+			
+			submitForm: function(form) {
+				
+				this.$refs[form].submit()
+					.then((res) => {
+						if(!this.registerImageList.length) {
+							uni.showToast({ title: '请上传登记证图片', icon: "none" }) 
+							return
+						}
+						
+						if(!this.statementImageList.length) {
+							uni.showToast({ title: '请上传声明照', icon: "none" }) 
+							return
+						}
+						uni.showLoading()
+						this.$request({
+							url: '/api/v1/admin/invoice/create/wx',
+							method: 'POST',
+							data: {
+								immigrationAddress: this.formData.immigrationAddress,
+								newOwner: this.formData.newCarOwner,
+								newOwnerCardDocument: this.formData.newCarDocumentNumber,
+								newOwnerPhone: +this.formData.newOwnerPhone,
+								oldOwner: this.formData.oldCarOwner,
+								oldOwnerCardDocument: this.formData.oldCarDocumentNumber,
+								oldOwnerPhone: +this.formData.oldOwnerPhone,
+								carType: this.formData.carType,
+								carId: this.formData.carId,
+								carNumber: this.formData.carNumber,
+								carname: this.formData.carname,
+								price: +this.formData.price,
+								remark: this.formData.remark,
+								oldIdCardUrl: this.oldOwnerImageList[0],
+								newIdCardUrl: this.newOwnerImageList[0],
+								vehicleLicenseUrl: this.vehicleLicenseImageList[0],
+								registerUrl: this.registerImageList.join(','),
+								statementUrl: this.statementImageList[0],
+								taxUrl: this.taxImageList[0],
+								creatBy: this.openid
+							}
+						}).then((res) => {
+							if (res.code === 200) {
+								uni.showToast({title:"登记成功", icon:"success"});
+								setTimeout(() => {
+									uni.switchTab({
+										url: '../invoiceList/index'
+									})
+								}, 1000)
+							} else {
+								uni.showToast({title: res.msg, icon:"none"});
+							}
+						})
+						
+					}).catch((errors) => {
+						console.error('验证失败：', errors);
+					})
 			},
 		}
 	}
@@ -755,5 +866,10 @@
 	
 	.picker-immigrant {
 		margin-left: 20rpx;
+	}
+	
+	.business-panel {
+		border-radius: 5px;
+		background-color: #FFFFFF;
 	}
 </style>

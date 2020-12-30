@@ -1,11 +1,28 @@
 <template>
 	<view class="invoiceList">
-		<uni-list>
-			<uni-list-item v-for="(item, index) in list" :title="item.carId + ' ' + item.carname" :note="item.createAt" showArrow  thumb-size="base" rightText="详情" />
-		</uni-list>
-		<view class="example-body">
-			<uni-load-more :status="status" />
-		</view>
+		<block v-if="list.length">
+			<uni-list>
+				<uni-list-item 
+					v-for="(item, index) in list" :title="item.carId + ' ' + item.carname" 
+					:note="item.createAt" 
+					showArrow  
+					thumb-size="base" 
+					rightText="详情"
+					:key="index"
+					clickable
+					@click="goDetail(index)"
+				/>
+			</uni-list>
+			<view class="example-body">
+				<uni-load-more :status="status" />
+			</view>
+		</block>
+		
+		<block v-if="!list.length">
+			<view class="no-data">
+				<text>没有发票信息</text>
+			</view>
+		</block>
 	</view>
 </template>
 
@@ -74,6 +91,12 @@
 					}
 					callback && callback()
 				})
+			},
+			goDetail(index) {
+				console.log('index', index)
+				uni.navigateTo({
+					url: '../invoiceDetail/index?data=' + JSON.stringify(this.list[index])
+				})
 			}
 		}
 	}
@@ -84,5 +107,10 @@
 		width: 100%;
 		min-height: 100%;
 		background-color: #FFFFFF;
+	}
+	
+	.no-data {
+		text-align: center;
+		padding-top: 100rpx;
 	}
 </style>

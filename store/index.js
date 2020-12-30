@@ -18,7 +18,8 @@ const store = new Vuex.Store({
 		activeOpen: '',
 		menu: [],
 		univerifyErrorMsg: '',
-		userInfo: null
+		userInfo: null,
+		weixinUserInfo: null
 	},
 	mutations: {
 		login(state, provider) {
@@ -65,6 +66,9 @@ const store = new Vuex.Store({
 		},
 		setUserInfo(state, payload) {
 			state.userInfo = payload
+		},
+		setWeixinUserInfo(state, payload){
+			state.weixinUserInfo = payload
 		}
 		
 	},

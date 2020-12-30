@@ -1,0 +1,11 @@
+
+.bookingList {
+	width: 100%;
+	min-height: 100%;
+	background-color: #FFFFFF;
+}
+.no-data {
+	text-align: center;
+	padding-top: 100rpx;
+}
+

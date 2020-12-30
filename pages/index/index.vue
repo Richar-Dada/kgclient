@@ -18,6 +18,12 @@
 </template>
 
 <script>
+	import {
+		mapState,
+		mapMutations,
+		mapActions
+	} from 'vuex'
+	
 	export default {
 		data() {
 			return {
@@ -35,7 +41,26 @@
 					}
 			}
 		},
+		onReady() {
+			if (!this.hasLogin) {
+				uni.navigateTo({
+					url: '../login/index'
+				})
+			}
+			const that = this
+			uni.getUserInfo({
+				provider: 'weixin',
+				success: function(infoRes) {				
+					that.setWeixinUserInfo(infoRes.userInfo)
+					console.log(infoRes.userInfo)
+				}
+			});
+		},
+		computed: {
+			...mapState(['openid', 'hasLogin'])
+		},
 		methods: {
+			...mapMutations(['setWeixinUserInfo']),
 			goInvoice() {
 				console.log('ddd')
 				uni.navigateTo({
@@ -53,6 +78,9 @@
 
 <style>
 	.container {
+		width: 100%;
+		height: 100%;
+		background-color: #FFFFFF;
 		font-size: 14px;
 		line-height: 24px;
 	}

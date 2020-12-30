@@ -21,9 +21,10 @@
 			"navigationBarTitleText": "发票详细信息"
 		}
 	},{
-		"path": "pages/booking/index",
+		"path": "pages/bookingList/index",
 		"style": {
-			"navigationBarTitleText": "空港服务站"
+			"navigationBarTitleText": "空港服务站",
+			"enablePullDownRefresh": true
 		}
 	},{
 		"path": "pages/user/index",
@@ -54,6 +55,16 @@
 		"path": "pages/notice/index",
 		"style": {
 			"navigationBarTitleText": "预约须知"
+		}
+	},{
+		"path": "pages/bookingDetail/index",
+		"style": {
+			"navigationBarTitleText": "预约详情"
+		}
+	},{
+		"path": "pages/login/index",
+		"style": {
+			"navigationBarTitleText": "空港服务站"
 		}
 	}],
 	"globalStyle": {
@@ -92,7 +103,7 @@
 				"selectedIconPath": "static/images/invoicehl.png",
 				"text": "发票"
 			}, {
-				"pagePath": "pages/booking/index",
+				"pagePath": "pages/bookingList/index",
 				"iconPath": "static/images/booking.png",
 				"selectedIconPath": "static/images/bookinghl.png",
 				"text": "预约"
