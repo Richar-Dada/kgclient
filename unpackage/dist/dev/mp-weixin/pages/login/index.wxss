@@ -20,6 +20,6 @@ button {
 .login-button {
 	width: 80%;
 	text-align: center;
-	margin: 0 auto;
+	margin: 20rpx auto;
 }
 

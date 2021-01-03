@@ -55,8 +55,7 @@
 	margin-right: 10px;
 	padding: 3px 15px;
 	border: 1px #DCDFE6 solid;
-	-webkit-border-radius: 3px;
-	        border-radius: 3px;
+	border-radius: 3px;
 	-webkit-transition: border-color 0.2s;
 	transition: border-color 0.2s;
 }
@@ -116,8 +115,7 @@
 	margin-right: 10px;
 	padding: 3px 10px;
 	border: 1px #eee solid;
-	-webkit-border-radius: 3px;
-	        border-radius: 3px;
+	border-radius: 3px;
 	background-color: #f5f5f5;
 	/* transition: border-color 0.1s; */
 }
@@ -130,10 +128,8 @@
 	        flex-shrink: 0;
 	position: relative;
 	border: 1px solid #DCDFE6;
-	-webkit-border-radius: 2px;
-	        border-radius: 2px;
-	-webkit-box-sizing: border-box;
-	        box-sizing: border-box;
+	border-radius: 2px;
+	box-sizing: border-box;
 	width: 16px;
 	height: 16px;
 	background-color: #fff;
@@ -176,14 +172,11 @@
 	        align-items: center;
 	position: relative;
 	border: 1px solid #DCDFE6;
-	-webkit-border-radius: 2px;
-	        border-radius: 2px;
-	-webkit-box-sizing: border-box;
-	        box-sizing: border-box;
+	border-radius: 2px;
+	box-sizing: border-box;
 	width: 16px;
 	height: 16px;
-	-webkit-border-radius: 16px;
-	        border-radius: 16px;
+	border-radius: 16px;
 	background-color: #fff;
 	z-index: 1;
 	-webkit-transition: border-color .3s;
@@ -192,8 +185,7 @@
 .radio__inner-icon {
 	width: 8px;
 	height: 8px;
-	-webkit-border-radius: 10px;
-	        border-radius: 10px;
+	border-radius: 10px;
 	opacity: 0;
 	-webkit-transition: -webkit-transform .3s;
 	transition: -webkit-transform .3s;

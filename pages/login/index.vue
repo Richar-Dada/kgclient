@@ -53,7 +53,7 @@
 			...mapState(['openid', 'hasLogin'])
 		},
 		methods: {
-			...mapMutations(['setWeixinUserInfo', 'setUserInfo', 'setOpenid']),
+			...mapMutations(['setWeixinUserInfo', 'setUserInfo', 'setOpenid', 'login']),
 			goInvoice() {
 				console.log('ddd')
 				uni.navigateTo({
@@ -68,14 +68,14 @@
 					provider: 'weixin',
 					success: (res) => {
 						console.log('login success:', res);
+						
+						this.login('weixin')
 				
 						that.$request({
 							url: '/wechat/getUserInfoByCode',
 							method: 'POST',
 							data: { code: res.code } ,
 						}).then((res) => {
-							console.log(res)
-			
 							if (res.resultCode === 200) {
 								this.setUserInfo(res.data)
 								this.setOpenid(res.data.openId)
@@ -178,6 +178,6 @@
 	.login-button {
 		width: 80%;
 		text-align: center;
-		margin: 0 auto;
+		margin: 20rpx auto;
 	}
 </style>

@@ -76,10 +76,12 @@
 					url: '/api/v1/booking/' + id,
 					method: 'DELETE'
 				}).then((res) => {
-					if (res.code === 200) {
+					if (res.resultCode === 200) {
 						uni.showToast({
 							title: '删除成功'
 						})
+						
+						uni.$emit('bookingDelete')
 						
 						setTimeout(() => {
 							uni.navigateBack()

@@ -4,7 +4,7 @@
 			<uni-list>
 				<uni-list-item 
 					v-for="(item, index) in list" :title="item.carId + ' ' + item.carname" 
-					:note="item.createAt" 
+					:note="format(item)" 
 					showArrow  
 					thumb-size="base" 
 					rightText="详情"
@@ -49,7 +49,18 @@
 		},
 		onLoad() {
 			this.fetchData(false)
+			
+			uni.$on('invoiceDelete', () => {
+				current = 1
+				this.fetchData(true)
+			})
+			
+			uni.$on('inoviceCreate', () => {
+				current = 1
+				this.fetchData(true)
+			})
 		},
+		
 		onPullDownRefresh() {
 			this.fetchData(true, () => {
 				uni.stopPullDownRefresh()
@@ -97,6 +108,11 @@
 				uni.navigateTo({
 					url: '../invoiceDetail/index?data=' + JSON.stringify(this.list[index])
 				})
+			},
+			format(record) {
+				const date = record.createAt.split(' ')[0]
+				const payStatus = record.isPay === '0' ? '未支付' : '已支付'
+				return date + '     ' + record.status + '     ' + payStatus
 			}
 		}
 	}

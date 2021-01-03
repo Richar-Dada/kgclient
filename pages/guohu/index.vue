@@ -156,11 +156,22 @@
 				})
 			},
 			
-			startDateChange() {
+			startDateChange(e) {
 				this.formData.startTime = e
 			},
-			endDateChange() {
+			endDateChange(e) {
 				this.formData.endTime = e
+			},
+			transformTime(timestamp = +new Date()) {
+			    if (timestamp) {
+			        var time = new Date(timestamp);
+			        var y = time.getFullYear(); //getFullYear方法以四位数字返回年份
+			        var M = time.getMonth() + 1; // getMonth方法从 Date 对象返回月份 (0 ~ 11)，返回结果需要手动加一
+			        var d = time.getDate(); // getDate方法从 Date 对象返回一个月中的某一天 (1 ~ 31)
+			        return y + '-' + M + '-' + d;
+			      } else {
+			          return '';
+			      }
 			},
 			
 			chooseImageVehicleLicense: function() {
@@ -244,7 +255,7 @@
 								createTime: new Date().getTime(),
 								createBy: this.openid,
 								vehicleLicenseUrl: this.vehicleLicenseImageList && this.vehicleLicenseImageList[0],
-								validDate: this.formData.carType === '小型轿车' ? this.formData.startTime + '~' + this.formData.endTime : ' '
+								validDate: this.formData.carType === '小型轿车' ? this.transformTime(this.formData.startTime) + '~' + this.transformTime(this.formData.endTime) : ' '
 							}
 						}).then((res) => {
 							uni.hideLoading()
@@ -252,9 +263,12 @@
 								uni.showToast({
 									title: '提交成功'
 								})
+								
+								uni.$emit('bookingCreate')
+								
 								setTimeout(() => {
 									uni.switchTab({
-										url: '../booking/index'
+										url: '../bookingList/index'
 									})
 								}, 1000)
 								

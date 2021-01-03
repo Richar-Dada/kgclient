@@ -1,8 +1,6 @@
 <template>
 	<view>
 		<view class="uni-padding-wrap uni-common-mt">
-			
-			
 			<form @submit="formSubmit" @reset="formReset">
 				<text class="text-tip">上传身份证照片(正面)</text>
 				<view class="demo">
@@ -16,7 +14,7 @@
 				
 				<view class="uni-form-item uni-column">
 					<view class="title">身份证号码</view>
-					<input class="uni-input" name="idCard" :value="idCardNum" placeholder="上传身份证照片后自动填写" disabled="true"/>
+					<input class="uni-input" name="idCard" :value="idCardNum" placeholder="上传身份证照片后自动填写"/>
 				</view>
 				<button form-type="submit" type="default" :disabled="!idCardNum.length" >关  联</button>
 			</form>
@@ -62,6 +60,7 @@
 			this.imageSrc = '';
 		},
 		methods: {
+			...mapMutations(['setUserInfo']),
 			formSubmit: function(e) {
 				console.log('form发生了submit事件，携带数据为：' + JSON.stringify(e.detail.value))
 				//定义表单规则
@@ -86,7 +85,11 @@
 						}
 					}).then((res) => {
 						if (res.code === 200) {
-							uni.showToast({title:"关联成功", icon:"success"});
+							uni.showToast({title:"关联成功", icon:"success", duration: 2000})
+							this.setUserInfo(res.data)
+							setTimeout(() => { uni.switchTab({
+								url: '../index/index'
+							})() }, 2000)
 						} else {
 							uni.showToast({title: res.msg, icon:"none"});
 						}
@@ -116,9 +119,9 @@
 								const resData = JSON.parse(res.data)
 								if (resData.code === 200) {
 									uni.showToast({
-										title: '上传成功',
+										title: '证件识别成功',
 										icon: 'success',
-										duration: 1000
+										duration: 2000
 									})
 									this.imageSrc = imageSrc
 									this.idCardNum = resData.data.IdNum

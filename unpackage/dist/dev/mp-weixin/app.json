@@ -12,7 +12,8 @@
     "pages/guohu/index",
     "pages/notice/index",
     "pages/bookingDetail/index",
-    "pages/login/index"
+    "pages/login/index",
+    "pages/payment/index"
   ],
   "subPackages": [],
   "window": {
@@ -53,5 +54,6 @@
       }
     ]
   },
-  "usingComponents": {}
+  "usingComponents": {},
+  "sitemapLocation": "sitemap42.json"
 }

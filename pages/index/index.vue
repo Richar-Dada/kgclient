@@ -4,7 +4,7 @@
 		    <swiper class="swiper-box" autoplay="true">
 		        <swiper-item v-for="(item ,index) in info" :key="index">
 		            <view class="swiper-item">
-						<image :src="item.url" mode="scaleToFill"></image>
+						<image :src="item.url" mode="widthFix"></image>
 		            </view>
 		        </swiper-item>
 		    </swiper>
@@ -28,6 +28,8 @@
 		data() {
 			return {
 				info: [{
+					url: '/static/images/banner3.jpg'
+				},{
 					url: '/static/images/banner1.jpg'
 				}, {
 					url: '/static/images/banner2.jpg'

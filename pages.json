@@ -66,6 +66,11 @@
 		"style": {
 			"navigationBarTitleText": "空港服务站"
 		}
+	},{
+		"path": "pages/payment/index",
+		"style": {
+			"navigationBarTitleText": "空港服务站"
+		}
 	}],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

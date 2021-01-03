@@ -4,7 +4,7 @@
 			<uni-list>
 				<uni-list-item 
 					v-for="(item, index) in list" :title="item.serviceType + ' ' + item.carId" 
-					:note="transformTime(+item.createTime)" 
+					:note="formate(item)" 
 					showArrow  
 					thumb-size="base" 
 					rightText="详情"
@@ -49,6 +49,16 @@
 		},
 		onLoad() {
 			this.fetchData(false)
+			
+			uni.$on('bookingDelete', () => {
+				current = 1
+				this.fetchData(true)
+			})
+			
+			uni.$on('bookingCreate', () => {
+				current = 1
+				this.fetchData(true)
+			})
 		},
 		onPullDownRefresh() {
 			this.fetchData(true, () => {
@@ -107,6 +117,10 @@
 			      } else {
 			          return '';
 			      }
+			},
+			formate(item) {
+				const date = this.transformTime(+item.createTime)
+				return date + '  ' +  item.status + '  ' + item.payStatus
 			}
 		}
 	}

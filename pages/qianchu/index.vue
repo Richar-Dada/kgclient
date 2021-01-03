@@ -576,9 +576,12 @@
 								uni.showToast({
 									title: '提交成功'
 								})
+								
+								uni.$emit('bookingCreate')
+								
 								setTimeout(() => {
 									uni.switchTab({
-										url: '../booking/index'
+										url: '../bookingList/index'
 									})
 								}, 1000)
 								
