@@ -56,37 +56,8 @@
 	margin-left: 20rpx;
 }
 .business-panel {
-	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	        border-radius: 5px;
 	background-color: #FFFFFF;
-}
-.statementWrapper {
-	position: relative;
-}
-.sub-title {
-	position: absolute;
-	right: 0rpx;
-	top: 175rpx;
-	width: 300rpx;
-}
-.sub-title-text {
-	display: inline-block;
-	width: 120rpx;
-	font-size: 24rpx;
-	color: #007aff;
-}
-.sub-title-text-second {
-	margin-left: 20rpx;
-}
-.statementImage {
-	width: 500rpx;
-	height: 666rpx;
-}
-.popup-content {
-	padding: 40px;
-}
-.popup-close-btn {
-	position: absolute;
-	top: 20rpx;
-	right: 20rpx;
 }
 

@@ -23,52 +23,23 @@
 		mapState
 	} from 'vuex'
 	
+	import { baseUrl } from '../../utils/request.js'
+	
 	export default {
 		data() {
 			return {
 				title: 'request-payment',
 				loading: false,
-				price: 1,
-				providerList: []
+				price: 0.1,
+				providerList: [],
+				id: ''
 			}
 		},
 		computed: {
 			...mapState(['openid'])
 		},
-		onLoad: function() {
-			// #ifdef APP-PLUS
-			uni.getProvider({
-				service: "payment",
-				success: (e) => {
-					console.log("payment success:" + JSON.stringify(e));
-					let providerList = [];
-					e.provider.map((value) => {
-						switch (value) {
-							case 'alipay':
-								providerList.push({
-									name: '支付宝',
-									id: value,
-									loading: false
-								});
-								break;
-							case 'wxpay':
-								providerList.push({
-									name: '微信',
-									id: value,
-									loading: false
-								});
-								break;
-							default:
-								break;
-						}
-					})
-					this.providerList = providerList;
-				},
-				fail: (e) => {
-					console.log("获取支付通道失败：", e);
-				}
-			});
-			// #endif
+		onLoad: function(option) {
+			this.id = option.pid
 		},
 		methods: {
 			async weixinPay() {
@@ -76,6 +47,7 @@
 				console.log("发起支付");
 				
 				let orderInfo = await this.getOrderInfo('wxpay')
+				console.log('orderInfo', orderInfo)
 				if (!orderInfo) {
 					uni.showModal({
 						content: '获取支付信息失败',
@@ -111,21 +83,17 @@
 					//这里服务端基于uniCloud unipay云函数实现，详情参考：https://uniapp.dcloud.net.cn/uniCloud/unipay
 					uni.request({
 						method: 'POST',
-						url: 'https://97fca9f2-41f6-449f-a35e-3f135d4c3875.bspapp.com/http/pay',
+						url: baseUrl + '/api/v1/wechatpay/createorder',
 						data: {
-							provider,
+							out_trade_no: this.id,
+							body: '32223',
 							openid: this.openid,
-							totalFee: Number(this.price) * 100, // 转为以分为单位
-							// #ifdef APP-PLUS
-							platform: 'app-plus',
-							// #endif
-							// #ifdef MP-WEIXIN
-							platform: 'mp-weixin',
-							// #endif
+							total_fee: (Number(this.price) * 100).toString(), // 转为以分为单位
 						},
 						success(res) {
-							if (res.data.code === 0) {
-								resolve(res.data.orderInfo)
+							if (res.data.code === 200) {
+								console.log('--',res)
+								resolve(res.data.data)
 							} else {
 								reject(new Error('获取支付信息失败' + res.data.msg))
 							}

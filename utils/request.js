@@ -1,4 +1,4 @@
-export const baseUrl =  process.env.NODE_ENV === 'development' ? 'http://192.168.0.104:7001' : 'https://konggang.inakerr.com' 
+export const baseUrl =  process.env.NODE_ENV === 'development' ? 'http://localhost:7001' : 'https://konggang.inakerr.com' 
 const request = ({url = '', data = {}, method = 'GET', header = {
 }}) => {
     return new Promise((resolve, reject) => {

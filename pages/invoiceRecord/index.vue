@@ -1,7 +1,7 @@
 <template>
 	<view class="invoiceRecord">
-		<uni-notice-bar :scrollable="true" :single="true" text="请选择所有权! 选择完成后上传证件照自动填写相关信息!如果信息有误,请自行修改!" />
-		<uni-popup id="dialogInput" ref="dialogInput" type="center" :maskClick="false">
+		<uni-notice-bar :scrollable="true" :single="true" text="请选择所有权!   选择完成后上传证件照自动填写相关信息!" />
+		<uni-popup id="dialogInput" ref="dialogInput" type="center">
 			<view class="business-panel">
 				<uni-forms labelWidth="105">
 					<uni-forms-item name="oldCarBusinessType" label="原车主所有权">
@@ -155,7 +155,7 @@
 						</picker>
 					</uni-forms-item>
 					
-					<uni-forms-item name="price" required label="发票金额(元)">
+					<uni-forms-item name="price" required label="发票金额">
 						<uni-easyinput type="number" v-model="formData.price" placeholder="请填写发票金额"></uni-easyinput>
 					</uni-forms-item>
 					
@@ -192,14 +192,10 @@
 				
 				<view class="uni-list list-pd">
 					<view class="uni-list-cell cell-pd">
-						<view class="uni-uploader  statementWrapper">
+						<view class="uni-uploader">
 							<view class="uni-uploader-head upload-header">
 								<view class="uni-uploader-title">点击上传声明照</view>
-								<view class="uni-uploader-info">{{statementImageList.length}}/1</view>
-							</view>
-							<view class="sub-title">
-								<text class="sub-title-text" @click="showStatementImage">查看示例</text>
-								<text class="sub-title-text sub-title-text-second" @click="downloadFile">下载声明书</text>
+								<view class="uni-uploader-info">1/1</view>
 							</view>
 							<view class="uni-uploader-body upload-body">
 								<view class="uni-uploader__files">
@@ -225,7 +221,7 @@
 						<view class="uni-uploader">
 							<view class="uni-uploader-head upload-header">
 								<view class="uni-uploader-title">点击上传增值税发票(公司车需要)</view>
-								<view class="uni-uploader-info">{{taxImageList.length}}/1</view>
+								<view class="uni-uploader-info">1/1</view>
 							</view>
 							<view class="uni-uploader-body upload-body">
 								<view class="uni-uploader__files">
@@ -255,14 +251,6 @@
 					<button class="button" style="margin-top: 20rpx;" type="default" @click="goNotice">查看预约须知</button>
 				</view>
 			</uni-forms>
-			
-			<uni-popup id="statementImagePopup" ref="statementImagePopup" type="center" :animation="false">
-				<view class="popup-content">
-					<image v-if="newCarBusinessType === 'personal'" class="statementImage" mode="widthFix" src="https://carbase.oss-cn-shenzhen.aliyuncs.com/statement1.jpg" />
-					<image v-if="newCarBusinessType === 'company'" class="statementImage" mode="widthFix" src="https://carbase.oss-cn-shenzhen.aliyuncs.com/statement2.jpg" />
-					<icon class="popup-close-btn" type="cancel" @click="hideStatementImage" size="26"/>
-				</view>
-			</uni-popup>
 			
 	</view>
 </template>
@@ -294,8 +282,6 @@
 				taxImageList: [],
 				oldCarBusinessType: '',
 				newCarBusinessType: '',
-				downloadFileUrl: '',
-				
 				
 				formData: {
 					oldOwnerPhone: '',
@@ -482,45 +468,7 @@
 				imageList.splice(index, 1)
 				imageList = [...imageList]
 			},
-			showStatementImage() {
-				this.$refs.statementImagePopup.open()
-			},
-			hideStatementImage() {
-				this.$refs.statementImagePopup.close()
-			},
-			downloadFile: function () {
-				uni.showLoading({
-					title:'下载中'
-				})
-				var self = this
-				const fileUrl = this.newCarBusinessType === 'personal' ? 'https://carbase.oss-cn-shenzhen.aliyuncs.com/3.png' : 'https://carbase.oss-cn-shenzhen.aliyuncs.com/4.png'
-				uni.downloadFile({
-					url: fileUrl,
-					success: (res) => {
-						self.downloadFileUrl = res.tempFilePath;
-						uni.hideLoading();
-						console.log(res)
-						if (res.statusCode === 200) {
-							
-							self.downloadFileUrl = res.tempFilePath;
-							uni.saveImageToPhotosAlbum({
-								filePath: res.tempFilePath,
-								success(response) {
-									uni.showToast({
-										icon: 'none',
-										mask: true,
-										title: '已保存到相册',
-										duration: 3000,
-									});
-								}
-							})
-						}
-					},
-					fail: (err) => {
-						console.log('downloadFile fail, err is:', err)
-					}
-				})
-			},
+			
 			chooseImageOldOwner: function() {
 				const that = this
 				const url = this.oldCarBusinessType === 'personal' ? '/api/v1/upload/idcard' : '/api/v1/upload/bizlicense'
@@ -540,17 +488,13 @@
 								const resData = JSON.parse(res.data)
 								if (resData.code === 200) {
 									uni.showToast({
-										title: '识别成功',
+										title: '上传成功',
 										icon: 'success',
 										duration: 1000
 									})
 									this.oldOwnerImageList.push(resData.data.imageUrl)
 									this.formData.oldCarOwner = resData.data.Name
-									if (this.oldCarBusinessType === 'personal') {
-										this.formData.oldCarDocumentNumber = resData.data.IdNum
-									} else {
-										this.formData.oldCarDocumentNumber = resData.data.RegNum
-									}
+									this.formData.oldCarDocumentNumber = resData.data.IdNum
 								} else {
 									uni.showToast({title: '图片有误，识别失败', icon:"none"})
 								}
@@ -572,7 +516,7 @@
 			
 			chooseImageNewOwner: function() {
 				const that = this
-				const url = this.newCarBusinessType === 'personal' ? '/api/v1/upload/idcard' : '/api/v1/upload/bizlicense'
+				const url = this.oldCarBusinessType === 'personal' ? '/api/v1/upload/idcard' : '/api/v1/upload/bizlicense'
 				uni.chooseImage({
 					count: 1,
 					sizeType: [],
@@ -589,17 +533,13 @@
 								const resData = JSON.parse(res.data)
 								if (resData.code === 200) {
 									uni.showToast({
-										title: '识别成功',
+										title: '上传成功',
 										icon: 'success',
 										duration: 1000
 									})
 									this.newOwnerImageList.push(resData.data.imageUrl)
 									this.formData.newCarOwner = resData.data.Name
-									if (this.newCarBusinessType === 'personal') {
-										this.formData.newCarDocumentNumber = resData.data.IdNum
-									} else {
-										this.formData.newCarDocumentNumber = resData.data.RegNum
-									}
+									this.formData.newCarDocumentNumber = resData.data.IdNum
 								} else {
 									uni.showToast({title: '图片有误，识别失败', icon:"none"})
 								}
@@ -637,7 +577,7 @@
 								const resData = JSON.parse(res.data)
 								if (resData.code === 200) {
 									uni.showToast({
-										title: '识别成功',
+										title: '上传成功',
 										icon: 'success',
 										duration: 1000
 									})
@@ -829,7 +769,7 @@
 								carId: this.formData.carId,
 								carNumber: this.formData.carNumber,
 								carname: this.formData.carname,
-								price: +this.formData.price,
+								price: this.formData.price,
 								remark: this.formData.remark,
 								oldIdCardUrl: this.oldOwnerImageList[0],
 								newIdCardUrl: this.newOwnerImageList[0],
@@ -841,15 +781,12 @@
 							}
 						}).then((res) => {
 							if (res.code === 200) {
-								uni.showToast({title:"登记成功", icon:"success"})
-								
-								uni.$emit('inoviceCreate')
-								
+								uni.showToast({title:"登记成功", icon:"success"});
 								setTimeout(() => {
 									uni.switchTab({
 										url: '../invoiceList/index'
 									})
-								}, 2000)
+								}, 1000)
 							} else {
 								uni.showToast({title: res.msg, icon:"none"});
 							}
@@ -934,42 +871,5 @@
 	.business-panel {
 		border-radius: 5px;
 		background-color: #FFFFFF;
-	}
-	
-	.statementWrapper {
-		position: relative;
-	}
-	
-	.sub-title {
-		position: absolute;
-		right: 0rpx;
-		top: 175rpx;
-		width: 300rpx;
-	}
-	
-	.sub-title-text {
-		display: inline-block;
-		width: 120rpx;
-		font-size: 24rpx;
-		color: #007aff;
-	}
-	
-	.sub-title-text-second {
-		margin-left: 20rpx;
-	}
-	
-	.statementImage {
-		width: 500rpx;
-		height: 666rpx;
-	}
-	
-	.popup-content {
-		padding: 40px;
-	}
-	
-	.popup-close-btn {
-		position: absolute;
-		top: 20rpx;
-		right: 20rpx;
 	}
 </style>

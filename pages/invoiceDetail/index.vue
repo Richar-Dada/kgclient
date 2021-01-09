@@ -131,7 +131,7 @@
 			},
 			goPayment() {
 				uni.navigateTo({
-					url: '../payment/index'
+					url: '../payment/index?pid=' + this.detail.pid
 				})
 			}
 		}
