@@ -29,10 +29,6 @@
 			return {
 				info: [{
 					url: '/static/images/banner3.jpg'
-				},{
-					url: '/static/images/banner1.jpg'
-				}, {
-					url: '/static/images/banner2.jpg'
 				}],
 				dotsStyles: {
 						backgroundColor: 'rgba(0, 0, 0, .3)',

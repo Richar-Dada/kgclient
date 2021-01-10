@@ -1,18 +1,25 @@
 <template>
 	<view class="bookingList">
 		<block v-if="list.length">
-			<uni-list>
-				<uni-list-item 
-					v-for="(item, index) in list" :title="item.serviceType + ' ' + item.carId" 
-					:note="formate(item)" 
-					showArrow  
-					thumb-size="base" 
-					rightText="详情"
-					:key="index"
-					clickable
-					@click="goDetail(index)"
-				/>
-			</uni-list>
+			<view v-for="(item, index) in list" :key="index" class="list-item">
+				<div class="list_item_header">
+					<div>{{item.serviceType}}</div>
+					<div class="status_text">{{item.status}}</div>
+				</div>
+				<view class="list_item_content">
+					<text class="list_item_text">{{item.carId}}</text>
+					<text class="list_item_text">{{item.carname}}</text>
+					<text class="list_item_text">{{item.carNumber}}</text>
+					<text class="list_item_text">{{item.carType}}</text>
+					<text class="list_item_text">{{item.bookingDate}}</text>
+					<text class="list_item_text">{{item.payStatus}}</text>
+				</view>
+				<view class="list_item_footer">
+					<button class="btn btn-delete" v-if="item.status === '未完成'"  size="mini" @click="deleteConfirm(item.id)">删除</button>
+					<button class="btn btn-update" v-if="item.status === '未完成'" size="mini" @click="goUpdate(index)">修改</button>
+					<button class="btn btn-detail"  size="mini" @click="goDetail(index)">详情</button>
+				</view>
+			</view>
 			<view class="example-body" v-if="">
 				<uni-load-more :status="status" />
 			</view>
@@ -59,6 +66,11 @@
 				current = 1
 				this.fetchData(true)
 			})
+			
+			uni.$on('bookingUpdate', () => {
+				current = 1
+				this.fetchData(true)
+			})
 		},
 		onPullDownRefresh() {
 			this.fetchData(true, () => {
@@ -67,12 +79,13 @@
 		},
 		onReachBottom() {
 			console.log("onReachBottom");
-			if (this.list >= count) {
+			if (this.list.length >= count) {
 				this.loadMoreText = "没有更多数据了!"
 				return;
 			}
 			setTimeout(() => {
 				this.status = 'loading'
+				current += 1
 				this.fetchData(false, () => {
 				});
 			}, 300);
@@ -102,6 +115,19 @@
 					callback && callback()
 				})
 			},
+			goUpdate(index) {
+				const item = this.list[index]
+				if (!item) return
+				if (item.serviceType === '市内过户') {
+					uni.navigateTo({
+						url: '../guohu/index?data=' + JSON.stringify(item)
+					})
+				} else {
+					uni.navigateTo({
+						url: '../qianchu/index?data=' + JSON.stringify(item)
+					})
+				}
+			},
 			goDetail(index) {
 				uni.navigateTo({
 					url: '../bookingDetail/index?data=' + JSON.stringify(this.list[index])
@@ -121,6 +147,38 @@
 			formate(item) {
 				const date = this.transformTime(+item.createTime)
 				return date + '  ' +  item.status + '  ' + item.payStatus
+			},
+			deleteConfirm(id) {
+				const that = this
+				uni.showModal({
+				    content: '确定要删除吗？',
+				    success: function (res) {
+				        if (res.confirm) {
+				            that.del(id)
+				        } else if (res.cancel) {
+				        }
+				    }
+				});
+			},
+			del(id) {
+				this.$request({
+					url: '/api/v1/booking/' + id,
+					method: 'DELETE'
+				}).then((res) => {
+					if (res.resultCode === 200) {
+						uni.showToast({
+							title: '删除成功'
+						})
+						
+						uni.$emit('bookingDelete')
+						
+						setTimeout(() => {
+							uni.navigateBack()
+						}, 1500)
+					} else {
+						uni.showToast({title: res.msg, icon:"none"})
+					}
+				})
 			}
 		}
 	}
@@ -130,11 +188,62 @@
 	.bookingList {
 		width: 100%;
 		min-height: 100%;
-		background-color: #FFFFFF;
 	}
 	
 	.no-data {
 		text-align: center;
 		padding-top: 100rpx;
+	}
+	
+	.list-item {
+		margin-left: 20rpx;
+		margin-right: 20rpx;
+		background-color: #FFFFFF;
+		height: 320rpx;
+		border-radius: 10rpx;
+		margin-bottom: 20rpx;
+	}
+	
+	.list_item_header {
+		height: 80rpx;
+		line-height: 80rpx;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 0 20rpx;
+	}
+	
+	.list_item_content {
+		display: flex;
+		flex-wrap: wrap;
+		border-top: 1px solid #e5e5e5;
+		border-bottom: 1px solid #e5e5e5;
+		padding: 20rpx;
+	}
+	
+	.list_item_text {
+		width: 50%;
+		font-size: 20rpx;
+	}
+	
+	
+	.list_item_footer {
+		padding: 10rpx;
+		display: flex;
+		justify-content: flex-end;
+	}
+	
+	.btn {
+		background-color: #FFFFFF;
+		border-radius: 15px;
+		margin-left: 20rpx;
+		font-size: 22rpx;
+		margin-right: 0;
+		color: #333333;
+		border: 1px solid #e5e5e5;
+	}
+	
+	.status_text {
+		color: #007aff;
 	}
 </style>

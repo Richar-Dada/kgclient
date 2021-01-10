@@ -49,5 +49,12 @@ image {
 	width: 20rpx;
 	height: 20rpx;
 }
+.notice-wrapper {
+	padding: 30rpx;
+	text-align: center;
+}
+.notice-text {
+	color: #007aff;
+}
 
 

@@ -2,7 +2,7 @@
 	<view class="container" scroll-y="false">
 		<uni-notice-bar :scrollable="true" :single="true" text="请选择所有权!   选择完成后上传证件照自动填写相关信息!" />
 		
-		<uni-popup id="dialogInput" ref="dialogInput" type="center">
+		<uni-popup id="dialogInput" ref="dialogInput" type="center" :maskClick="false">
 			<view class="business-panel">
 				<uni-forms labelWidth="105">
 					<uni-forms-item name="oldCarBusinessType" label="原车主所有权">
@@ -162,7 +162,9 @@
 
 			<view class="example">
 				<button class="button" type="default" @click="submitForm('form')">提交</button>
-				<button class="button" type="default" @click="goNotice">查看预约须知</button>
+				<view class="notice-wrapper">
+					<text class="notice-text" type="default" @click="goNotice">查看预约须知</text>
+				</view>
 			</view>
 		</uni-forms>
 	</view>
@@ -294,14 +296,41 @@
 		},
 		onLoad(option) {
 			this.date = option.date
-			this.goNotice()
+			const data = option.data
+			
+			if (data) {
+				const detail = JSON.parse(data)
+				this.id = detail.id
+				this.formData.carname = detail.carname
+				this.formData.carId = detail.carId
+				this.formData.carType = detail.carType
+				this.formData.carNumber = detail.carNumber
+				this.formData.engineNumber = detail.engineNumber
+				this.formData.remark = detail.remark
+				this.formData.oldCarDocumentNumber = detail.oldCarDocumentNumber
+				this.formData.newCarDocumentNumber = detail.newCarDocumentNumber
+				this.formData.oldCarOwner = detail.oldCarOwner
+				this.formData.newCarOwner = detail.newCarOwner
+				this.formData.immigrationAddress = detail.immigrationAddress
+				
+				this.oldCarBusinessType = detail.oldCarDocumentType
+				this.newCarBusinessType = detail.newCarDocumentType
+				
+				if (detail.oldIdCardUrl) this.oldOwnerImageList = [detail.oldIdCardUrl]
+				if (detail.newIdCardUrl) this.newOwnerImageList = [detail.newIdCardUrl]
+				if (detail.vehicleLicenseUrl) this.vehicleLicenseImageList = [detail.vehicleLicenseUrl]
+			} else {
+				this.goNotice()
+			}
 		},
 		onReady() {
 			this.$refs.form.setRules(this.rules)
 			this.initData()
 		},
 		mounted() {
-			this.$refs.dialogInput.open()
+			if (!this.oldCarBusinessType || !this.newCarBusinessType) {
+				this.$refs.dialogInput.open()
+			}
 		},
 		methods: {
 			initData() { //首次加载渲染 第一列 和 第二列数据
@@ -320,8 +349,37 @@
 						});
 						this.multiArray[0] = arrOne;
 						this.multiArray[1] = arrTwo;
-						this.oneId = res.data[18].name;
-						this.twoId = res.data[18].children[0].name;
+						
+						if (!this.id) {
+							const arrTwo = res.data[18].children.map(item => {
+								return item.name; // 此方法将第二列'名称'分到一个新数组中
+							});
+							this.multiArray[0] = arrOne;
+							this.multiArray[1] = arrTwo;
+							this.oneId = res.data[18].name;
+							this.twoId = res.data[18].children[0].name;
+						} else {
+							const imAddress = this.formData.immigrationAddress.split(',')
+							
+							const firstIndex = res.data.findIndex((item) => {
+								return item.name === imAddress[0]
+							})
+							
+							const children = res.data[firstIndex].children
+							const secondIndex = children.findIndex((item) => {
+								return item.name === imAddress[1]
+							})
+							
+							const arrTwo = res.data[firstIndex].children.map(item => {
+								return item.name; // 此方法将第二列'名称'分到一个新数组中
+							});
+							this.multiArray[0] = arrOne;
+							this.multiArray[1] = arrTwo;
+							
+							this.multiIndex = [firstIndex, secondIndex]
+							this.oneId = imAddress[0]
+							this.twoId = imAddress[1]
+						}
 					}
 				})
 				
@@ -341,7 +399,7 @@
 				}
 				console.log(this.oneId, "打印第一列id");
 				console.log(this.twoId, "打印第二列id");
-				this.$refs.form.setValue('immigrationAddress', this.oneId + ',' + this.twoId)
+				this.formData.immigrationAddress = this.oneId + ',' + this.twoId
 			},
 			// 定义一个传入对应的'下标'为了拿到第一列id 和 第二列的name和id的方法
 			initSelect(index) {
@@ -405,7 +463,7 @@
 									})
 									this.oldOwnerImageList.push(resData.data.imageUrl)
 									this.formData.oldCarOwner = resData.data.Name
-									if (this.newCarBusinessType === 'personal') {
+									if (this.oldCarBusinessType === 'personal') {
 										this.formData.oldCarDocumentNumber = resData.data.IdNum
 									} else {
 										this.formData.oldCarDocumentNumber = resData.data.RegNum
@@ -540,6 +598,17 @@
 			 * @param {Object} form
 			 */
 			submitForm(form) {
+				if (this.id) {
+					this.update(form)
+				} else {
+					this.create(form)
+				}
+			},
+			change(name, value) {
+				this.formData.checked = value
+				this.$refs.form.setValue(name, value)
+			},
+			create(form) {
 				uni.showLoading()
 				this.$refs[form].submit()
 					.then((res) => {
@@ -561,9 +630,11 @@
 								oldCarOwner: this.formData.oldCarOwner,
 								newCarOwner: this.formData.newCarOwner,
 								immigrationAddress: this.formData.immigrationAddress,
-								newCarDocumentType: this.formData.newCarDocumentType,
+								oldCarDocumentNumber: this.formData.newCarDocumentNumber,
 								newCarDocumentNumber: this.formData.newCarDocumentNumber,
-								mark: this.formData.mark,
+								oldCarDocumentType: this.oldCarBusinessType,
+								newCarDocumentType: this.newCarBusinessType,
+								remark: this.formData.remark,
 								createTime: new Date().getTime(),
 								createBy: this.openid,
 								newIdCardUrl: this.newOwnerImageList.length && this.newOwnerImageList[0],
@@ -596,10 +667,53 @@
 						console.error('验证失败：', errors);
 					})
 			},
-			change(name, value) {
-				this.formData.checked = value
-				this.$refs.form.setValue(name, value)
-			},
+			update(form) {
+				uni.showLoading()
+				this.$refs[form].submit()
+					.then((res) => {
+						this.$request({
+							url: '/api/v1/booking/update/wx/' + this.id,
+							method: 'POST',
+							data: {
+								carNumber: this.formData.carNumber,
+								carname: this.formData.carname,
+								carId: this.formData.carId,
+								carType: this.formData.carType,
+								engineNumber: this.formData.engineNumber,
+								oldCarOwner: this.formData.oldCarOwner,
+								newCarOwner: this.formData.newCarOwner,
+								immigrationAddress: this.formData.immigrationAddress,
+								oldCarDocumentNumber: this.formData.newCarDocumentNumber,
+								newCarDocumentNumber: this.formData.newCarDocumentNumber,
+								remark: this.formData.remark,
+								newIdCardUrl: this.newOwnerImageList.length && this.newOwnerImageList[0],
+								oldIdCardUrl: this.oldOwnerImageList.length && this.oldOwnerImageList[0],
+								vehicleLicenseUrl: this.vehicleLicenseImageList && this.vehicleLicenseImageList[0]
+							}
+						}).then((res) => {
+							uni.hideLoading()
+							if (res.code === 200) {
+								uni.showToast({
+									title: '修改成功'
+								})
+								
+								uni.$emit('bookingUpdate')
+								
+								setTimeout(() => {
+									uni.navigateBack()
+								}, 1000)
+								
+							} else {
+								uni.showToast({
+									title: res.msg
+								})
+							}
+						})
+						
+					}).catch((errors) => {
+						console.error('验证失败：', errors);
+					})
+			}
 }
 	}
 </script>
@@ -666,4 +780,12 @@
 		background-color: #FFFFFF;
 	}
 	
+	.notice-wrapper {
+		padding: 30rpx;
+		text-align: center;
+	}
+	
+	.notice-text {
+		color: #007aff;
+	}
 </style>

@@ -1,7 +1,7 @@
 <template>
 	<view class="invoiceRecord">
 		<uni-notice-bar :scrollable="true" :single="true" text="请选择所有权!   选择完成后上传证件照自动填写相关信息!" />
-		<uni-popup id="dialogInput" ref="dialogInput" type="center">
+		<uni-popup id="dialogInput" ref="dialogInput" type="center" :maskClick="false">
 			<view class="business-panel">
 				<uni-forms labelWidth="105">
 					<uni-forms-item name="oldCarBusinessType" label="原车主所有权">
@@ -96,6 +96,9 @@
 					<uni-forms-item name="oldOwnerPhone" required label="手机号码">
 						<uni-easyinput type="number" v-model="formData.oldOwnerPhone" class="uni-input-border" placeholder="请输入原车主手机号码"></uni-easyinput>
 					</uni-forms-item>
+					<uni-forms-item name="oldCarOwnerAddress" required label="地址">
+						<uni-easyinput type="text" v-model="formData.oldCarOwnerAddress" class="uni-input-border" placeholder="请输入原车主地址"></uni-easyinput>
+					</uni-forms-item>
 				</uni-group>
 				
 				<view class="uni-list list-pd">
@@ -137,6 +140,9 @@
 					<uni-forms-item name="newOwnerPhone" required label="手机号码">
 						<uni-easyinput type="number" v-model="formData.newOwnerPhone" class="uni-input-border" placeholder="请输入新车主手机号码"></uni-easyinput>
 					</uni-forms-item>
+					<uni-forms-item name="newCarOwnerAddress" required label="地址">
+						<uni-easyinput type="text" v-model="formData.newCarOwnerAddress" class="uni-input-border" placeholder="请输入新车主地址"></uni-easyinput>
+					</uni-forms-item>
 				</uni-group>
 					
 				<uni-group title="其他信息" top="0">
@@ -156,7 +162,7 @@
 					</uni-forms-item>
 					
 					<uni-forms-item name="price" required label="发票金额">
-						<uni-easyinput type="number" v-model="formData.price" placeholder="请填写发票金额"></uni-easyinput>
+						<uni-easyinput type="digit" v-model="formData.price" placeholder="请填写发票金额"></uni-easyinput>
 					</uni-forms-item>
 					
 					<uni-forms-item name="remark" label="备注">
@@ -282,6 +288,7 @@
 				taxImageList: [],
 				oldCarBusinessType: '',
 				newCarBusinessType: '',
+				id: '',
 				
 				formData: {
 					oldOwnerPhone: '',
@@ -297,7 +304,9 @@
 					remark: '',
 					immigrationAddress: '广东省,广州市',
 					oldCarDocumentNumber: '',
-					newCarDocumentNumber: ''
+					newCarDocumentNumber: '',
+					oldCarOwnerAddress: '',
+					newCarOwnerAddress: ''
 				},
 				businessType: [{
 					text: '个人',
@@ -307,8 +316,6 @@
 					value: 'company'
 				}],
 				rules: {
-					
-					
 					carname: {
 						rules: [{
 							required: true,
@@ -354,6 +361,12 @@
 							errorMessage: '必须是11位手机号码',
 						}]
 					},
+					oldCarOwnerAddress: {
+						rules: [{
+							required: true,
+							errorMessage: '请输入原车主地址',
+						}]
+					},
 					newCarOwner: {
 						rules: [{
 							required: true,
@@ -373,6 +386,12 @@
 						}, {
 							pattern: /^[1][3,4,5,7,8][0-9]{9}$/,
 							errorMessage: '必须是11位手机号码',
+						}]
+					},
+					newCarOwnerAddress: {
+						rules: [{
+							required: true,
+							errorMessage: '请输入新车主地址',
 						}]
 					},
 					immigrationAddress: {
@@ -397,12 +416,53 @@
 		computed: {
 			...mapState(['openid'])
 		},
-		onReady() {
+		onReady(option) {
+			
+		},
+		onLoad(option) {
+			
+			const data = option.data
+			if (data) {
+				const detail = JSON.parse(data)
+				console.log(detail)
+				
+				this.id = detail.id
+				this.formData.oldOwnerPhone = detail.oldOwnerPhone
+				this.formData.newOwnerPhone = detail.newOwnerPhone
+				this.formData.carname = detail.carname
+				this.formData.carId = detail.carId
+				this.formData.carType = detail.carType
+				this.formData.carNumber = detail.carNumber
+				this.formData.engineNumber = detail.engineNumber
+				this.formData.oldCarOwner = detail.oldOwner
+				this.formData.newCarOwner = detail.newOwner
+				this.formData.price = detail.price
+				this.formData.remark = detail.remark
+				this.formData.immigrationAddress = detail.immigrationAddress
+				this.formData.oldCarDocumentNumber = detail.oldOwnerCardDocument
+				this.formData.newCarDocumentNumber = detail.newOwnerCardDocument
+				this.formData.oldCarOwnerAddress = detail.oldOwnerAddress
+				this.formData.newCarOwnerAddress = detail.newOwnerAddress
+				
+				this.oldCarBusinessType = detail.oldOwnerBusinessType
+				this.newCarBusinessType = detail.newOwnerBusinessType
+				
+				if (detail.oldIdCardUrl) this.oldOwnerImageList = [detail.oldIdCardUrl]
+				if (detail.newIdCardUrl) this.newOwnerImageList = [detail.newIdCardUrl]
+				if (detail.vehicleLicenseUrl) this.vehicleLicenseImageList = [detail.vehicleLicenseUrl]
+				if (detail.statementUrl) this.statementImageList = [detail.statementUrl]
+				if (detail.taxUrl) this.taxImageList = [detail.taxUrl]
+				if (detail.registerUrl) {
+					this.registerImageList = detail.registerUrl.split(',')
+				}
+			}
 			this.$refs.form.setRules(this.rules)
 			this.initData()
 		},
 		mounted() {
-			this.$refs.dialogInput.open()
+			if (!this.oldCarBusinessType || !this.newCarBusinessType) {
+				this.$refs.dialogInput.open()
+			}
 		},
 		methods: {
 			initData() { //首次加载渲染 第一列 和 第二列数据
@@ -421,8 +481,37 @@
 						});
 						this.multiArray[0] = arrOne;
 						this.multiArray[1] = arrTwo;
-						this.oneId = res.data[18].name;
-						this.twoId = res.data[18].children[0].name;
+						
+						if (!this.id) {
+							const arrTwo = res.data[18].children.map(item => {
+								return item.name; // 此方法将第二列'名称'分到一个新数组中
+							});
+							this.multiArray[0] = arrOne;
+							this.multiArray[1] = arrTwo;
+							this.oneId = res.data[18].name;
+							this.twoId = res.data[18].children[0].name;
+						} else {
+							const imAddress = this.formData.immigrationAddress.split(',')
+							
+							const firstIndex = res.data.findIndex((item) => {
+								return item.name === imAddress[0]
+							})
+							
+							const children = res.data[firstIndex].children
+							const secondIndex = children.findIndex((item) => {
+								return item.name === imAddress[1]
+							})
+							
+							const arrTwo = res.data[firstIndex].children.map(item => {
+								return item.name; // 此方法将第二列'名称'分到一个新数组中
+							});
+							this.multiArray[0] = arrOne;
+							this.multiArray[1] = arrTwo;
+							
+							this.multiIndex = [firstIndex, secondIndex]
+							this.oneId = imAddress[0]
+							this.twoId = imAddress[1]
+						}
 					}
 				})
 				
@@ -440,7 +529,10 @@
 						this.multiIndex[1]
 					].name;
 				}
+				console.log('this.oneId', this.oneId) 
+				console.log('this.twoId', this.twoId)
 				this.$refs.form.setValue('immigrationAddress', this.oneId + ',' + this.twoId)
+				this.formData.immigrationAddress = this.oneId + ',' + this.twoId
 			},
 			// 定义一个传入对应的'下标'为了拿到第一列id 和 第二列的name和id的方法
 			initSelect(index) {
@@ -494,7 +586,12 @@
 									})
 									this.oldOwnerImageList.push(resData.data.imageUrl)
 									this.formData.oldCarOwner = resData.data.Name
-									this.formData.oldCarDocumentNumber = resData.data.IdNum
+									if (this.oldCarBusinessType === 'personal') {
+										this.formData.oldCarDocumentNumber = resData.data.IdNum
+									} else {
+										this.formData.oldCarDocumentNumber = resData.data.RegNum
+									}
+									this.formData.oldCarOwnerAddress = resData.data.Address
 								} else {
 									uni.showToast({title: '图片有误，识别失败', icon:"none"})
 								}
@@ -516,7 +613,7 @@
 			
 			chooseImageNewOwner: function() {
 				const that = this
-				const url = this.oldCarBusinessType === 'personal' ? '/api/v1/upload/idcard' : '/api/v1/upload/bizlicense'
+				const url = this.newCarBusinessType === 'personal' ? '/api/v1/upload/idcard' : '/api/v1/upload/bizlicense'
 				uni.chooseImage({
 					count: 1,
 					sizeType: [],
@@ -539,7 +636,12 @@
 									})
 									this.newOwnerImageList.push(resData.data.imageUrl)
 									this.formData.newCarOwner = resData.data.Name
-									this.formData.newCarDocumentNumber = resData.data.IdNum
+									if (this.newCarBusinessType === 'personal') {
+										this.formData.newCarDocumentNumber = resData.data.IdNum
+									} else {
+										this.formData.newCarDocumentNumber = resData.data.RegNum
+									}
+									this.formData.newCarOwnerAddress = resData.data.Address
 								} else {
 									uni.showToast({title: '图片有误，识别失败', icon:"none"})
 								}
@@ -753,49 +855,106 @@
 							uni.showToast({ title: '请上传声明照', icon: "none" }) 
 							return
 						}
-						uni.showLoading()
-						this.$request({
-							url: '/api/v1/admin/invoice/create/wx',
-							method: 'POST',
-							data: {
-								immigrationAddress: this.formData.immigrationAddress,
-								newOwner: this.formData.newCarOwner,
-								newOwnerCardDocument: this.formData.newCarDocumentNumber,
-								newOwnerPhone: +this.formData.newOwnerPhone,
-								oldOwner: this.formData.oldCarOwner,
-								oldOwnerCardDocument: this.formData.oldCarDocumentNumber,
-								oldOwnerPhone: +this.formData.oldOwnerPhone,
-								carType: this.formData.carType,
-								carId: this.formData.carId,
-								carNumber: this.formData.carNumber,
-								carname: this.formData.carname,
-								price: this.formData.price,
-								remark: this.formData.remark,
-								oldIdCardUrl: this.oldOwnerImageList[0],
-								newIdCardUrl: this.newOwnerImageList[0],
-								vehicleLicenseUrl: this.vehicleLicenseImageList[0],
-								registerUrl: this.registerImageList.join(','),
-								statementUrl: this.statementImageList[0],
-								taxUrl: this.taxImageList[0],
-								createBy: this.openid
-							}
-						}).then((res) => {
-							if (res.code === 200) {
-								uni.showToast({title:"登记成功", icon:"success"});
-								setTimeout(() => {
-									uni.switchTab({
-										url: '../invoiceList/index'
-									})
-								}, 1000)
-							} else {
-								uni.showToast({title: res.msg, icon:"none"});
-							}
-						})
 						
-					}).catch((errors) => {
-						console.error('验证失败：', errors);
+						if (this.id) {
+							this.update()
+						} else {
+							this.create()
+						}
 					})
 			},
+			create() {
+				uni.showLoading()
+				this.$request({
+					url: '/api/v1/admin/invoice/create/wx',
+					method: 'POST',
+					data: {
+						immigrationAddress: this.formData.immigrationAddress,
+						newOwner: this.formData.newCarOwner,
+						newOwnerCardDocument: this.formData.newCarDocumentNumber,
+						newOwnerPhone: +this.formData.newOwnerPhone,
+						oldOwner: this.formData.oldCarOwner,
+						oldOwnerCardDocument: this.formData.oldCarDocumentNumber,
+						oldOwnerPhone: +this.formData.oldOwnerPhone,
+						carType: this.formData.carType,
+						carId: this.formData.carId,
+						carNumber: this.formData.carNumber,
+						carname: this.formData.carname,
+						price: this.formData.price,
+						remark: this.formData.remark,
+						oldIdCardUrl: this.oldOwnerImageList[0],
+						newIdCardUrl: this.newOwnerImageList[0],
+						vehicleLicenseUrl: this.vehicleLicenseImageList[0],
+						registerUrl: this.registerImageList.join(','),
+						statementUrl: this.statementImageList[0],
+						taxUrl: this.taxImageList[0],
+						createBy: this.openid,
+						oldOwnerBusinessType: this.oldCarBusinessType,
+						newOwnerBusinessType: this.newCarBusinessType,
+						oldOwnerAddress: this.formData.oldCarOwnerAddress,
+						newOwnerAddress: this.formData.newCarOwnerAddress
+					}
+				}).then((res) => {
+					uni.hideLoading()
+					if (res.code === 200) {
+						uni.showToast({title:"登记成功", icon:"success"});
+						uni.$emit('inoviceCreate')
+						setTimeout(() => {
+							uni.switchTab({
+								url: '../invoiceList/index'
+							})
+						}, 1000)
+					} else {
+						uni.showToast({title: res.msg, icon:"none"});
+					}
+				})
+					
+			},
+			update() {
+				uni.showLoading()
+				this.$request({
+					url: '/api/v1/admin/invoice/update/wx/' + this.id,
+					method: 'POST',
+					data: {
+						immigrationAddress: this.formData.immigrationAddress,
+						newOwner: this.formData.newCarOwner,
+						newOwnerCardDocument: this.formData.newCarDocumentNumber,
+						newOwnerPhone: +this.formData.newOwnerPhone,
+						oldOwner: this.formData.oldCarOwner,
+						oldOwnerCardDocument: this.formData.oldCarDocumentNumber,
+						oldOwnerPhone: +this.formData.oldOwnerPhone,
+						carType: this.formData.carType,
+						carId: this.formData.carId,
+						carNumber: this.formData.carNumber,
+						carname: this.formData.carname,
+						price: this.formData.price,
+						remark: this.formData.remark,
+						oldIdCardUrl: this.oldOwnerImageList[0],
+						newIdCardUrl: this.newOwnerImageList[0],
+						vehicleLicenseUrl: this.vehicleLicenseImageList[0],
+						registerUrl: this.registerImageList.join(','),
+						statementUrl: this.statementImageList[0],
+						taxUrl: this.taxImageList[0],
+						createBy: this.openid,
+						oldOwnerBusinessType: this.oldCarBusinessType,
+						newOwnerBusinessType: this.newCarBusinessType,
+						oldOwnerAddress: this.formData.oldCarOwnerAddress,
+						newOwnerAddress: this.formData.newCarOwnerAddress
+					}
+				}).then((res) => {
+					uni.hideLoading()
+					if (res.code === 200) {
+						uni.showToast({title:"修改成功", icon:"success"});
+						uni.$emit('inoviceUpdate')
+						setTimeout(() => {
+							uni.navigateBack()
+						}, 1000)
+					} else {
+						uni.showToast({title: res.msg, icon:"none"});
+					}
+				})
+					
+			}
 		}
 	}
 </script>

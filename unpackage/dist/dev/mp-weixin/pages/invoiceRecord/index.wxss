@@ -56,8 +56,7 @@
 	margin-left: 20rpx;
 }
 .business-panel {
-	-webkit-border-radius: 5px;
-	        border-radius: 5px;
+	border-radius: 5px;
 	background-color: #FFFFFF;
 }
 

@@ -44,10 +44,8 @@
 		methods: {
 			async weixinPay() {
 				let openid = uni.getStorageSync('openid')
-				console.log("发起支付");
 				
 				let orderInfo = await this.getOrderInfo('wxpay')
-				console.log('orderInfo', orderInfo)
 				if (!orderInfo) {
 					uni.showModal({
 						content: '获取支付信息失败',
@@ -59,8 +57,13 @@
 					...orderInfo,
 					success: (res) => {
 						uni.showToast({
-							title: "感谢您的赞助!"
+							title: "支付完成"
 						})
+						uni.$emit('inovicePay')
+						
+						setTimeout(() => {
+							uni.navigateBack()
+						}, 1000)
 					},
 					fail: (res) => {
 						uni.showModal({
@@ -86,7 +89,7 @@
 						url: baseUrl + '/api/v1/wechatpay/createorder',
 						data: {
 							out_trade_no: this.id,
-							body: '32223',
+							body: 'invoice pay',
 							openid: this.openid,
 							total_fee: (Number(this.price) * 100).toString(), // 转为以分为单位
 						},

@@ -39,8 +39,7 @@
 	z-index: 998;
 }
 .uni-datetime-picker-popup {
-	-webkit-border-radius: 8px;
-	        border-radius: 8px;
+	border-radius: 8px;
 	padding: 30px;
 	width: 270px;
 	background-color: #fff;
@@ -70,11 +69,9 @@
 }
 .uni-datetime-picker-timebox {
 	border: 1px solid #E5E5E5;
-	-webkit-border-radius: 5px;
-	        border-radius: 5px;
+	border-radius: 5px;
 	padding: 7px 10px;
-	-webkit-box-sizing: border-box;
-	        box-sizing: border-box;
+	box-sizing: border-box;
 	cursor: pointer;
 }
 

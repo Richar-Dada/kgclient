@@ -64,7 +64,9 @@
 
 			<view class="example">
 				<button class="button" type="default" @click="submitForm('form')">提交</button>
-				<button class="button" type="default" @click="goNotice">查看预约须知</button>
+				<view class="notice-wrapper">
+					<text class="notice-text" type="default" @click="goNotice">查看预约须知</text>
+				</view>
 			</view>
 		</uni-forms>
 	</view>
@@ -82,6 +84,7 @@
 			return {
 				vehicleLicenseImageList: [],
 				date: '',
+				id: '',
 				
 				formData: {
 					carname: '',
@@ -136,15 +139,35 @@
 				}
 			}
 		},
+		onLoad(option) {
+			this.date = option.date
+			const data = option.data
+			
+			if (data) {
+				const detail = JSON.parse(data)
+				this.id = detail.id
+				this.formData.carname = detail.carname
+				this.formData.carId = detail.carId
+				this.formData.carType = detail.carType
+				this.formData.carNumber = detail.carNumber
+				this.formData.engineNumber = detail.engineNumber
+				this.formData.remark = detail.remark
+				if(detail.validDate) {
+					const timeArr = detail.validDate.split('~')
+					this.formData.startTime = timeArr[0]
+					this.formData.endTime = timeArr[1]
+				}
+				
+				if (detail.vehicleLicenseUrl) this.vehicleLicenseImageList = [detail.vehicleLicenseUrl]
+			} else {
+				this.goNotice()
+			}
+		},
 		computed: {
 			...mapState(['openid']),
 			showForm() {
 				return this.oldCarBusinessType && this.newCarBusinessType
 			}
-		},
-		onLoad(option) {
-			this.date = option.date
-			this.goNotice()
 		},
 		onReady() {
 			this.$refs.form.setRules(this.rules)
@@ -235,6 +258,13 @@
 			 * @param {Object} form
 			 */
 			submitForm(form) {
+				if (this.id) {
+					this.update(form)
+				} else {
+					this.create(form)
+				}
+			},
+			create(form) {
 				uni.showLoading()
 				this.$refs[form].submit()
 					.then((res) => {
@@ -283,6 +313,48 @@
 						console.error('验证失败：', errors);
 					})
 			},
+			update(form) {
+				uni.showLoading()
+				this.$refs[form].submit()
+					.then((res) => {
+						this.$request({
+							url: '/api/v1/booking/update/wx/' + this.id,
+							method: 'POST',
+							data: {
+								serviceType: '市内过户',
+								carNumber: this.formData.carNumber,
+								carname: this.formData.carname,
+								carId: this.formData.carId,
+								carType: this.formData.carType,
+								engineNumber: this.formData.engineNumber,
+								mark: this.formData.mark,
+								vehicleLicenseUrl: this.vehicleLicenseImageList && this.vehicleLicenseImageList[0],
+								validDate: this.formData.carType === '小型轿车' ? this.transformTime(this.formData.startTime) + '~' + this.transformTime(this.formData.endTime) : ' '
+							}
+						}).then((res) => {
+							uni.hideLoading()
+							if (res.code === 200) {
+								uni.showToast({
+									title: '修改成功'
+								})
+								
+								uni.$emit('bookingUpdate')
+								
+								setTimeout(() => {
+									uni.navigateBack()
+								}, 1000)
+								
+							} else {
+								uni.showToast({
+									title: res.msg
+								})
+							}
+						})
+						
+					}).catch((errors) => {
+						console.error('验证失败：', errors);
+					})
+			}
 }
 	}
 </script>
@@ -342,6 +414,15 @@
 		right: 18px;
 		width: 20rpx;
 		height: 20rpx;
+	}
+	
+	.notice-wrapper {
+		padding: 30rpx;
+		text-align: center;
+	}
+	
+	.notice-text {
+		color: #007aff;
 	}
 	
 </style>

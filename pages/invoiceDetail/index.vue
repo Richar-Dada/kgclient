@@ -8,6 +8,7 @@
 				<uni-list-item title="姓名" :rightText="detail.oldOwner"/>
 				<uni-list-item title="身份证号码" :rightText="detail.oldOwnerCardDocument"/>
 				<uni-list-item title="手机号码" :rightText="detail.oldOwnerPhone"/>
+				<uni-list-item title="地址" :rightText="detail.oldOwnerAddress"/>
 			</uni-list>
 		</uni-group>
 		
@@ -20,6 +21,7 @@
 				<uni-list-item title="姓名" :rightText="detail.newOwner"/>
 				<uni-list-item title="身份证号码" :rightText="detail.newOwnerCardDocument"/>
 				<uni-list-item title="手机号码" :rightText="detail.newOwnerPhone"/>
+				<uni-list-item title="地址" :rightText="detail.newOwnerAddress"/>
 			</uni-list>
 		</uni-group>
 		
@@ -40,6 +42,9 @@
 			<view class="uni-center" style="background:#FFFFFF; font-size:0;">
 				<image v-for="(url, index) in registerImageList" :key="index" class="image" mode="widthFix" :src="url" />
 			</view>
+			<uni-list>
+				<uni-list-item title="登记号" :rightText="detail.registerNumber"/>
+			</uni-list>
 		</uni-group >	
 			
 		<uni-group title="声明照" top="0">	
@@ -62,11 +67,6 @@
 				<uni-list-item title="备注" :rightText="detail.remark"/>
 			</uni-list>
 		</uni-group >
-			
-		<button v-if="detail.isPay === '0'" class="button" type="default" @click="goPayment">支付</button>
-		<button class="button" type="warn" @click="deleteConfirm(detail.id)">删除</button>
-		
-		
 	</view>
 </template>
 
@@ -91,47 +91,30 @@
 			}
 		},
 		onLoad(option) {
-			this.detail = JSON.parse(option.data)
+			const data = option.data
+			if (data) {
+				this.detail = JSON.parse(option.data)
+			}
 		},
 		methods: {
-			deleteConfirm(id) {
-				const that = this
-				uni.showModal({
-				    content: '确定要删除吗？',
-				    success: function (res) {
-				        if (res.confirm) {
-				            that.del(id)
-				        } else if (res.cancel) {
-				        }
-				    }
-				});
-			},
-			del(id) {
+			
+			
+			goRefund() {
 				this.$request({
-					url: '/api/v1/admin/invoice/deletebyid',
-					method: 'DELETE',
+					url: '/api/v1/wechatpay/createRefund',
+					method: 'POST',
 					data: {
-						id
+						out_trade_no: this.detail.pid,
+						openid: this.openid
 					}
 				}).then((res) => {
 					if (res.code === 200) {
 						uni.showToast({
-							title: '删除成功'
+							title: '申请退款成功'
 						})
-						
-						uni.$emit('invoiceDelete')
-						
-						setTimeout(() => {
-							uni.navigateBack()
-						}, 1500)
 					} else {
 						uni.showToast({title: res.msg, icon:"none"})
 					}
-				})
-			},
-			goPayment() {
-				uni.navigateTo({
-					url: '../payment/index?pid=' + this.detail.pid
 				})
 			}
 		}
