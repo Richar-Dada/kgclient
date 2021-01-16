@@ -3,7 +3,7 @@
 		<block v-if="list.length">
 			<view v-for="(item, index) in list" :key="index" class="list-item">
 				<div class="list_item_header">
-					<div>{{item.serviceType}}</div>
+					<div>{{ formate(item.serviceType, item.sendMsg) }}</div>
 					<div class="status_text">{{item.status}}</div>
 				</div>
 				<view class="list_item_content">
@@ -101,7 +101,6 @@
 						createBy: this.openid
 					}
 				}).then((res) => {
-					console.log('res', res)
 					if (res.code === 200) {
 						const list = refresh ? res.data.list : this.list.concat(res.data.list)
 						this.list = list
@@ -144,9 +143,18 @@
 			          return '';
 			      }
 			},
-			formate(item) {
-				const date = this.transformTime(+item.createTime)
-				return date + '  ' +  item.status + '  ' + item.payStatus
+			formate(serviceType ,sendMsg) {
+				if (sendMsg === '否') {
+					return serviceType + '(未审核)'
+				}
+				
+				if (sendMsg === 'ok') {
+					return serviceType + '(审核通过)'
+				}
+				
+				if (sendMsg === 'fail') {
+					return serviceType + '(审核失败)'
+				}
 			},
 			deleteConfirm(id) {
 				const that = this

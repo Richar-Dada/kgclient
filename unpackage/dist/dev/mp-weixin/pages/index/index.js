@@ -173,6 +173,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
 var _vuex = __webpack_require__(/*! vuex */ 15);function ownKeys(object, enumerableOnly) {var keys = Object.keys(object);if (Object.getOwnPropertySymbols) {var symbols = Object.getOwnPropertySymbols(object);if (enumerableOnly) symbols = symbols.filter(function (sym) {return Object.getOwnPropertyDescriptor(object, sym).enumerable;});keys.push.apply(keys, symbols);}return keys;}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};if (i % 2) {ownKeys(Object(source), true).forEach(function (key) {_defineProperty(target, key, source[key]);});} else if (Object.getOwnPropertyDescriptors) {Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));} else {ownKeys(Object(source)).forEach(function (key) {Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));});}}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}var _default =
 
 
@@ -190,8 +192,11 @@ var _vuex = __webpack_require__(/*! vuex */ 15);function ownKeys(object, enumera
         border: '1px rgba(0, 0, 0, .3) solid',
         color: '#fff',
         selectedBackgroundColor: 'rgba(0, 0, 0, .9)',
-        selectedBorder: '1px rgba(0, 0, 0, .9) solid' } };
+        selectedBorder: '1px rgba(0, 0, 0, .9) solid' },
 
+      guohuOpen: true,
+      qianchuOpen: true,
+      invoiceOpen: true };
 
   },
   onReady: function onReady() {
@@ -208,6 +213,31 @@ var _vuex = __webpack_require__(/*! vuex */ 15);function ownKeys(object, enumera
         console.log(infoRes.userInfo);
       } });
 
+  },
+  mounted: function mounted() {var _this = this;
+    console.log('mounted');
+    this.$request({
+      url: '/api/v1/admin/deadlinestatus',
+      method: 'GET' }).
+
+    then(function (res) {
+      if (res.code === 200) {
+        var data = res.data;
+        data.forEach(function (item) {
+          if (item.type === 'guohu' && item.status === 'off') {
+            _this.guohuOpen = false;
+          }
+
+          if (item.type === 'qianchu' && item.status === 'off') {
+            _this.qianchuOpen = false;
+          }
+
+          if (item.type === 'invoice' && item.status === 'off') {
+            _this.invoiceOpen = false;
+          }
+        });
+      }
+    });
   },
   computed: _objectSpread({},
   (0, _vuex.mapState)(['openid', 'hasLogin'])),

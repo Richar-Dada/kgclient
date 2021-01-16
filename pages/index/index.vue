@@ -10,9 +10,11 @@
 		    </swiper>
 		</uni-swiper-dot>
 		<view class="content">
-			<button type="default" @click="goSchedul('guohu')">市内过户</button>
-			<button type="default" @click="goSchedul('qianchu')">迁出提档</button>
-			<button type="default" @click="goInvoice">发票服务</button>
+			<form bindsubmit="formSubmit">
+				<button type="default" @click="goSchedul('guohu')" :disabled="!guohuOpen">市内过户</button>
+				<button type="default" @click="goSchedul('qianchu')" :disabled="!qianchuOpen" >迁出提档</button>
+				<button type="default" @click="goInvoice" :disabled="!invoiceOpen">发票服务</button>
+			</form>
 		</view>
 	</view>
 </template>
@@ -36,7 +38,10 @@
 						color: '#fff',
 						selectedBackgroundColor: 'rgba(0, 0, 0, .9)',
 						selectedBorder: '1px rgba(0, 0, 0, .9) solid'
-					}
+				},
+				guohuOpen: true,
+				qianchuOpen: true,
+				invoiceOpen: true,
 			}
 		},
 		onReady() {
@@ -52,7 +57,32 @@
 					that.setWeixinUserInfo(infoRes.userInfo)
 					console.log(infoRes.userInfo)
 				}
-			});
+			})
+		},
+		mounted() {
+			console.log('mounted')
+			this.$request({
+				url: '/api/v1/admin/deadlinestatus',
+				method: 'GET'
+			})
+			.then((res) => {
+				if (res.code === 200) {
+					const data = res.data
+					data.forEach((item) => {
+						if (item.type === 'guohu' && item.status === 'off') {
+							this.guohuOpen = false
+						}
+						
+						if (item.type === 'qianchu' && item.status === 'off') {
+							this.qianchuOpen = false
+						}
+						
+						if (item.type === 'invoice' && item.status === 'off') {
+							this.invoiceOpen = false
+						}
+					})
+				}
+			})
 		},
 		computed: {
 			...mapState(['openid', 'hasLogin'])

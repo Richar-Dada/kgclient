@@ -601,7 +601,13 @@
 				if (this.id) {
 					this.update(form)
 				} else {
-					this.create(form)
+					const that = this
+					wx.requestSubscribeMessage({
+					  tmplIds: ['ZpSyU9MfuwmZryCO6UdkEOwd-YdHnRMdxY4SxEy-j5w'],
+					  complete () {
+						  that.create(form)
+					  }
+					})
 				}
 			},
 			change(name, value) {

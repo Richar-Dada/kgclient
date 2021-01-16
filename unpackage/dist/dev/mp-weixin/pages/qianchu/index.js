@@ -777,7 +777,13 @@ var _vuex = __webpack_require__(/*! vuex */ 15);function _toConsumableArray(arr)
       if (this.id) {
         this.update(form);
       } else {
-        this.create(form);
+        var that = this;
+        wx.requestSubscribeMessage({
+          tmplIds: ['ZpSyU9MfuwmZryCO6UdkEOwd-YdHnRMdxY4SxEy-j5w'],
+          complete: function complete() {
+            that.create(form);
+          } });
+
       }
     },
     change: function change(name, value) {

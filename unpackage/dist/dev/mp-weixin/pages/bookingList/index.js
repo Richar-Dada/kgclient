@@ -120,6 +120,25 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
+  var l0 = _vm.list.length
+    ? _vm.__map(_vm.list, function(item, index) {
+        var $orig = _vm.__get_orig(item)
+
+        var m0 = _vm.formate(item.serviceType, item.sendMsg)
+        return {
+          $orig: $orig,
+          m0: m0
+        }
+      })
+    : null
+  _vm.$mp.data = Object.assign(
+    {},
+    {
+      $root: {
+        l0: l0
+      }
+    }
+  )
 }
 var recyclableRender = false
 var staticRenderFns = []
@@ -256,7 +275,6 @@ var current = 1;var _default =
           createBy: this.openid } }).
 
       then(function (res) {
-        console.log('res', res);
         if (res.code === 200) {
           var list = refresh ? res.data.list : _this3.list.concat(res.data.list);
           _this3.list = list;
@@ -299,9 +317,18 @@ var current = 1;var _default =
         return '';
       }
     },
-    formate: function formate(item) {
-      var date = this.transformTime(+item.createTime);
-      return date + '  ' + item.status + '  ' + item.payStatus;
+    formate: function formate(serviceType, sendMsg) {
+      if (sendMsg === '否') {
+        return serviceType + '(未审核)';
+      }
+
+      if (sendMsg === 'ok') {
+        return serviceType + '(审核通过)';
+      }
+
+      if (sendMsg === 'fail') {
+        return serviceType + '(审核失败)';
+      }
     },
     deleteConfirm: function deleteConfirm(id) {
       var that = this;
