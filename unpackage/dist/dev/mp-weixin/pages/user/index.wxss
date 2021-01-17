@@ -19,4 +19,27 @@
 .username {
 	margin-top: 20rpx;
 }
+.unlogin-wrapper {
+	margin-top: 200rpx
+}
+.unlogin-text {
+	font-size: 48rpx;
+	color: #000000;
+}
+.content {
+	width: 60%;
+	margin: 20rpx auto;
+}
+button {
+	margin-top: 30rpx;
+}
+.image {
+	margin:40rpx 0;
+	width: 200rpx;
+}
+.login-button {
+	width: 80%;
+	text-align: center;
+	margin: 20rpx auto;
+}
 

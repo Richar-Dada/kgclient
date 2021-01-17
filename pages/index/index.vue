@@ -11,9 +11,9 @@
 		</uni-swiper-dot>
 		<view class="content">
 			<form bindsubmit="formSubmit">
-				<button type="default" @click="goSchedul('guohu')" :disabled="!guohuOpen">市内过户</button>
-				<button type="default" @click="goSchedul('qianchu')" :disabled="!qianchuOpen" >迁出提档</button>
-				<button type="default" @click="goInvoice" :disabled="!invoiceOpen">发票服务</button>
+				<button type="default" @click="handleButtonClick('guohu')" :disabled="!guohuOpen">市内过户</button>
+				<button type="default" @click="handleButtonClick('qianchu')" :disabled="!qianchuOpen" >迁出提档</button>
+				<button type="default" @click="handleButtonClick('invoice')" :disabled="!invoiceOpen">发票服务</button>
 			</form>
 		</view>
 	</view>
@@ -45,19 +45,19 @@
 			}
 		},
 		onReady() {
-			if (!this.hasLogin) {
-				uni.navigateTo({
-					url: '../login/index'
-				})
-			}
-			const that = this
-			uni.getUserInfo({
-				provider: 'weixin',
-				success: function(infoRes) {				
-					that.setWeixinUserInfo(infoRes.userInfo)
-					console.log(infoRes.userInfo)
-				}
-			})
+			// if (!this.hasLogin) {
+			// 	uni.navigateTo({
+			// 		url: '../login/index'
+			// 	})
+			// }
+			// const that = this
+			// uni.getUserInfo({
+			// 	provider: 'weixin',
+			// 	success: function(infoRes) {				
+			// 		that.setWeixinUserInfo(infoRes.userInfo)
+			// 		console.log(infoRes.userInfo)
+			// 	}
+			// })
 		},
 		mounted() {
 			console.log('mounted')
@@ -99,6 +99,23 @@
 				uni.navigateTo({
 					url: '../schedul/index?type=' + type
 				})
+			},
+			handleButtonClick(key) {
+				if (!this.hasLogin) {
+					uni.showToast({
+						title: '请登录',
+						icon: 'none'
+					})
+					
+					return
+				}
+				
+				if (key != 'invoice') {
+					this.goSchedul(key)
+				} else if (key === 'invoice') {
+					this.goInvoice()
+				}
+				
 			}
 		}
 	}

@@ -87,9 +87,8 @@
 						if (res.code === 200) {
 							uni.showToast({title:"关联成功", icon:"success", duration: 2000})
 							this.setUserInfo(res.data)
-							setTimeout(() => { uni.switchTab({
-								url: '../index/index'
-							})() }, 2000)
+							uni.$emit('BandSuccess')
+							setTimeout(() => { uni.navigateBack() }, 2000)
 						} else {
 							uni.showToast({title: res.msg, icon:"none"});
 						}

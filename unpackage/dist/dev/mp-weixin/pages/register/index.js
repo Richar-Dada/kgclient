@@ -219,9 +219,8 @@ var graceChecker = __webpack_require__(/*! ../../common/graceChecker.js */ 40);v
           if (res.code === 200) {
             uni.showToast({ title: "关联成功", icon: "success", duration: 2000 });
             _this.setUserInfo(res.data);
-            setTimeout(function () {uni.switchTab({
-                url: '../index/index' })();
-            }, 2000);
+            uni.$emit('BandSuccess');
+            setTimeout(function () {uni.navigateBack();}, 2000);
           } else {
             uni.showToast({ title: res.msg, icon: "none" });
           }

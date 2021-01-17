@@ -175,6 +175,39 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 var _vuex = __webpack_require__(/*! vuex */ 15);function ownKeys(object, enumerableOnly) {var keys = Object.keys(object);if (Object.getOwnPropertySymbols) {var symbols = Object.getOwnPropertySymbols(object);if (enumerableOnly) symbols = symbols.filter(function (sym) {return Object.getOwnPropertyDescriptor(object, sym).enumerable;});keys.push.apply(keys, symbols);}return keys;}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};if (i % 2) {ownKeys(Object(source), true).forEach(function (key) {_defineProperty(target, key, source[key]);});} else if (Object.getOwnPropertyDescriptors) {Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));} else {ownKeys(Object(source)).forEach(function (key) {Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));});}}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}
 
 
@@ -194,20 +227,116 @@ var univerifyInfoKey = 'univerifyInfo';var _default =
   (0, _vuex.mapState)(['hasLogin', 'userInfo', 'weixinUserInfo'])),
 
   onLoad: function onLoad() {var _this = this;
-    if (this.hasLogin && this.isUniverifyLogin) {
-      this.getPhoneNumber(uni.getStorageSync(univerifyInfoKey)).then(function (phoneNumber) {
-        _this.phoneNumber = phoneNumber;
-      });
-    }
+    var that = this;
+    uni.getUserInfo({
+      provider: 'weixin',
+      success: function success(infoRes) {
+        that.setWeixinUserInfo(infoRes.userInfo);
+        console.log(infoRes.userInfo);
+      } });
+
+
+    uni.$on('BandSuccess', function () {
+      _this.isNew = false;
+    });
   },
   methods: _objectSpread(_objectSpread(_objectSpread({},
-  (0, _vuex.mapMutations)(['login', 'setUniverifyLogin', 'setOpenid', 'setUserInfo'])),
+  (0, _vuex.mapMutations)(['login', 'setUniverifyLogin', 'setOpenid', 'setUserInfo', 'setWeixinUserInfo'])),
   (0, _vuex.mapActions)(['getPhoneNumber'])), {}, {
 
     Toast: function Toast(data) {var duration = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1000;
       uni.showToast(Object.assign({}, data, {
         duration: duration }));
 
+    },
+    tologin: function tologin(provider) {var _this2 = this;
+      var that = this;
+      // 一键登录已在APP onLaunch的时候进行了预登陆，可以显著提高登录速度。登录成功后，预登陆状态会重置
+      uni.login({
+        provider: 'weixin',
+        success: function success(res) {
+          console.log('login success:', res);
+
+          _this2.login('weixin');
+
+          that.$request({
+            url: '/wechat/getUserInfoByCode',
+            method: 'POST',
+            data: { code: res.code } }).
+          then(function (res) {
+            if (res.resultCode === 200) {
+              _this2.setUserInfo(res.data);
+              _this2.setOpenid(res.data.openId);
+              uni.navigateBack();
+            } else if (res.errorCode === 431) {
+              _this2.isNew = true;
+              _this2.sessionKey = res.sessionKey;
+              _this2.setOpenid(res.openId);
+            }
+          });
+        },
+        fail: function fail(err) {
+          console.log('login fail:', err);
+
+          // 一键登录点击其他登录方式
+          if (err.code == '30002') {
+            uni.closeAuthView();
+            _this2.Toast({
+              title: '其他登录方式' });
+
+            return;
+          }
+
+          // 未开通
+          if (err.code == 1000) {
+            uni.showModal({
+              title: '登录失败',
+              content: "".concat(err.errMsg, "\n\uFF0C\u9519\u8BEF\u7801\uFF1A").concat(err.code),
+              confirmText: '开通指南',
+              cancelText: '确定',
+              success: function success(res) {
+                if (res.confirm) {
+                  setTimeout(function () {
+                    plus.runtime.openWeb('https://ask.dcloud.net.cn/article/37965');
+                  }, 500);
+                }
+              } });
+
+            return;
+          }
+
+          // 一键登录预登陆失败
+          if (err.code == '30005') {
+            uni.showModal({
+              showCancel: false,
+              title: '预登录失败',
+              content: _this2.univerifyErrorMsg || err.errMsg });
+
+            return;
+          }
+
+          // 一键登录用户关闭验证界面
+          if (err.code != '30003') {
+            uni.showModal({
+              showCancel: false,
+              title: '登录失败',
+              content: JSON.stringify(err) });
+
+          }
+        },
+        complete: function complete() {
+          _this2.univerifyBtnLoading = false;
+        } });
+
+
+    },
+    getPhoneNumber: function getPhoneNumber(e) {
+      if (e.detail.errMsg === 'getPhoneNumber:ok') {
+        console.log(e.detail);
+        uni.navigateTo({
+          url: "../register/index?iv=".concat(e.detail.iv, "&encryptedData=").concat(e.detail.encryptedData, "&sessionKey=").concat(this.sessionKey) });
+
+      }
     } }) };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 

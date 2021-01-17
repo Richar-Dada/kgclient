@@ -25,9 +25,15 @@
 			</view>
 		</block>
 		
-		<block v-if="!list.length">
+		<block v-if="hasLogin && !list.length">
 			<view class="no-data">
-				<text>没有预约信息</text>
+				<text>没有预约信息,下拉刷新试试</text>
+			</view>
+		</block>
+		
+		<block v-if="!hasLogin">
+			<view class="no-data">
+				<text>请先登录</text>
 			</view>
 		</block>
 	</view>
@@ -52,9 +58,11 @@
 			}
 		},
 		computed: {
-			...mapState(['openid'])
+			...mapState(['openid', 'hasLogin'])
 		},
 		onLoad() {
+			if (!this.hasLogin) return
+			
 			this.fetchData(false)
 			
 			uni.$on('bookingDelete', () => {

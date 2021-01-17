@@ -200,19 +200,19 @@ var _vuex = __webpack_require__(/*! vuex */ 15);function ownKeys(object, enumera
 
   },
   onReady: function onReady() {
-    if (!this.hasLogin) {
-      uni.navigateTo({
-        url: '../login/index' });
-
-    }
-    var that = this;
-    uni.getUserInfo({
-      provider: 'weixin',
-      success: function success(infoRes) {
-        that.setWeixinUserInfo(infoRes.userInfo);
-        console.log(infoRes.userInfo);
-      } });
-
+    // if (!this.hasLogin) {
+    // 	uni.navigateTo({
+    // 		url: '../login/index'
+    // 	})
+    // }
+    // const that = this
+    // uni.getUserInfo({
+    // 	provider: 'weixin',
+    // 	success: function(infoRes) {				
+    // 		that.setWeixinUserInfo(infoRes.userInfo)
+    // 		console.log(infoRes.userInfo)
+    // 	}
+    // })
   },
   mounted: function mounted() {var _this = this;
     console.log('mounted');
@@ -253,6 +253,23 @@ var _vuex = __webpack_require__(/*! vuex */ 15);function ownKeys(object, enumera
     goSchedul: function goSchedul(type) {
       uni.navigateTo({
         url: '../schedul/index?type=' + type });
+
+    },
+    handleButtonClick: function handleButtonClick(key) {
+      if (!this.hasLogin) {
+        uni.showToast({
+          title: '请登录',
+          icon: 'none' });
+
+
+        return;
+      }
+
+      if (key != 'invoice') {
+        this.goSchedul(key);
+      } else if (key === 'invoice') {
+        this.goInvoice();
+      }
 
     } }) };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
