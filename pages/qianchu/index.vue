@@ -29,7 +29,7 @@
 							<view class="uni-uploader__files">
 								<block v-for="(image,index) in vehicleLicenseImageList" :key="index">
 									<view class="uni-uploader__file">
-										<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImage"></image>
+										<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImageVehicleLicense"></image>
 										<view class="delete-btn" @click="deleteImage(index, vehicleLicenseImageList)">
 											<uni-icons type="clear" color="#dd524d" size="25" />
 										</view>
@@ -70,7 +70,7 @@
 							<view class="uni-uploader__files">
 								<block v-for="(image,index) in oldOwnerImageList" :key="index">
 									<view class="uni-uploader__file">
-										<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImage"></image>
+										<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImageveOldOwner"></image>
 										<view class="delete-btn" @click="deleteImage(index, oldOwnerImageList)">
 											<uni-icons type="clear" color="#dd524d" size="25" />
 										</view>
@@ -85,8 +85,11 @@
 				</view>
 			</view>
 			<uni-group title="原车主信息" top="0">
-				<uni-forms-item name="newCarOwner" required label="姓名">
+				<uni-forms-item name="newCarOwner" v-if="oldCarBusinessType === 'personal'" required label="姓名">
 					<uni-easyinput type="text" v-model="formData.oldCarOwner" class="uni-input-border" placeholder="请输入原车主姓名"></uni-easyinput>
+				</uni-forms-item>
+				<uni-forms-item name="newCarOwner" v-if="oldCarBusinessType === 'company'" required label="企业名称">
+					<uni-easyinput type="text" v-model="formData.oldCarOwner" class="uni-input-border" placeholder="请输入原车主企业名称"></uni-easyinput>
 				</uni-forms-item>
 				
 				<uni-forms-item name="oldCarDocumentNumber" required label="身份证号码" v-if="oldCarBusinessType === 'personal'">
@@ -108,7 +111,7 @@
 							<view class="uni-uploader__files">
 								<block v-for="(image,index) in newOwnerImageList" :key="index">
 									<view class="uni-uploader__file">
-										<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImage"></image>
+										<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImageveNewOwner"></image>
 										<view class="delete-btn" @click="deleteImage(index, newOwnerImageList)">
 											<uni-icons type="clear" color="#dd524d" size="25" />
 										</view>
@@ -123,8 +126,11 @@
 				</view>
 			</view>
 			<uni-group title="新车主信息" top="0">
-				<uni-forms-item name="newCarOwner" required label="姓名">
+				<uni-forms-item name="newCarOwner" v-if="newCarBusinessType === 'personal'" required label="姓名">
 					<uni-easyinput type="text" v-model="formData.newCarOwner" class="uni-input-border" placeholder="请输入新车主姓名"></uni-easyinput>
+				</uni-forms-item>
+				<uni-forms-item name="newCarOwner" v-if="newCarBusinessType === 'company'" required label="企业名称">
+					<uni-easyinput type="text" v-model="formData.newCarOwner" class="uni-input-border" placeholder="请输入新车主企业名称"></uni-easyinput>
 				</uni-forms-item>
 				
 				<uni-forms-item name="newCarDocumentNumber" v-if="newCarBusinessType === 'personal'" required label="身份证号码">
@@ -176,6 +182,8 @@
 		mapMutations,
 		mapActions
 	} from 'vuex'
+	
+	import { baseUrl } from '../../utils/request.js'
 	
 	export default {
 		data() {
@@ -333,6 +341,21 @@
 			}
 		},
 		methods: {
+			previewImageVehicleLicense(e) {
+				uni.previewImage({
+					urls: this.vehicleLicenseImageList
+				})
+			},
+			previewImageveOldOwner(e) {
+				uni.previewImage({
+					urls: this.oldOwnerImageList
+				})
+			},
+			previewImageveNewOwner(e) {
+				uni.previewImage({
+					urls: this.newOwnerImageList
+				})
+			},
 			initData() { //首次加载渲染 第一列 和 第二列数据
 				this.$request({
 					url: '/api/vi/address',
@@ -449,7 +472,7 @@
 						var imageSrc = res.tempFilePaths[0]
 						
 						uni.uploadFile({
-							url: this.$baseUrl + url,
+							url: baseUrl + url,
 							filePath: imageSrc,
 							name: 'image',
 							success: (res) => {
@@ -497,7 +520,7 @@
 						var imageSrc = res.tempFilePaths[0]
 						uni.showLoading()
 						uni.uploadFile({
-							url: this.$baseUrl + url,
+							url: baseUrl + url,
 							filePath: imageSrc,
 							name: 'image',
 							success: (res) => {
@@ -546,7 +569,7 @@
 						var imageSrc = res.tempFilePaths[0]
 						uni.showLoading()
 						uni.uploadFile({
-							url: this.$baseUrl + '/api/v1/upload/vehiclelicense',
+							url: baseUrl + '/api/v1/upload/vehiclelicense',
 							filePath: imageSrc,
 							name: 'image',
 							success: (res) => {
@@ -793,5 +816,11 @@
 	
 	.notice-text {
 		color: #007aff;
+	}
+	
+	.picker-immigrant {
+		margin-left: 20rpx;
+		font-size: 32rpx;
+		border-bottom: 1px solid #CCCCCC;
 	}
 </style>

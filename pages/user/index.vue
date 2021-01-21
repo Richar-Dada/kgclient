@@ -108,6 +108,7 @@
 						}).then((res) => {
 							if (res.resultCode === 200) {
 								this.setUserInfo(res.data)
+								uni.setStorageSync('userInfo', JSON.stringify(res.data))
 								this.setOpenid(res.data.openId)
 								uni.navigateBack()
 							} else if (res.errorCode === 431) {

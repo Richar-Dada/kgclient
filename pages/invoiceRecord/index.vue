@@ -27,7 +27,7 @@
 								<view class="uni-uploader__files">
 									<block v-for="(image,index) in vehicleLicenseImageList" :key="index">
 										<view class="uni-uploader__file">
-											<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImage"></image>
+											<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImageVehicleLicense"></image>
 											<view class="delete-btn" @click="deleteImage(index, vehicleLicenseImageList)">
 												<uni-icons type="clear" color="#dd524d" size="25" />
 											</view>
@@ -68,7 +68,7 @@
 								<view class="uni-uploader__files">
 									<block v-for="(image,index) in oldOwnerImageList" :key="index">
 										<view class="uni-uploader__file">
-											<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImage"></image>
+											<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImageveOldOwner"></image>
 											<view class="delete-btn" @click="deleteImage(index, oldOwnerImageList)">
 												<uni-icons type="clear" color="#dd524d" size="25" />
 											</view>
@@ -83,8 +83,11 @@
 					</view>
 				</view>
 				<uni-group title="原车主信息" top="0">
-					<uni-forms-item name="oldCarOwner" required label="姓名">
+					<uni-forms-item name="oldCarOwner" v-if="oldCarBusinessType === 'personal'" required label="姓名">
 						<uni-easyinput type="text" v-model="formData.oldCarOwner" class="uni-input-border" placeholder="请输入原车主姓名"></uni-easyinput>
+					</uni-forms-item>
+					<uni-forms-item name="oldCarOwner" v-if="oldCarBusinessType === 'company'" required label="企业名称">
+						<uni-easyinput type="text" v-model="formData.oldCarOwner" class="uni-input-border" placeholder="请输入原车主企业名称"></uni-easyinput>
 					</uni-forms-item>
 					
 					<uni-forms-item name="oldCarDocumentNumber" required label="身份证号码" v-if="oldCarBusinessType === 'personal'">
@@ -93,11 +96,8 @@
 					<uni-forms-item name="oldCarDocumentNumber" required label="统一社会代码" v-if="oldCarBusinessType === 'company'">
 						<uni-easyinput type="text" v-model="formData.oldCarDocumentNumber" class="uni-input-border" placeholder="请输入证件号码"></uni-easyinput>
 					</uni-forms-item>
-					<uni-forms-item name="oldOwnerPhone" required label="手机号码">
+					<uni-forms-item name="oldOwnerPhone" label="手机号码">
 						<uni-easyinput type="number" v-model="formData.oldOwnerPhone" class="uni-input-border" placeholder="请输入原车主手机号码"></uni-easyinput>
-					</uni-forms-item>
-					<uni-forms-item name="oldCarOwnerAddress" required label="地址">
-						<uni-easyinput type="text" v-model="formData.oldCarOwnerAddress" class="uni-input-border" placeholder="请输入原车主地址"></uni-easyinput>
 					</uni-forms-item>
 				</uni-group>
 				
@@ -112,7 +112,7 @@
 								<view class="uni-uploader__files">
 									<block v-for="(image,index) in newOwnerImageList" :key="index">
 										<view class="uni-uploader__file">
-											<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImage"></image>
+											<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImageveNewOwner"></image>
 											<view class="delete-btn" @click="deleteImage(index, newOwnerImageList)">
 												<uni-icons type="clear" color="#dd524d" size="25" />
 											</view>
@@ -127,8 +127,11 @@
 					</view>
 				</view>
 				<uni-group title="新车主信息" top="0">
-					<uni-forms-item name="newCarOwner" required label="姓名">
+					<uni-forms-item name="newCarOwner" v-if="newCarBusinessType === 'personal'" required label="姓名">
 						<uni-easyinput type="text" v-model="formData.newCarOwner" class="uni-input-border" placeholder="请输入新车主姓名"></uni-easyinput>
+					</uni-forms-item>
+					<uni-forms-item name="newCarOwner" v-if="newCarBusinessType === 'company'" required label="企业名称">
+						<uni-easyinput type="text" v-model="formData.newCarOwner" class="uni-input-border" placeholder="请输入新车主企业名称"></uni-easyinput>
 					</uni-forms-item>
 					
 					<uni-forms-item name="newCarDocumentNumber" v-if="newCarBusinessType === 'personal'" required label="身份证号码">
@@ -137,7 +140,7 @@
 					<uni-forms-item name="newCarDocumentNumber" v-if="newCarBusinessType === 'company'" required label="统一社会代码">
 						<uni-easyinput type="text" v-model="formData.newCarDocumentNumber" class="uni-input-border" placeholder="请输入证件号码"></uni-easyinput>
 					</uni-forms-item>
-					<uni-forms-item name="newOwnerPhone" required label="手机号码">
+					<uni-forms-item name="newOwnerPhone" label="手机号码">
 						<uni-easyinput type="number" v-model="formData.newOwnerPhone" class="uni-input-border" placeholder="请输入新车主手机号码"></uni-easyinput>
 					</uni-forms-item>
 					<uni-forms-item name="newCarOwnerAddress" required label="地址">
@@ -146,7 +149,7 @@
 				</uni-group>
 					
 				<uni-group title="其他信息" top="0">
-					
+					<text class="example-info"> * 市内过户业务请选择广东省广州市 * </text>
 					<uni-forms-item name="immigrationAddress" required label="迁入地">
 						<picker
 							mode="multiSelector"
@@ -161,8 +164,8 @@
 						</picker>
 					</uni-forms-item>
 					
-					<uni-forms-item name="price" required label="发票金额">
-						<uni-easyinput type="digit" v-model="formData.price" placeholder="请填写发票金额"></uni-easyinput>
+					<uni-forms-item name="price" required label="交易金额">
+						<uni-easyinput type="digit" v-model="formData.price" :disabled="oldCarBusinessType === 'company'" :placeholder="oldCarBusinessType != 'company' ? '请填写发票金额':'单位车金额根据增值税发票'"></uni-easyinput>
 					</uni-forms-item>
 					
 					<uni-forms-item name="remark" label="备注">
@@ -174,14 +177,16 @@
 					<view class="uni-list-cell cell-pd">
 						<view class="uni-uploader">
 							<view class="uni-uploader-head upload-header">
-								<view class="uni-uploader-title">点击上传登记证(1-2页 原车主页)</view>
+								<view class="uni-uploader-title">点击上传登记证(1-2页 原车主页)
+									<text style="color: red;">*</text>
+								</view>
 								<view class="uni-uploader-info">{{registerImageList.length}}/9</view>
 							</view>
 							<view class="uni-uploader-body upload-body">
 								<view class="uni-uploader__files">
 									<block v-for="(image,index) in registerImageList" :key="index">
 										<view class="uni-uploader__file">
-											<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImage"></image>
+											<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImageveRegister"></image>
 											<view class="delete-btn" @click="deleteImage(index, registerImageList)">
 												<uni-icons type="clear" color="#dd524d" size="25" />
 											</view>
@@ -200,14 +205,16 @@
 					<view class="uni-list-cell cell-pd">
 						<view class="uni-uploader">
 							<view class="uni-uploader-head upload-header">
-								<view class="uni-uploader-title">点击上传声明照</view>
+								<view class="uni-uploader-title">点击上传声明照
+									<text style="color: red;">*</text>
+								</view>
 								<view class="uni-uploader-info">1/1</view>
 							</view>
 							<view class="uni-uploader-body upload-body">
 								<view class="uni-uploader__files">
 									<block v-for="(image,index) in statementImageList" :key="index">
 										<view class="uni-uploader__file">
-											<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImage"></image>
+											<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImageveStatement"></image>
 											<view class="delete-btn" @click="deleteImage(index, statementImageList)">
 												<uni-icons type="clear" color="#dd524d" size="25" />
 											</view>
@@ -226,14 +233,17 @@
 					<view class="uni-list-cell cell-pd">
 						<view class="uni-uploader">
 							<view class="uni-uploader-head upload-header">
-								<view class="uni-uploader-title">点击上传增值税发票(公司车需要)</view>
+								<view class="uni-uploader-title">
+									点击上传增值税发票(公司车需要)
+									<text style="color: red;">*</text>
+								</view>
 								<view class="uni-uploader-info">1/1</view>
 							</view>
 							<view class="uni-uploader-body upload-body">
 								<view class="uni-uploader__files">
 									<block v-for="(image,index) in taxImageList" :key="index">
 										<view class="uni-uploader__file">
-											<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImage"></image>
+											<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImageveTax"></image>
 											<view class="delete-btn" @click="deleteImage(index, taxImageList)">
 												<uni-icons type="clear" color="#dd524d" size="25" />
 											</view>
@@ -254,7 +264,7 @@
 			
 				<view class="example">
 					<button class="button" type="default" @click="submitForm('form')">提交</button>
-					<button class="button" style="margin-top: 20rpx;" type="default" @click="goNotice">查看预约须知</button>
+					<!-- <button class="button" style="margin-top: 20rpx;" type="default" @click="goNotice">查看预约须知</button> -->
 				</view>
 			</uni-forms>
 			
@@ -264,6 +274,7 @@
 <script>
 	const  graceChecker = require("../../common/graceChecker.js")
 	const addressArr = require('./address.js')
+	import { baseUrl } from '../../utils/request.js'
 	
 	import {
 		mapState,
@@ -305,7 +316,7 @@
 					immigrationAddress: '广东省,广州市',
 					oldCarDocumentNumber: '',
 					newCarDocumentNumber: '',
-					oldCarOwnerAddress: '',
+					oldCarOwnerAddress: '广东省,广州市',
 					newCarOwnerAddress: ''
 				},
 				businessType: [{
@@ -354,7 +365,7 @@
 					},
 					oldOwnerPhone: {
 						rules: [{
-							required: true,
+							required: false,
 							errorMessage: '请输入原车主手机号码',
 						}, {
 							pattern: /^[1][3,4,5,7,8][0-9]{9}$/,
@@ -381,7 +392,7 @@
 					},
 					newOwnerPhone: {
 						rules: [{
-							required: true,
+							required: false,
 							errorMessage: '请输入新车主手机号码',
 						}, {
 							pattern: /^[1][3,4,5,7,8][0-9]{9}$/,
@@ -465,6 +476,36 @@
 			}
 		},
 		methods: {
+			previewImageVehicleLicense(e) {
+				uni.previewImage({
+					urls: this.vehicleLicenseImageList
+				})
+			},
+			previewImageveOldOwner(e) {
+				uni.previewImage({
+					urls: this.oldOwnerImageList
+				})
+			},
+			previewImageveNewOwner(e) {
+				uni.previewImage({
+					urls: this.newOwnerImageList
+				})
+			},
+			previewImageveRegister(e) {
+				uni.previewImage({
+					urls: this.registerImageList
+				})
+			},
+			previewImageveStatement(e) {
+				uni.previewImage({
+					urls: this.statementImageList
+				})
+			},
+			previewImageveTax(e) {
+				uni.previewImage({
+					urls: this.taxImageList
+				})
+			},
 			initData() { //首次加载渲染 第一列 和 第二列数据
 				this.$request({
 					url: '/api/vi/address',
@@ -571,7 +612,7 @@
 						var imageSrc = res.tempFilePaths[0]
 						uni.showLoading()
 						uni.uploadFile({
-							url: this.$baseUrl + url,
+							url: baseUrl + url,
 							filePath: imageSrc,
 							name: 'image',
 							success: (res) => {
@@ -621,7 +662,7 @@
 						var imageSrc = res.tempFilePaths[0]
 						uni.showLoading()
 						uni.uploadFile({
-							url: this.$baseUrl + url,
+							url: baseUrl + url,
 							filePath: imageSrc,
 							name: 'image',
 							success: (res) => {
@@ -670,7 +711,7 @@
 						var imageSrc = res.tempFilePaths[0]
 						uni.showLoading()
 						uni.uploadFile({
-							url: this.$baseUrl + '/api/v1/upload/vehiclelicense',
+							url: baseUrl + '/api/v1/upload/vehiclelicense',
 							filePath: imageSrc,
 							name: 'image',
 							success: (res) => {
@@ -719,7 +760,7 @@
 						var imageSrc = res.tempFilePaths[0]
 						uni.showLoading()
 						uni.uploadFile({
-							url: this.$baseUrl + '/api/v1/upload',
+							url: baseUrl + '/api/v1/upload',
 							filePath: imageSrc,
 							name: 'image',
 							success: (res) => {
@@ -760,7 +801,7 @@
 						var imageSrc = res.tempFilePaths[0]
 						uni.showLoading()
 						uni.uploadFile({
-							url: this.$baseUrl + '/api/v1/upload',
+							url: baseUrl + '/api/v1/upload',
 							filePath: imageSrc,
 							name: 'image',
 							success: (res) => {
@@ -801,7 +842,7 @@
 						var imageSrc = res.tempFilePaths[0]
 						uni.showLoading()
 						uni.uploadFile({
-							url: this.$baseUrl + '/api/v1/upload',
+							url: baseUrl + '/api/v1/upload',
 							filePath: imageSrc,
 							name: 'image',
 							success: (res) => {
@@ -1024,11 +1065,21 @@
 	}
 	
 	.picker-immigrant {
+		margin-top: 10rpx;
 		margin-left: 20rpx;
+		font-size: 32rpx;
+		border-bottom: 1px solid #CCCCCC;
 	}
 	
 	.business-panel {
 		border-radius: 5px;
 		background-color: #FFFFFF;
+	}
+	
+	.example-info {
+		padding-left: 100rpx;
+		padding-bottom: 10rpx;
+		color: red;
+		background: #ffffff;
 	}
 </style>

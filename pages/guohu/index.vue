@@ -15,7 +15,7 @@
 							<view class="uni-uploader__files">
 								<block v-for="(image,index) in vehicleLicenseImageList" :key="index">
 									<view class="uni-uploader__file">
-										<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImage"></image>
+										<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImageVehicleLicense"></image>
 										<view class="delete-btn" @click="deleteImage(index, vehicleLicenseImageList)">
 											<uni-icons type="clear" color="#dd524d" size="25" />
 										</view>
@@ -78,6 +78,7 @@
 		mapMutations,
 		mapActions
 	} from 'vuex'
+	import { baseUrl } from '../../utils/request.js'
 	
 	export default {
 		data() {
@@ -178,7 +179,11 @@
 					url: '../notice/index'
 				})
 			},
-			
+			previewImageVehicleLicense(e) {
+				uni.previewImage({
+					urls: this.vehicleLicenseImageList
+				})
+			},
 			startDateChange(e) {
 				this.formData.startTime = e
 			},
@@ -206,7 +211,7 @@
 						var imageSrc = res.tempFilePaths[0]
 						uni.showLoading()
 						uni.uploadFile({
-							url: this.$baseUrl + '/api/v1/upload/vehiclelicense',
+							url: baseUrl + '/api/v1/upload/vehiclelicense',
 							filePath: imageSrc,
 							name: 'image',
 							success: (res) => {
@@ -261,13 +266,7 @@
 				if (this.id) {
 					this.update(form)
 				} else {
-					const that = this
-					wx.requestSubscribeMessage({
-					  tmplIds: ['ZpSyU9MfuwmZryCO6UdkEOwd-YdHnRMdxY4SxEy-j5w'],
-					  complete () {
-						  that.create(form)
-					  }
-					})
+					this.create(form)
 				}
 			},
 			create(form) {

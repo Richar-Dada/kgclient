@@ -44,6 +44,15 @@
 				invoiceOpen: true,
 			}
 		},
+		onLoad() {
+			const userInfo = uni.getStorageSync('userInfo')
+			if (userInfo) {
+				const userInfoObj = JSON.parse(userInfo)
+				this.setUserInfo(userInfoObj)
+				this.setOpenid(userInfoObj.openId)
+				this.login('weixin')
+			}
+		},
 		onReady() {
 			// if (!this.hasLogin) {
 			// 	uni.navigateTo({
@@ -88,7 +97,7 @@
 			...mapState(['openid', 'hasLogin'])
 		},
 		methods: {
-			...mapMutations(['setWeixinUserInfo']),
+			...mapMutations(['setOpenid', 'setUserInfo', 'login', 'setWeixinUserInfo']),
 			goInvoice() {
 				console.log('ddd')
 				uni.navigateTo({

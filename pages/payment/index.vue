@@ -89,7 +89,7 @@
 						url: baseUrl + '/api/v1/wechatpay/createorder',
 						data: {
 							out_trade_no: this.id,
-							body: 'invoice pay',
+							body: '发票支付',
 							openid: this.openid,
 							total_fee: (Number(this.price) * 100).toString(), // 转为以分为单位
 						},
