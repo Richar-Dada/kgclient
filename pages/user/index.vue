@@ -97,6 +97,7 @@
 			tologout() {
 				this.logout()
 				uni.clearStorage()
+				uni.$emit('logout')
 			},
 			tologin(provider) {
 				const that = this
@@ -117,6 +118,7 @@
 								this.setUserInfo(res.data)
 								uni.setStorageSync('userInfo', JSON.stringify(res.data))
 								this.setOpenid(res.data.openId)
+								uni.$emit('login')
 								uni.navigateBack()
 							} else if (res.errorCode === 431) {
 								this.isNew = true

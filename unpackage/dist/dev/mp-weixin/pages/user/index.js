@@ -255,6 +255,7 @@ var univerifyInfoKey = 'univerifyInfo';var _default =
     tologout: function tologout() {
       this.logout();
       uni.clearStorage();
+      uni.$emit('logout');
     },
     tologin: function tologin(provider) {var _this2 = this;
       var that = this;
@@ -275,6 +276,7 @@ var univerifyInfoKey = 'univerifyInfo';var _default =
               _this2.setUserInfo(res.data);
               uni.setStorageSync('userInfo', JSON.stringify(res.data));
               _this2.setOpenid(res.data.openId);
+              uni.$emit('login');
               uni.navigateBack();
             } else if (res.errorCode === 431) {
               _this2.isNew = true;

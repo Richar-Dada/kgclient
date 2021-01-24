@@ -79,6 +79,14 @@
 				current = 1
 				this.fetchData(true)
 			})
+			
+			uni.$on('logout', () => {
+				this.list = []
+			})
+			
+			uni.$on('login', () => {
+				this.fetchData(true)
+			})
 		},
 		onPullDownRefresh() {
 			this.fetchData(true, () => {

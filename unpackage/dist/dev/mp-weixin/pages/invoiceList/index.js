@@ -273,6 +273,14 @@ var current = 1;var _default =
       current = 1;
       _this.fetchData(true);
     });
+
+    uni.$on('logout', function () {
+      _this.list = [];
+    });
+
+    uni.$on('login', function () {
+      _this.fetchData(true);
+    });
   },
 
   onPullDownRefresh: function onPullDownRefresh() {
