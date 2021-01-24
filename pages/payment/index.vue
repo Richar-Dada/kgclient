@@ -62,7 +62,9 @@
 						uni.$emit('inovicePay')
 						
 						setTimeout(() => {
-							uni.navigateBack()
+							uni.switchTab({
+								url: '../invoiceList/index'
+							})
 						}, 1000)
 					},
 					fail: (res) => {

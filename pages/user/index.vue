@@ -44,6 +44,9 @@
 				<uni-list-item title="真实姓名" :rightText="userInfo.username" />
 				<uni-list-item title="手机号码" :rightText="userInfo.phone" />
 			</uni-list>
+			<button type="warn" class="login-button" @click="tologout">
+				退出登录
+			</button>
 		</block>
 		
 	</view>
@@ -83,13 +86,17 @@
 			})
 		},
 		methods: {
-			...mapMutations(['login', 'setUniverifyLogin', 'setOpenid', 'setUserInfo', 'setWeixinUserInfo']),
+			...mapMutations(['login', 'logout', 'setUniverifyLogin', 'setOpenid', 'setUserInfo', 'setWeixinUserInfo']),
 			...mapActions(['getPhoneNumber']),
 			
 			Toast(data, duration = 1000) {
 				uni.showToast(Object.assign({}, data, {
 					duration
 				}))
+			},
+			tologout() {
+				this.logout()
+				uni.clearStorage()
 			},
 			tologin(provider) {
 				const that = this

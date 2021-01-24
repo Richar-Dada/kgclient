@@ -2,6 +2,10 @@
   "navigationBarTitleText": "空港服务站",
   "enablePullDownRefresh": true,
   "usingComponents": {
-    "uni-load-more": "/components/uni-load-more/uni-load-more"
+    "uni-load-more": "/components/uni-load-more/uni-load-more",
+    "uni-popup": "/components/uni-popup/uni-popup",
+    "uni-forms": "/components/uni-forms/uni-forms",
+    "uni-forms-item": "/components/uni-forms-item/uni-forms-item",
+    "uni-data-checkbox": "/components/uni-data-checkbox/uni-data-checkbox"
   }
 }

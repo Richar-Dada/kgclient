@@ -199,6 +199,7 @@
 				date: '',
 				oldCarBusinessType: '',
 				newCarBusinessType: '',
+				invoiceId: '',
 				
 				formData: {
 					contactName: '',
@@ -305,6 +306,7 @@
 		onLoad(option) {
 			this.date = option.date
 			const data = option.data
+			this.invoiceId = option.invoiceId
 			
 			if (data) {
 				const detail = JSON.parse(data)
@@ -328,6 +330,42 @@
 				if (detail.newIdCardUrl) this.newOwnerImageList = [detail.newIdCardUrl]
 				if (detail.vehicleLicenseUrl) this.vehicleLicenseImageList = [detail.vehicleLicenseUrl]
 			} else {
+				if (this.invoiceId) {
+					uni.showLoading({
+						mask: true
+					})
+					this.$request({
+						url: '/api/v1/admin/invoice/find/' + this.invoiceId,
+						method: 'GET'
+					}).then((res) => {
+						uni.hideLoading()
+						if (res.code === 200) {
+							const data = res.data
+							this.formData.carname = data.carname
+							this.formData.carId = data.carId
+							this.formData.carType = data.carType
+							this.formData.carNumber = data.carNumber
+							this.formData.engineNumber = data.engineNumber
+							this.formData.oldCarOwner = data.oldOwner
+							this.formData.newCarOwner = data.newOwner
+					
+							this.formData.immigrationAddress = data.immigrationAddress,
+							this.formData.oldCarDocumentNumber = data.oldOwnerCardDocument
+							this.formData.newCarDocumentNumber = data.newOwnerCardDocument
+							
+							this.oldCarBusinessType = data.oldOwnerBusinessType
+							this.newCarBusinessType = data.newOwnerBusinessType
+							
+							this.vehicleLicenseImageList = [data.vehicleLicenseUrl]
+							this.newOwnerImageList = [data.newIdCardUrl]
+							this.oldOwnerImageList = [data.oldIdCardUrl]
+						} else {
+							uni.showToast({
+								title: res.msg
+							})
+						}
+					})
+				}
 				this.goNotice()
 			}
 		},
@@ -518,7 +556,9 @@
 					sizeType: [],
 					success: (res) => {
 						var imageSrc = res.tempFilePaths[0]
-						uni.showLoading()
+						uni.showLoading({
+							mask: true
+						})
 						uni.uploadFile({
 							url: baseUrl + url,
 							filePath: imageSrc,
@@ -567,7 +607,9 @@
 					sizeType: [],
 					success: (res) => {
 						var imageSrc = res.tempFilePaths[0]
-						uni.showLoading()
+						uni.showLoading({
+							mask: true
+						})
 						uni.uploadFile({
 							url: baseUrl + '/api/v1/upload/vehiclelicense',
 							filePath: imageSrc,
@@ -638,7 +680,9 @@
 				this.$refs.form.setValue(name, value)
 			},
 			create(form) {
-				uni.showLoading()
+				uni.showLoading({
+					mask: true
+				})
 				this.$refs[form].submit()
 					.then((res) => {
 						const dataArr = this.date.split(' ')
@@ -668,7 +712,8 @@
 								createBy: this.openid,
 								newIdCardUrl: this.newOwnerImageList.length && this.newOwnerImageList[0],
 								oldIdCardUrl: this.oldOwnerImageList.length && this.oldOwnerImageList[0],
-								vehicleLicenseUrl: this.vehicleLicenseImageList && this.vehicleLicenseImageList[0]
+								vehicleLicenseUrl: this.vehicleLicenseImageList && this.vehicleLicenseImageList[0],
+								invoiceId: this.invoiceId
 							}
 						}).then((res) => {
 							uni.hideLoading()
@@ -687,6 +732,7 @@
 								
 							} else {
 								uni.showToast({
+									icon: 'none',
 									title: res.msg
 								})
 							}
@@ -697,7 +743,9 @@
 					})
 			},
 			update(form) {
-				uni.showLoading()
+				uni.showLoading({
+					mask: true
+				})
 				this.$refs[form].submit()
 					.then((res) => {
 						this.$request({

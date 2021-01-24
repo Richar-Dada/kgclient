@@ -210,6 +210,12 @@
 								</view>
 								<view class="uni-uploader-info">1/1</view>
 							</view>
+							
+							<view class="statementTipWapper">
+								<text class="statementTipText" @click="showStatementExample">查看示例</text>
+								<text class="statementTipText" style="margin-left: 50rpx;" @click="savePoster">下载模板</text>
+							</view>
+							
 							<view class="uni-uploader-body upload-body">
 								<view class="uni-uploader__files">
 									<block v-for="(image,index) in statementImageList" :key="index">
@@ -476,6 +482,62 @@
 			}
 		},
 		methods: {
+			savePoster() {
+				uni.getSetting({ //获取用户的当前设置
+					success: (res) => {
+						if (res.authSetting['scope.writePhotosAlbum']) { //验证用户是否授权可以访问相册
+							this.saveImageToPhotosAlbum();
+						} else {
+							uni.authorize({ //如果没有授权，向用户发起请求
+								scope: 'scope.writePhotosAlbum',
+								success: () => {
+									this.saveImageToPhotosAlbum();
+								},
+								fail: () => {
+									uni.showToast({
+										title: "请打开保存相册权限，再点击保存相册分享",
+										icon: "none",
+										duration: 3000
+									});
+									setTimeout(() => {
+										uni.openSetting({ //调起客户端小程序设置界面,让用户开启访问相册
+											success: (res2) => {
+												// console.log(res2.authSetting)
+											}
+										});
+									}, 3000);
+								}
+							})
+						}
+					}
+				})
+			},
+			saveImageToPhotosAlbum() {
+				const url = this.newCarBusinessType === 'personal' ? 
+					'/static/statement_pensonal.png' : '/static/statement_company.png'
+				uni.saveImageToPhotosAlbum({
+					filePath: url,
+					success: function(res2) {
+						uni.hideLoading();
+						uni.showToast({
+							title: '保存成功，请从相册查看',
+							icon: "none",
+							duration: 5000
+						})
+					},
+					fail: function(err) {
+						uni.hideLoading();
+						// console.log(err.errMsg);
+					}
+				})
+			},
+			showStatementExample() {
+				const url = this.newCarBusinessType === 'personal' ?
+					'https://carbase.oss-cn-shenzhen.aliyuncs.com/statement1.jpg' : 'https://carbase.oss-cn-shenzhen.aliyuncs.com/statement2.jpg'
+				uni.previewImage({
+					urls: [url]
+				})
+			},
 			previewImageVehicleLicense(e) {
 				uni.previewImage({
 					urls: this.vehicleLicenseImageList
@@ -610,7 +672,9 @@
 					sizeType: [],
 					success: (res) => {
 						var imageSrc = res.tempFilePaths[0]
-						uni.showLoading()
+						uni.showLoading({
+							mask: true
+						})
 						uni.uploadFile({
 							url: baseUrl + url,
 							filePath: imageSrc,
@@ -660,7 +724,9 @@
 					sizeType: [],
 					success: (res) => {
 						var imageSrc = res.tempFilePaths[0]
-						uni.showLoading()
+						uni.showLoading({
+							mask: true
+						})
 						uni.uploadFile({
 							url: baseUrl + url,
 							filePath: imageSrc,
@@ -709,7 +775,9 @@
 					sizeType: [],
 					success: (res) => {
 						var imageSrc = res.tempFilePaths[0]
-						uni.showLoading()
+						uni.showLoading({
+							mask: true
+						})
 						uni.uploadFile({
 							url: baseUrl + '/api/v1/upload/vehiclelicense',
 							filePath: imageSrc,
@@ -758,7 +826,9 @@
 					sizeType: [],
 					success: (res) => {
 						var imageSrc = res.tempFilePaths[0]
-						uni.showLoading()
+						uni.showLoading({
+							mask: true
+						})
 						uni.uploadFile({
 							url: baseUrl + '/api/v1/upload',
 							filePath: imageSrc,
@@ -799,7 +869,9 @@
 					sizeType: [],
 					success: (res) => {
 						var imageSrc = res.tempFilePaths[0]
-						uni.showLoading()
+						uni.showLoading({
+							mask: true
+						})
 						uni.uploadFile({
 							url: baseUrl + '/api/v1/upload',
 							filePath: imageSrc,
@@ -840,7 +912,9 @@
 					sizeType: [],
 					success: (res) => {
 						var imageSrc = res.tempFilePaths[0]
-						uni.showLoading()
+						uni.showLoading({
+							mask: true
+						})
 						uni.uploadFile({
 							url: baseUrl + '/api/v1/upload',
 							filePath: imageSrc,
@@ -905,7 +979,9 @@
 					})
 			},
 			create() {
-				uni.showLoading()
+				uni.showLoading({
+					mask: true
+				})
 				this.$request({
 					url: '/api/v1/admin/invoice/create/wx',
 					method: 'POST',
@@ -941,8 +1017,8 @@
 						uni.showToast({title:"登记成功", icon:"success"});
 						uni.$emit('inoviceCreate')
 						setTimeout(() => {
-							uni.switchTab({
-								url: '../invoiceList/index'
+							uni.redirectTo({
+								url: '../payment/index?pid=' + res.data.pid
 							})
 						}, 1000)
 					} else {
@@ -952,7 +1028,9 @@
 					
 			},
 			update() {
-				uni.showLoading()
+				uni.showLoading({
+					mask: true
+				})
 				this.$request({
 					url: '/api/v1/admin/invoice/update/wx/' + this.id,
 					method: 'POST',
@@ -1081,5 +1159,16 @@
 		padding-bottom: 10rpx;
 		color: red;
 		background: #ffffff;
+	}
+	
+	.statementTipWapper {
+		position: absolute;
+		top: 10rpx;
+		left: 300rpx;
+	}
+	
+	.statementTipText {
+		color: red;
+		font-size: 24rpx;
 	}
 </style>

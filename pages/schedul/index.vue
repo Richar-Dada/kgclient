@@ -8,7 +8,8 @@
 		<view class="line-h"></view>
 		<swiper :current="tabIndex" class="swiper-box" style="flex: 1;" :duration="300" @change="ontabchange">
 			<swiper-item class="swiper-item" v-for="(tab,index1) in newsList" :key="index1">
-				<view class="card" :key="index3" v-for="(item, index3) in tab.data" @click="goBooking(item)">{{item.duration}}</view>
+				<view class="card" v-if="tab.data.length" :key="index3" v-for="(item, index3) in tab.data" @click="goBooking(item)">{{item.duration}}</view>
+				<text v-if="tab.msg" class="error-msg">{{tab.msg}}</text>
 			</swiper-item>
 		</swiper>
 	</view>
@@ -23,6 +24,7 @@
 		data() {
 			return {
 				type: '',
+				invoiceId: '',
 				tabIndex: 0,
 				scrollInto: '',
 				tabBars: [],
@@ -31,12 +33,13 @@
 		},
 		onLoad(option) {
 			this.type = option.type
+			this.invoiceId = option.invoiceId
 			
 			this.getSchedul()
 		},
 		methods: {
 			getSchedul() {
-				uni.showLoading({title: '正在请求数据...'})
+				uni.showLoading({title: '正在请求数据...', mask: true})
 				this.$request({
 					url: '/api/v1/getschedul?type=' + this.type,
 					method: 'GET',
@@ -47,6 +50,7 @@
 						  this.tabBars.forEach((tabBar) => {
 							  this.newsList.push({
 								  data: [],
+								  msg: '',
 								  isLoading: false,
 								  refreshText: "",
 								  loadingText: '加载更多...'
@@ -55,13 +59,13 @@
 						  this.getList(0)
 						}, 350)
 					} else {
-						uni.showToast({title: res.errorMsg, icon:"none"});
+						uni.showToast({ title: res.errorMsg, icon:"none", duration: 3000 });
 					}
 				})
 			},
 			getList(index) {
 				const activeDate = this.tabBars[index].fullDate
-				uni.showLoading({title: '正在请求数据...'})
+				uni.showLoading({ title: '正在请求数据...', mask:true })
 				this.$request({
 					url: '/api/v1/schedul/' + base64.encode(activeDate) + '&' + this.type,
 					method: 'GET',
@@ -70,7 +74,7 @@
 					if (res.resultCode === 200) {
 						this.newsList[index].data = res.schedulList
 					} else {
-						uni.showToast({title: res.errorMsg, icon:"none"});
+						this.newsList[index].msg = res.errorMsg
 					}
 				})
 			},
@@ -98,11 +102,11 @@
 				const date = this.tabBars[this.tabIndex].fullDate + ' ' + item.duration
 				if (this.type === 'guohu') {
 					uni.redirectTo({
-						url: '../guohu/index?date=' + date
+						url: '../guohu/index?date=' + date + '&invoiceId=' + this.invoiceId
 					})
 				} else {
 					uni.redirectTo({
-						url: '../qianchu/index?date=' + date
+						url: '../qianchu/index?date=' + date + '&invoiceId=' + this.invoiceId
 					})
 				}
 				
@@ -290,5 +294,12 @@
 		margin-top: 10rpx;
 		margin-left: 10rpx;
 		margin-right: 10rpx;
+	}
+	
+	.error-msg {
+		display: block;
+		margin: 100rpx auto;
+		text-align: center;
+		
 	}
 </style>

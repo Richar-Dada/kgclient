@@ -2,7 +2,7 @@
 	<view class="container" scroll-y="false">
 		<uni-notice-bar :scrollable="true" :single="true" text="上传证件照自动填写相关信息!" />
 
-		<uni-forms :value="formData" ref="form" validate-trigger="bind" err-show-type="toast" labelWidth="105">
+		<uni-forms :value="formData" ref="form" validate-trigger="bind" err-show-type="toast" labelWidth="115">
 			
 			<view class="uni-list list-pd">
 				<view class="uni-list-cell cell-pd">
@@ -45,14 +45,35 @@
 				</uni-forms-item>
 			</uni-group>
 			
-				
+			<view class="uni-list list-pd" v-if="isCar(formData.carType)">
+				<view class="uni-list-cell cell-pd">
+					<view class="uni-uploader">
+						<view class="uni-uploader-head upload-header">
+							<view class="uni-uploader-title">点击上传指标书图片
+								<text style="color: red;">*</text>
+							</view>
+							<view class="uni-uploader-info">1/1</view>
+						</view>
+						<view class="uni-uploader-body upload-body">
+							<view class="uni-uploader__files">
+								<block v-for="(image,index) in valicImageList" :key="index">
+									<view class="uni-uploader__file">
+										<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImageValic"></image>
+										<view class="delete-btn" @click="deleteImage(index, valicImageList)">
+											<uni-icons type="clear" color="#dd524d" size="25" />
+										</view>
+									</view>
+								</block>
+								<view v-if="valicImageList.length === 0" class="uni-uploader__input-box">
+									<view class="uni-uploader__input" @tap="chooseImageValic"></view>
+								</view>
+							</view>
+						</view>
+					</view>
+				</view>
+			</view>
+			
 			<uni-group title="其他信息" top="0">
-				<uni-forms-item name="startTime" v-if="formData.carType === '小型轿车'" required label="指标有效期开始">
-					<uni-datetime-picker v-model="formData.startTime" :min-year="2018" :max-year="2025" :timestamp="true" @change="startDateChange"></uni-datetime-picker>
-				</uni-forms-item>
-				<uni-forms-item name="endTime" v-if="formData.carType === '小型轿车'" required label="指标有效期结束">
-					<uni-datetime-picker v-model="formData.endTime" :min-year="2018" :max-year="2025" :timestamp="true" @change="endDateChange"></uni-datetime-picker>
-				</uni-forms-item>
 				<uni-forms-item name="remark" label="备注">
 					<uni-easyinput type="text" v-model="formData.remark" placeholder="如有特殊情况请备注"></uni-easyinput>
 				</uni-forms-item>
@@ -84,8 +105,10 @@
 		data() {
 			return {
 				vehicleLicenseImageList: [],
+				valicImageList: [],
 				date: '',
 				id: '',
+				invoiceId: '',
 				
 				formData: {
 					carname: '',
@@ -143,6 +166,7 @@
 		onLoad(option) {
 			this.date = option.date
 			const data = option.data
+			this.invoiceId = option.invoiceId
 			
 			if (data) {
 				const detail = JSON.parse(data)
@@ -153,14 +177,35 @@
 				this.formData.carNumber = detail.carNumber
 				this.formData.engineNumber = detail.engineNumber
 				this.formData.remark = detail.remark
-				if(detail.validDate) {
-					const timeArr = detail.validDate.split('~')
-					this.formData.startTime = timeArr[0]
-					this.formData.endTime = timeArr[1]
-				}
 				
 				if (detail.vehicleLicenseUrl) this.vehicleLicenseImageList = [detail.vehicleLicenseUrl]
+				if (detail.valicUrl) this.valicImageList = [detail.valicUrl]
 			} else {
+				if (this.invoiceId) {
+					uni.showLoading({
+						mask: true
+					})
+					this.$request({
+						url: '/api/v1/admin/invoice/find/' + this.invoiceId,
+						method: 'GET'
+					}).then((res) => {
+						uni.hideLoading()
+						if (res.code === 200) {
+							const data = res.data
+							this.formData.carname = data.carname
+							this.formData.carId = data.carId
+							this.formData.carType = data.carType
+							this.formData.carNumber = data.carNumber
+							this.formData.engineNumber = data.engineNumber
+							this.vehicleLicenseImageList = [data.vehicleLicenseUrl]
+						} else {
+							uni.showToast({
+								title: res.msg,
+								duration: 3000
+							})
+						}
+					})
+				}
 				this.goNotice()
 			}
 		},
@@ -174,6 +219,11 @@
 			this.$refs.form.setRules(this.rules)
 		},
 		methods: {
+			isCar(type) {
+				if (!type) return false
+				if (type.indexOf('货车') > -1) return false
+				return true
+			},
 			goNotice() {
 				uni.navigateTo({
 					url: '../notice/index'
@@ -182,6 +232,11 @@
 			previewImageVehicleLicense(e) {
 				uni.previewImage({
 					urls: this.vehicleLicenseImageList
+				})
+			},
+			previewImageValic(e) {
+				uni.previewImage({
+					urls: this.valicImageList
 				})
 			},
 			startDateChange(e) {
@@ -201,7 +256,6 @@
 			          return '';
 			      }
 			},
-			
 			chooseImageVehicleLicense: function() {
 				const that = this
 				uni.chooseImage({
@@ -209,7 +263,9 @@
 					sizeType: [],
 					success: (res) => {
 						var imageSrc = res.tempFilePaths[0]
-						uni.showLoading()
+						uni.showLoading({
+							mask: true
+						})
 						uni.uploadFile({
 							url: baseUrl + '/api/v1/upload/vehiclelicense',
 							filePath: imageSrc,
@@ -252,6 +308,47 @@
 					}
 				})
 			},
+			chooseImageValic: function() {
+				const that = this
+				uni.chooseImage({
+					count: 1,
+					sizeType: [],
+					success: (res) => {
+						var imageSrc = res.tempFilePaths[0]
+						uni.showLoading({
+							mask: true
+						})
+						uni.uploadFile({
+							url: baseUrl + '/api/v1/upload',
+							filePath: imageSrc,
+							name: 'image',
+							success: (res) => {
+								uni.hideLoading()
+								const resData = JSON.parse(res.data)
+								if (resData.code === 200) {
+									uni.showToast({
+										title: '上传成功',
+										icon: 'success',
+										duration: 1000
+									})
+									this.valicImageList.push(resData.data[0])
+								} else {
+									uni.showToast({title: '图片上传失败', icon:"none"})
+								}
+							},
+							fail: (err) => {
+								uni.showModal({
+									content: err.errMsg,
+									showCancel: false
+								});
+							}
+						});
+					},
+					fail: (err) => {
+						console.log('chooseImage fail', err)
+					}
+				})
+			},
 			
 			deleteImage(index, imageList) {
 				imageList.splice(index, 1)
@@ -263,14 +360,33 @@
 			 * @param {Object} form
 			 */
 			submitForm(form) {
-				if (this.id) {
-					this.update(form)
-				} else {
-					this.create(form)
-				}
+				this.$refs[form].submit()
+					.then((res) => {
+						if (this.isCar(this.formData.carType) && !this.valicImageList.length) {
+							uni.showToast({
+								icon: 'none',
+								title: '请上传指标书图片'
+							})
+							return 
+						}
+						
+						if (this.id) {
+							this.update(form)
+						} else {
+							const that = this
+							wx.requestSubscribeMessage({
+							  tmplIds: ['ZpSyU9MfuwmZryCO6UdkEOwd-YdHnRMdxY4SxEy-j5w'],
+							  complete () {
+								  that.create(form)
+							  }
+							})
+						}
+					})
 			},
 			create(form) {
-				uni.showLoading()
+				uni.showLoading({
+					mask: true
+				})
 				this.$refs[form].submit()
 					.then((res) => {
 						const dataArr = this.date.split(' ')
@@ -286,11 +402,12 @@
 								carId: this.formData.carId,
 								carType: this.formData.carType,
 								engineNumber: this.formData.engineNumber,
-								mark: this.formData.mark,
+								remark: this.formData.remark,
 								createTime: new Date().getTime(),
 								createBy: this.openid,
 								vehicleLicenseUrl: this.vehicleLicenseImageList && this.vehicleLicenseImageList[0],
-								validDate: this.formData.carType === '小型轿车' ? this.transformTime(this.formData.startTime) + '~' + this.transformTime(this.formData.endTime) : ' '
+								valicUrl: this.valicImageList.length > 0 ? this.valicImageList[0] : '',
+								invoiceId: this.invoiceId
 							}
 						}).then((res) => {
 							uni.hideLoading()
@@ -309,6 +426,7 @@
 								
 							} else {
 								uni.showToast({
+									icon: 'none',
 									title: res.msg
 								})
 							}
@@ -319,7 +437,9 @@
 					})
 			},
 			update(form) {
-				uni.showLoading()
+				uni.showLoading({
+					mask: true
+				})
 				this.$refs[form].submit()
 					.then((res) => {
 						this.$request({
@@ -332,7 +452,7 @@
 								carId: this.formData.carId,
 								carType: this.formData.carType,
 								engineNumber: this.formData.engineNumber,
-								mark: this.formData.mark,
+								remark: this.formData.remark,
 								vehicleLicenseUrl: this.vehicleLicenseImageList && this.vehicleLicenseImageList[0],
 								validDate: this.formData.carType === '小型轿车' ? this.transformTime(this.formData.startTime) + '~' + this.transformTime(this.formData.endTime) : ' '
 							}

@@ -71,6 +71,9 @@
 				var formData = e.detail.value;
 				var checkRes = graceChecker.check(formData, rule);
 				if(checkRes){
+					uni.showLoading({
+						mask: true
+					})
 					this.$request({
 						url: '/api/vi/admin/user/create/wx',
 						method: 'POST',
@@ -84,17 +87,18 @@
 							openId: this.openid
 						}
 					}).then((res) => {
+						uni.hideLoading()
 						if (res.code === 200) {
 							uni.showToast({title:"关联成功", icon:"success", duration: 2000})
 							this.setUserInfo(res.data)
 							uni.$emit('BandSuccess')
 							setTimeout(() => { uni.navigateBack() }, 2000)
 						} else {
-							uni.showToast({title: res.msg, icon:"none"});
+							uni.showToast({title: res.msg, icon:"none", duration: 3000});
 						}
 					})
 				}else{
-					uni.showToast({ title: graceChecker.error, icon: "none" });
+					uni.showToast({ title: graceChecker.error, icon: "none", duration: 3000 });
 				}
 			},
 			formReset: function(e) {
@@ -108,13 +112,15 @@
 					sourceType: ['album'],
 					success: (res) => {
 						var imageSrc = res.tempFilePaths[0]
-						
+						uni.showLoading({
+							mask: true
+						})
 						uni.uploadFile({
 							url: baseUrl + '/api/v1/upload/idcard',
 							filePath: imageSrc,
 							name: 'image',
 							success: (res) => {
-								console.log(res)
+								uni.hideLoading()
 								const resData = JSON.parse(res.data)
 								if (resData.code === 200) {
 									uni.showToast({
@@ -127,7 +133,7 @@
 									this.username = resData.data.Name
 									this.idCardUrl = resData.data.imageUrl
 								} else {
-									uni.showToast({title: '图片有误，识别失败', icon:"none"})
+									uni.showToast({title: '图片有误，识别失败', icon: "none", duration: 3000})
 								}
 							},
 							fail: (err) => {

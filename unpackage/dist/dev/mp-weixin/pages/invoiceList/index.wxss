@@ -12,8 +12,7 @@
 	margin-right: 20rpx;
 	background-color: #FFFFFF;
 	height: 320rpx;
-	-webkit-border-radius: 10rpx;
-	        border-radius: 10rpx;
+	border-radius: 10rpx;
 	margin-bottom: 20rpx;
 }
 .list_item_header {
@@ -55,15 +54,19 @@
 }
 .btn {
 	background-color: #FFFFFF;
-	-webkit-border-radius: 15px;
-	        border-radius: 15px;
+	border-radius: 15px;
 	margin-left: 20rpx;
-	font-size: 22rpx;
+	font-size: 20rpx;
 	margin-right: 0;
 	color: #333333;
 	border: 1px solid #e5e5e5;
+	padding: 0 10px !important;
 }
 .status_text {
 	color: #007aff;
+}
+.business-panel {
+	border-radius: 5px;
+	background-color: #FFFFFF;
 }
 

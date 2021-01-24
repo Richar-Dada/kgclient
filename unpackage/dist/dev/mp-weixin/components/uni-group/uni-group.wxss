@@ -66,10 +66,8 @@
 }
 .uni-group--card.data-v-0c0bc38a {
   margin: 10px;
-  -webkit-border-radius: 5px;
-          border-radius: 5px;
+  border-radius: 5px;
   overflow: hidden;
-  -webkit-box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.08);
-          box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.08);
 }
 

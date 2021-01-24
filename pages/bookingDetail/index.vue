@@ -33,11 +33,13 @@
 		</uni-group>
 		
 		<uni-group title="其他信息" top="0">
+			<view v-if="detail.valicUrl" class="uni-center" style="background:#FFFFFF; font-size:0;">
+				<image class="image" mode="widthFix" :src="detail.valicUrl" />
+			</view>
 			<uni-list>
 				<uni-list-item title="业务类型" :rightText="detail.serviceType"/>
 				<uni-list-item title="预约时间" :rightText="detail.bookingDate + detail.bookingTime"/>
 				<uni-list-item v-if="detail.serviceType === '迁出提档'" title="迁入地" :rightText="detail.immigrationAddress"/>
-				<uni-list-item v-if="detail.serviceType === '市内过户'" title="指标有效期" :rightText="detail.validDate"/>
 				<uni-list-item title="状态" :rightText="detail.status"/>
 				<uni-list-item v-if="detail.failReason" title="失败原因" :rightText="detail.failReason"/>
 				<uni-list-item title="备注" :rightText="detail.remark"/>
@@ -56,14 +58,36 @@
 	export default {
 		data () {
 			return {
+				id: '',
 				detail: ''
 			}
 		},
 		onLoad(option) {
-			this.detail = JSON.parse(option.data)
+			const id = option.id
+			if (id) {
+				this.getBookingByid(id)
+			}
 		},
 		methods: {
-			
+			getBookingByid(id) {
+				uni.showLoading({
+					mask: true
+				})
+				this.$request({
+					url: '/api/v1/admin/booking/find/' + id,
+					method: 'GET'
+				}).then((res) => {
+					uni.hideLoading()
+					if (res.code === 200) {
+						this.detail = res.data
+					} else {
+						uni.showToast({
+							title: res.msg,
+							duration: 3000
+						})
+					}
+				})
+			},
 		}
 	}
 </script>

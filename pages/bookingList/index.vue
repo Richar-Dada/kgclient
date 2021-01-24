@@ -17,7 +17,7 @@
 				<view class="list_item_footer">
 					<button class="btn btn-delete" v-if="item.status === '未完成'"  size="mini" @click="deleteConfirm(item.id)">删除</button>
 					<button class="btn btn-update" v-if="item.status === '未完成'" size="mini" @click="goUpdate(index)">修改</button>
-					<button class="btn btn-detail"  size="mini" @click="goDetail(index)">详情</button>
+					<button class="btn btn-detail"  size="mini" @click="goDetail(item.id)">详情</button>
 				</view>
 			</view>
 			<view class="example-body" v-if="">
@@ -117,7 +117,7 @@
 						count = res.data.count
 						this.status = list.length < count ? 'more' : 'noMore'
 					} else {
-						uni.showToast({title: res.msg, icon:"none"})
+						uni.showToast({title: res.msg, icon: "none",duration: 3000})
 					}
 					callback && callback()
 				})
@@ -135,9 +135,9 @@
 					})
 				}
 			},
-			goDetail(index) {
+			goDetail(id) {
 				uni.navigateTo({
-					url: '../bookingDetail/index?data=' + JSON.stringify(this.list[index])
+					url: '../bookingDetail/index?id=' + id
 				})
 			},
 			transformTime(timestamp = +new Date()) {
@@ -183,7 +183,8 @@
 				}).then((res) => {
 					if (res.resultCode === 200) {
 						uni.showToast({
-							title: '删除成功'
+							title: '删除成功',
+							duration: 2000
 						})
 						
 						uni.$emit('bookingDelete')
@@ -192,7 +193,7 @@
 							uni.navigateBack()
 						}, 1500)
 					} else {
-						uni.showToast({title: res.msg, icon:"none"})
+						uni.showToast({title: res.msg, icon: "none", duration: 3000})
 					}
 				})
 			}
@@ -253,10 +254,11 @@
 		background-color: #FFFFFF;
 		border-radius: 15px;
 		margin-left: 20rpx;
-		font-size: 22rpx;
+		font-size: 20rpx;
 		margin-right: 0;
 		color: #333333;
 		border: 1px solid #e5e5e5;
+		padding: 0 10px !important;
 	}
 	
 	.status_text {

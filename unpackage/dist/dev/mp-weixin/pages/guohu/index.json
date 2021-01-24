@@ -6,7 +6,6 @@
     "uni-icons": "/components/uni-icons/uni-icons",
     "uni-group": "/components/uni-group/uni-group",
     "uni-forms-item": "/components/uni-forms-item/uni-forms-item",
-    "uni-easyinput": "/components/uni-easyinput/uni-easyinput",
-    "uni-datetime-picker": "/components/uni-datetime-picker/uni-datetime-picker"
+    "uni-easyinput": "/components/uni-easyinput/uni-easyinput"
   }
 }

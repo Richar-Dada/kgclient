@@ -17,8 +17,9 @@
 				<view class="list_item_footer">
 					<button class="btn btn-delete" v-if="item.status === '未完成' && item.isPay === '0'"  size="mini" @click="deleteConfirm(item.id)">删除</button>
 					<button class="btn btn-pay" v-if="item.isPay === '0'" size="mini" @click="goPayment(item.pid)">支付</button>
+					<button class="btn btn-detail" v-if="!item.booking"  size="mini" @click="gobooking(item.id)">预约</button>
 					<button class="btn btn-update" v-if="item.status === '未完成'" size="mini" @click="goUpdate(index)">修改</button>
-					<button class="btn btn-detail"  size="mini" @click="goDetail(index)">详情</button>
+					<button class="btn btn-detail"  size="mini" @click="goDetail(item.id)">详情</button>
 				</view>
 			</view>
 			<view class="example-body">
@@ -37,6 +38,17 @@
 				<text>请先登录</text>
 			</view>
 		</block>
+		
+		<uni-popup id="dialogInput" ref="dialogInput" type="center">
+			<view class="business-panel">
+				<uni-forms labelWidth="105">
+					<uni-forms-item name="serviceType" label="类型:">
+						<uni-data-checkbox v-model="serviceType" :localdata="serviceTypeData"></uni-data-checkbox>
+					</uni-forms-item>
+					<button class="button" type="default" @click="serviceConfirm">确定</button>
+				</uni-forms>
+			</view>
+		</uni-popup>
 	</view>
 </template>
 
@@ -55,7 +67,16 @@
 		data () {
 			return {
 				list: [],
-				status: 'more'
+				status: 'more',
+				serviceType: '',
+				invoiceId: '',
+				serviceTypeData: [{
+					text: '过户',
+					value: 'guohu'
+				},{
+					text: '迁出',
+					value: 'qianchu'
+				}]
 			}
 		},
 		computed: {
@@ -106,6 +127,32 @@
 			}, 300);
 		},
 		methods: {
+			gobooking(id) {
+				this.invoiceId = id
+				this.$refs.dialogInput.open()
+			},
+			serviceConfirm() {
+				if(!this.serviceType) {
+					uni.showToast({
+						title: '请选择类型'
+					})
+					return
+				}
+				
+				if (this.serviceType === 'guohu') {
+					uni.navigateTo({
+						url: '../schedul/index?type=guohu&invoiceId=' + this.invoiceId
+					})
+					this.$refs.dialogInput.close()
+				}
+				
+				if (this.serviceType === 'qianchu') {
+					uni.navigateTo({
+						url: '../schedul/index?type=qianchu&invoiceId=' + this.invoiceId
+					})
+					this.$refs.dialogInput.close()
+				}
+			},
 			fetchData(refresh, callback) {
 				this.$request({
 					url: '/api/v1/admin/invoice/query/wx',
@@ -126,14 +173,14 @@
 						this.status = list.length < count ? 'more' : 'noMore'
 						console.log(this.status)
 					} else {
-						uni.showToast({title: res.msg, icon:"none"})
+						uni.showToast({title: res.msg, icon: "none", duration: 3000})
 					}
 					callback && callback()
 				})
 			},
-			goDetail(index) {
+			goDetail(id) {
 				uni.navigateTo({
-					url: '../invoiceDetail/index?data=' + JSON.stringify(this.list[index])
+					url: '../invoiceDetail/index?id=' + id
 				})
 			},
 			goUpdate(index) {
@@ -173,7 +220,7 @@
 						})
 						this.fetchData(true)
 					} else {
-						uni.showToast({title: res.msg, icon:"none"})
+						uni.showToast({title: res.msg, icon:"none", duration: 3000})
 					}
 				})
 			},
@@ -239,13 +286,19 @@
 		background-color: #FFFFFF;
 		border-radius: 15px;
 		margin-left: 20rpx;
-		font-size: 22rpx;
+		font-size: 20rpx;
 		margin-right: 0;
 		color: #333333;
 		border: 1px solid #e5e5e5;
+		padding: 0 10px !important;
 	}
 	
 	.status_text {
 		color: #007aff;
+	}
+	
+	.business-panel {
+		border-radius: 5px;
+		background-color: #FFFFFF;
 	}
 </style>

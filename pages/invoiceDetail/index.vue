@@ -91,13 +91,32 @@
 			}
 		},
 		onLoad(option) {
-			const data = option.data
-			if (data) {
-				this.detail = JSON.parse(option.data)
+			const id = option.id
+			if (id) {
+				this.getInvoiceByid(id)
 			}
+			
 		},
 		methods: {
-			
+			getInvoiceByid(id) {
+				uni.showLoading({
+					mask: true
+				})
+				this.$request({
+					url: '/api/v1/admin/invoice/find/' + id,
+					method: 'GET'
+				}).then((res) => {
+					uni.hideLoading()
+					if (res.code === 200) {
+						this.detail = res.data
+					} else {
+						uni.showToast({
+							title: res.msg,
+							duration: 3000
+						})
+					}
+				})
+			},
 			
 			goRefund() {
 				this.$request({
@@ -110,10 +129,11 @@
 				}).then((res) => {
 					if (res.code === 200) {
 						uni.showToast({
-							title: '申请退款成功'
+							title: '申请退款成功',
+							duration: 2000
 						})
 					} else {
-						uni.showToast({title: res.msg, icon:"none"})
+						uni.showToast({title: res.msg, icon:"none", duration: 3000})
 					}
 				})
 			}
