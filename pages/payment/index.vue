@@ -30,7 +30,7 @@
 			return {
 				title: 'request-payment',
 				loading: false,
-				price: 0.1,
+				price: process.env.NODE_ENV === 'development' ? 0.1 : 50,
 				providerList: [],
 				id: ''
 			}

@@ -1,5 +1,13 @@
 <template>
 	<view class="bookingList">
+		<view class="search-wrapper">
+			<view class="search-item">
+				<uni-search-bar  placeholder="车牌搜索" @confirm="searchCarId" cancelButton="none" clearButton="none" />
+			</view>
+			<view>
+				<uni-search-bar  placeholder="品牌搜索" @confirm="searchCarName" cancelButton="none" clearButton="none" />
+			</view>
+		</view>
 		<block v-if="list.length">
 			<view v-for="(item, index) in list" :key="index" class="list-item">
 				<div class="list_item_header">
@@ -16,7 +24,7 @@
 				</view>
 				<view class="list_item_footer">
 					<button class="btn btn-delete" v-if="item.status === '未完成'"  size="mini" @click="deleteConfirm(item.id)">删除</button>
-					<button class="btn btn-update" v-if="item.status === '未完成'" size="mini" @click="goUpdate(index)">修改</button>
+					<!-- <button class="btn btn-update" v-if="item.status === '未完成'" size="mini" @click="goUpdate(index)">修改</button> -->
 					<button class="btn btn-detail"  size="mini" @click="goDetail(item.id)">详情</button>
 				</view>
 			</view>
@@ -54,7 +62,9 @@
 		data () {
 			return {
 				list: [],
-				status: 'more'
+				status: 'more',
+				searchCarIdValue: '',
+				searchCarNameValue: ''
 			}
 		},
 		computed: {
@@ -107,6 +117,15 @@
 			}, 300);
 		},
 		methods: {
+			searchCarId(res) {
+				console.log(res)
+				this.searchCarIdValue = res.value
+				this.fetchData(true)
+			},
+			searchCarName(res) {
+				this.searchCarNameValue = res.value
+				this.fetchData(true)
+			},
 			fetchData(refresh, callback) {
 				this.$request({
 					url: '/api/v1/booking/query/wx',
@@ -114,7 +133,9 @@
 					data: {
 						pageSize: pageSize,
 						current: current,
-						createBy: this.openid
+						createBy: this.openid,
+						carId: this.searchCarIdValue,
+						carname: this.searchCarNameValue
 					}
 				}).then((res) => {
 					if (res.code === 200) {
@@ -218,6 +239,16 @@
 	.no-data {
 		text-align: center;
 		padding-top: 100rpx;
+	}
+	
+	.search-wrapper {
+		width: 100%;
+		margin-bottom: 20rpx;
+	}
+	
+	.search-item {
+		width: 50%;
+		float: left;
 	}
 	
 	.list-item {

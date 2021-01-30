@@ -80,15 +80,12 @@
 	export default {
 		data () {
 			return {
-				detail: ''
+				detail: '',
+				registerImageList: []
 			}
 		},
 		computed: {
-			...mapState(['openid']),
-			registerImageList: () => {
-				if(!this || !this.detail) return []
-				return this.detail.registerUrl.split(',')
-			}
+			...mapState(['openid'])
 		},
 		onLoad(option) {
 			const id = option.id
@@ -109,6 +106,9 @@
 					uni.hideLoading()
 					if (res.code === 200) {
 						this.detail = res.data
+						if (this.detail.registerUrl) {
+							this.registerImageList = this.detail.registerUrl.split(',')
+						}
 					} else {
 						uni.showToast({
 							title: res.msg,

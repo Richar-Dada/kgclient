@@ -2,6 +2,7 @@
   "navigationBarTitleText": "空港服务站",
   "enablePullDownRefresh": true,
   "usingComponents": {
+    "uni-search-bar": "/components/uni-search-bar/uni-search-bar",
     "uni-load-more": "/components/uni-load-more/uni-load-more"
   }
 }

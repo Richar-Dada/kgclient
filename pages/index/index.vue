@@ -109,6 +109,9 @@
 					url: '../schedul/index?type=' + type
 				})
 			},
+			onShareAppMessage() {
+			  
+			},
 			handleButtonClick(key) {
 				if (!this.hasLogin) {
 					uni.showToast({

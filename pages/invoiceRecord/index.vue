@@ -532,7 +532,7 @@
 				})
 			},
 			showStatementExample() {
-				const url = this.newCarBusinessType === 'personal' ?
+				const url = this.oldCarBusinessType === 'personal' ?
 					'https://carbase.oss-cn-shenzhen.aliyuncs.com/statement1.jpg' : 'https://carbase.oss-cn-shenzhen.aliyuncs.com/statement2.jpg'
 				uni.previewImage({
 					urls: [url]
@@ -822,40 +822,40 @@
 			chooseImageRegister: function() {
 				const that = this
 				uni.chooseImage({
-					count: 1,
+					count: 9,
 					sizeType: [],
 					success: (res) => {
-						var imageSrc = res.tempFilePaths[0]
-						uni.showLoading({
-							mask: true
-						})
-						uni.uploadFile({
-							url: baseUrl + '/api/v1/upload',
-							filePath: imageSrc,
-							name: 'image',
-							success: (res) => {
-								console.log(res)
-								uni.hideLoading()
-								const resData = JSON.parse(res.data)
-								if (resData.code === 200) {
-									uni.showToast({
-										title: '上传成功',
-										icon: 'success',
-										duration: 1000
-									})
-									console.log(resData)
-									this.registerImageList.push(resData.data[0])
-								} else {
-									uni.showToast({title: '图片上传失败', icon:"none"})
+						var tempFilePaths = res.tempFilePaths
+						for(let i = 0, len = tempFilePaths.length; i < len; i++) {
+							uni.showLoading({
+								mask: true
+							})
+							uni.uploadFile({
+								url: baseUrl + '/api/v1/upload',
+								filePath: tempFilePaths[i],
+								name: 'image',
+								success: (res) => {
+									uni.hideLoading()
+									const resData = JSON.parse(res.data)
+									if (resData.code === 200) {
+										uni.showToast({
+											title: '上传成功',
+											icon: 'success',
+											duration: 1000
+										})
+										this.registerImageList.push(resData.data[0])
+									} else {
+										uni.showToast({title: '图片上传失败', icon:"none"})
+									}
+								},
+								fail: (err) => {
+									uni.showModal({
+										content: err.errMsg,
+										showCancel: false
+									});
 								}
-							},
-							fail: (err) => {
-								uni.showModal({
-									content: err.errMsg,
-									showCancel: false
-								});
-							}
-						});
+							});
+						}
 					},
 					fail: (err) => {
 						console.log('chooseImage fail', err)
@@ -974,7 +974,13 @@
 						if (this.id) {
 							this.update()
 						} else {
-							this.create()
+							const that = this
+							wx.requestSubscribeMessage({
+							  tmplIds: ['1WwxHfQUBtnLjxOxLRWqkoo6hF51XR-DBYOxD97koDw'],
+							  complete () {
+								  that.create()
+							  }
+							})
 						}
 					})
 			},

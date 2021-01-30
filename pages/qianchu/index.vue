@@ -508,13 +508,15 @@
 					sizeType: [],
 					success: (res) => {
 						var imageSrc = res.tempFilePaths[0]
-						
+						uni.showLoading({
+							mask: true
+						})
 						uni.uploadFile({
 							url: baseUrl + url,
 							filePath: imageSrc,
 							name: 'image',
 							success: (res) => {
-								console.log(res)
+								uni.hideLoading()
 								const resData = JSON.parse(res.data)
 								if (resData.code === 200) {
 									uni.showToast({
