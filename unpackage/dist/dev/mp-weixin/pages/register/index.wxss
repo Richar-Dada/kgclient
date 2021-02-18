@@ -12,4 +12,15 @@
 button {
 	margin-top: 20rpx;
 }
+.icon-wrapper {
+	width: 60rpx;
+	display: inline-block;
+}
+.notice-text {
+	width: 400rpx;
+	height: 39rpx;
+	line-height: 29rpx;
+	display: inline-block;
+	color: #007aff;
+}
 

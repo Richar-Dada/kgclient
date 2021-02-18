@@ -247,4 +247,5 @@
 		text-align: center;
 		margin: 20rpx auto;
 	}
+	
 </style>

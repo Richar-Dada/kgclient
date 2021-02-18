@@ -75,6 +75,8 @@
 			
 			this.fetchData(false)
 			
+		},
+		mounted() {
 			uni.$on('bookingDelete', () => {
 				current = 1
 				this.fetchData(true)
@@ -222,7 +224,7 @@
 							uni.navigateBack()
 						}, 1500)
 					} else {
-						uni.showToast({title: res.msg, icon: "none", duration: 3000})
+						uni.showToast({title: res.errorMsg, icon: "none", duration: 3000})
 					}
 				})
 			}

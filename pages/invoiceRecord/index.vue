@@ -976,7 +976,7 @@
 						} else {
 							const that = this
 							wx.requestSubscribeMessage({
-							  tmplIds: ['1WwxHfQUBtnLjxOxLRWqkoo6hF51XR-DBYOxD97koDw'],
+							  tmplIds: ['fjkHU8-cHQ5o6BEND7EQVfvEThwepPQ74ESoXcALWCo'],
 							  complete () {
 								  that.create()
 							  }

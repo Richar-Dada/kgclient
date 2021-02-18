@@ -2,7 +2,7 @@
 	<view>
 		<view class="uni-padding-wrap uni-common-mt">
 			<form @submit="formSubmit" @reset="formReset">
-				<text class="text-tip">上传身份证照片(正面)</text>
+				<text class="text-tip" style="font-size: 36rpx;">上传身份证照片(正面)</text>
 				<view class="demo">
 					<block v-if="imageSrc">
 						<image :src="imageSrc" class="image" mode="widthFix"></image>
@@ -13,10 +13,20 @@
 				</view>
 				
 				<view class="uni-form-item uni-column">
-					<view class="title">身份证号码</view>
+					<view class="title" style="font-size: 36rpx;">身份证号码</view>
 					<input class="uni-input" name="idCard" :value="idCardNum" placeholder="上传身份证照片后自动填写"/>
 				</view>
-				<button form-type="submit" type="default" :disabled="!idCardNum.length" >关  联</button>
+				<view >
+					<view class="icon-wrapper">
+						<uni-icons v-if="!isAgress" type="circle" color="#8f8f94" size="22" style="display: inline-block;" />
+						<uni-icons v-if="isAgress" @click="resetAgress" type="circle-filled" color="#007aff" size="22" style="display: inline-block;" />
+					</view>
+					<text class="notice-text" style="font-size: 36rpx;" @click="goNotice">同意用户服务协议</text>
+					
+				</view>
+				
+				
+				<button form-type="submit" type="default" :disabled="!idCardNum.length || !isAgress" >关  联</button>
 			</form>
 			
 			<button type="default" @click="chooseImage">重新上传</button>
@@ -36,6 +46,11 @@
 	} from 'vuex'
 	
 	export default {
+		mounted() {
+			uni.$on('hasReadNotice', () => {
+				this.isAgress = true
+			})
+		},
 		data() {
 			return {
 				title: 'uploadFile',
@@ -45,7 +60,8 @@
 				idCardUrl: '',
 				iv: '',
 				encryptedData: '',
-				sessionKey: ''
+				sessionKey: '',
+				isAgress: false
 			}
 		},
 		computed: {
@@ -103,6 +119,14 @@
 			},
 			formReset: function(e) {
 				console.log('清空数据')
+			},
+			goNotice: function(e) {
+				uni.navigateTo({
+					url: '../noticeRegister/index'
+				})
+			},
+			resetAgress: function() {
+				this.isAgress = false
 			},
 			chooseImage: function() {
 				const that = this
@@ -169,5 +193,18 @@
 	
 	button {
 		margin-top: 20rpx;
+	}
+	
+	.icon-wrapper {
+		width: 60rpx;
+		display: inline-block;
+	}
+	
+	.notice-text {
+		width: 400rpx;
+		height: 39rpx;
+		line-height: 29rpx;
+		display: inline-block;
+		color: #007aff;
 	}
 </style>

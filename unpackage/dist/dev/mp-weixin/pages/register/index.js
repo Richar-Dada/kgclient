@@ -93,6 +93,29 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "recyclableRender", function() { return recyclableRender; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "components", function() { return components; });
 var components
+try {
+  components = {
+    uniIcons: function() {
+      return Promise.all(/*! import() | components/uni-icons/uni-icons */[__webpack_require__.e("common/vendor"), __webpack_require__.e("components/uni-icons/uni-icons")]).then(__webpack_require__.bind(null, /*! @/components/uni-icons/uni-icons.vue */ 195))
+    }
+  }
+} catch (e) {
+  if (
+    e.message.indexOf("Cannot find module") !== -1 &&
+    e.message.indexOf(".vue") !== -1
+  ) {
+    console.error(e.message)
+    console.error("1. 排查组件名称拼写是否正确")
+    console.error(
+      "2. 排查组件是否符合 easycom 规范，文档：https://uniapp.dcloud.net.cn/collocation/pages?id=easycom"
+    )
+    console.error(
+      "3. 若组件不符合 easycom 规范，需手动引入，并在 components 中注册该组件"
+    )
+  } else {
+    throw e
+  }
+}
 var render = function() {
   var _vm = this
   var _h = _vm.$createElement
@@ -159,6 +182,16 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+
+
+
+
+
+
+
+
 var _request = __webpack_require__(/*! ../../utils/request.js */ 17);
 
 var _vuex = __webpack_require__(/*! vuex */ 15);function ownKeys(object, enumerableOnly) {var keys = Object.keys(object);if (Object.getOwnPropertySymbols) {var symbols = Object.getOwnPropertySymbols(object);if (enumerableOnly) symbols = symbols.filter(function (sym) {return Object.getOwnPropertyDescriptor(object, sym).enumerable;});keys.push.apply(keys, symbols);}return keys;}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};if (i % 2) {ownKeys(Object(source), true).forEach(function (key) {_defineProperty(target, key, source[key]);});} else if (Object.getOwnPropertyDescriptors) {Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));} else {ownKeys(Object(source)).forEach(function (key) {Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));});}}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;} //
@@ -187,13 +220,19 @@ var _vuex = __webpack_require__(/*! vuex */ 15);function ownKeys(object, enumera
 //
 //
 //
-var graceChecker = __webpack_require__(/*! ../../common/graceChecker.js */ 40);var _default = { data: function data() {return { title: 'uploadFile', imageSrc: '', idCardNum: '', username: '', idCardUrl: '', iv: '', encryptedData: '', sessionKey: '' };}, computed: _objectSpread({}, (0, _vuex.mapState)(['openid'])), onLoad: function onLoad(option) {this.iv = option.iv;this.encryptedData = option.encryptedData;this.sessionKey = option.sessionKey;},
-  onUnload: function onUnload() {
-    this.imageSrc = '';
-  },
-  methods: _objectSpread(_objectSpread({},
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+var graceChecker = __webpack_require__(/*! ../../common/graceChecker.js */ 40);var _default = { mounted: function mounted() {var _this = this;uni.$on('hasReadNotice', function () {_this.isAgress = true;});}, data: function data() {return { title: 'uploadFile', imageSrc: '', idCardNum: '', username: '', idCardUrl: '', iv: '', encryptedData: '', sessionKey: '', isAgress: false };}, computed: _objectSpread({}, (0, _vuex.mapState)(['openid'])), onLoad: function onLoad(option) {this.iv = option.iv;this.encryptedData = option.encryptedData;this.sessionKey = option.sessionKey;}, onUnload: function onUnload() {this.imageSrc = '';}, methods: _objectSpread(_objectSpread({},
   (0, _vuex.mapMutations)(['setUserInfo'])), {}, {
-    formSubmit: function formSubmit(e) {var _this = this;
+    formSubmit: function formSubmit(e) {var _this2 = this;
       console.log('form发生了submit事件，携带数据为：' + JSON.stringify(e.detail.value));
       //定义表单规则
       var rule = [
@@ -222,7 +261,7 @@ var graceChecker = __webpack_require__(/*! ../../common/graceChecker.js */ 40);v
           uni.hideLoading();
           if (res.code === 200) {
             uni.showToast({ title: "关联成功", icon: "success", duration: 2000 });
-            _this.setUserInfo(res.data);
+            _this2.setUserInfo(res.data);
             uni.$emit('BandSuccess');
             setTimeout(function () {uni.navigateBack();}, 2000);
           } else {
@@ -236,7 +275,15 @@ var graceChecker = __webpack_require__(/*! ../../common/graceChecker.js */ 40);v
     formReset: function formReset(e) {
       console.log('清空数据');
     },
-    chooseImage: function chooseImage() {var _this2 = this;
+    goNotice: function goNotice(e) {
+      uni.navigateTo({
+        url: '../noticeRegister/index' });
+
+    },
+    resetAgress: function resetAgress() {
+      this.isAgress = false;
+    },
+    chooseImage: function chooseImage() {var _this3 = this;
       var that = this;
       uni.chooseImage({
         count: 1,
@@ -260,10 +307,10 @@ var graceChecker = __webpack_require__(/*! ../../common/graceChecker.js */ 40);v
                   icon: 'success',
                   duration: 2000 });
 
-                _this2.imageSrc = imageSrc;
-                _this2.idCardNum = resData.data.IdNum;
-                _this2.username = resData.data.Name;
-                _this2.idCardUrl = resData.data.imageUrl;
+                _this3.imageSrc = imageSrc;
+                _this3.idCardNum = resData.data.IdNum;
+                _this3.username = resData.data.Name;
+                _this3.idCardUrl = resData.data.imageUrl;
               } else {
                 uni.showToast({ title: '图片有误，识别失败', icon: "none", duration: 3000 });
               }

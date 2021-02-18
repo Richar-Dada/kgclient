@@ -97,6 +97,8 @@
 			
 			this.fetchData(false)
 			
+		},
+		mounted() {
 			uni.$on('invoiceDelete', () => {
 				current = 1
 				this.fetchData(true)

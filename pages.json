@@ -71,6 +71,11 @@
 		"style": {
 			"navigationBarTitleText": "空港服务站"
 		}
+	},{
+		"path": "pages/noticeRegister/index",
+		"style": {
+			"navigationBarTitleText": "用户服务协议"
+		}
 	}],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

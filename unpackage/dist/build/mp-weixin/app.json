@@ -13,7 +13,8 @@
     "pages/notice/index",
     "pages/bookingDetail/index",
     "pages/login/index",
-    "pages/payment/index"
+    "pages/payment/index",
+    "pages/noticeRegister/index"
   ],
   "subPackages": [],
   "window": {

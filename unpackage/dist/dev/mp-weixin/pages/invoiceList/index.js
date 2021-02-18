@@ -96,22 +96,22 @@ var components
 try {
   components = {
     uniSearchBar: function() {
-      return __webpack_require__.e(/*! import() | components/uni-search-bar/uni-search-bar */ "components/uni-search-bar/uni-search-bar").then(__webpack_require__.bind(null, /*! @/components/uni-search-bar/uni-search-bar.vue */ 140))
+      return __webpack_require__.e(/*! import() | components/uni-search-bar/uni-search-bar */ "components/uni-search-bar/uni-search-bar").then(__webpack_require__.bind(null, /*! @/components/uni-search-bar/uni-search-bar.vue */ 148))
     },
     uniLoadMore: function() {
-      return __webpack_require__.e(/*! import() | components/uni-load-more/uni-load-more */ "components/uni-load-more/uni-load-more").then(__webpack_require__.bind(null, /*! @/components/uni-load-more/uni-load-more.vue */ 147))
+      return __webpack_require__.e(/*! import() | components/uni-load-more/uni-load-more */ "components/uni-load-more/uni-load-more").then(__webpack_require__.bind(null, /*! @/components/uni-load-more/uni-load-more.vue */ 155))
     },
     uniPopup: function() {
-      return Promise.all(/*! import() | components/uni-popup/uni-popup */[__webpack_require__.e("common/vendor"), __webpack_require__.e("components/uni-popup/uni-popup")]).then(__webpack_require__.bind(null, /*! @/components/uni-popup/uni-popup.vue */ 154))
+      return Promise.all(/*! import() | components/uni-popup/uni-popup */[__webpack_require__.e("common/vendor"), __webpack_require__.e("components/uni-popup/uni-popup")]).then(__webpack_require__.bind(null, /*! @/components/uni-popup/uni-popup.vue */ 162))
     },
     uniForms: function() {
-      return Promise.all(/*! import() | components/uni-forms/uni-forms */[__webpack_require__.e("common/vendor"), __webpack_require__.e("components/uni-forms/uni-forms")]).then(__webpack_require__.bind(null, /*! @/components/uni-forms/uni-forms.vue */ 163))
+      return Promise.all(/*! import() | components/uni-forms/uni-forms */[__webpack_require__.e("common/vendor"), __webpack_require__.e("components/uni-forms/uni-forms")]).then(__webpack_require__.bind(null, /*! @/components/uni-forms/uni-forms.vue */ 171))
     },
     uniFormsItem: function() {
-      return Promise.all(/*! import() | components/uni-forms-item/uni-forms-item */[__webpack_require__.e("common/vendor"), __webpack_require__.e("components/uni-forms-item/uni-forms-item")]).then(__webpack_require__.bind(null, /*! @/components/uni-forms-item/uni-forms-item.vue */ 171))
+      return Promise.all(/*! import() | components/uni-forms-item/uni-forms-item */[__webpack_require__.e("common/vendor"), __webpack_require__.e("components/uni-forms-item/uni-forms-item")]).then(__webpack_require__.bind(null, /*! @/components/uni-forms-item/uni-forms-item.vue */ 179))
     },
     uniDataCheckbox: function() {
-      return Promise.all(/*! import() | components/uni-data-checkbox/uni-data-checkbox */[__webpack_require__.e("common/vendor"), __webpack_require__.e("components/uni-data-checkbox/uni-data-checkbox")]).then(__webpack_require__.bind(null, /*! @/components/uni-data-checkbox/uni-data-checkbox.vue */ 178))
+      return Promise.all(/*! import() | components/uni-data-checkbox/uni-data-checkbox */[__webpack_require__.e("common/vendor"), __webpack_require__.e("components/uni-data-checkbox/uni-data-checkbox")]).then(__webpack_require__.bind(null, /*! @/components/uni-data-checkbox/uni-data-checkbox.vue */ 186))
     }
   }
 } catch (e) {
@@ -262,11 +262,13 @@ var current = 1;var _default =
   computed: _objectSpread({},
   (0, _vuex.mapState)(['openid', 'hasLogin'])),
 
-  onLoad: function onLoad() {var _this = this;
+  onLoad: function onLoad() {
     if (!this.hasLogin) return;
 
     this.fetchData(false);
 
+  },
+  mounted: function mounted() {var _this = this;
     uni.$on('invoiceDelete', function () {
       current = 1;
       _this.fetchData(true);

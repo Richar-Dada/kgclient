@@ -96,10 +96,10 @@ var components
 try {
   components = {
     uniSearchBar: function() {
-      return __webpack_require__.e(/*! import() | components/uni-search-bar/uni-search-bar */ "components/uni-search-bar/uni-search-bar").then(__webpack_require__.bind(null, /*! @/components/uni-search-bar/uni-search-bar.vue */ 140))
+      return __webpack_require__.e(/*! import() | components/uni-search-bar/uni-search-bar */ "components/uni-search-bar/uni-search-bar").then(__webpack_require__.bind(null, /*! @/components/uni-search-bar/uni-search-bar.vue */ 148))
     },
     uniLoadMore: function() {
-      return __webpack_require__.e(/*! import() | components/uni-load-more/uni-load-more */ "components/uni-load-more/uni-load-more").then(__webpack_require__.bind(null, /*! @/components/uni-load-more/uni-load-more.vue */ 147))
+      return __webpack_require__.e(/*! import() | components/uni-load-more/uni-load-more */ "components/uni-load-more/uni-load-more").then(__webpack_require__.bind(null, /*! @/components/uni-load-more/uni-load-more.vue */ 155))
     }
   }
 } catch (e) {
@@ -247,11 +247,13 @@ var current = 1;var _default =
   computed: _objectSpread({},
   (0, _vuex.mapState)(['openid', 'hasLogin'])),
 
-  onLoad: function onLoad() {var _this = this;
+  onLoad: function onLoad() {
     if (!this.hasLogin) return;
 
     this.fetchData(false);
 
+  },
+  mounted: function mounted() {var _this = this;
     uni.$on('bookingDelete', function () {
       current = 1;
       _this.fetchData(true);
@@ -399,7 +401,7 @@ var current = 1;var _default =
             uni.navigateBack();
           }, 1500);
         } else {
-          uni.showToast({ title: res.msg, icon: "none", duration: 3000 });
+          uni.showToast({ title: res.errorMsg, icon: "none", duration: 3000 });
         }
       });
     } } };exports.default = _default;
