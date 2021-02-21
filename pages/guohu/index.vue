@@ -45,12 +45,11 @@
 				</uni-forms-item>
 			</uni-group>
 			
-			<view class="uni-list list-pd" v-if="isCar(formData.carType)">
+			<view class="uni-list list-pd">
 				<view class="uni-list-cell cell-pd">
 					<view class="uni-uploader">
 						<view class="uni-uploader-head upload-header">
 							<view class="uni-uploader-title">点击上传指标书图片
-								<text style="color: red;">*</text>
 							</view>
 							<view class="uni-uploader-info">1/1</view>
 						</view>
@@ -112,7 +111,7 @@
 				
 				formData: {
 					carname: '',
-					carId: "",
+					carId: "粤A",
 					carType: '',
 					carNumber: '',
 					engineNumber: '',
@@ -129,9 +128,17 @@
 					},
 					carId: {
 						rules: [{
-							required: true,
-							errorMessage: '请输入车牌号',
-						}]
+								format: "string"
+							},
+							{
+								validateFunction: function(rule, value, data, callback) {
+									console.log(value)
+									if (value.length < 6 || value.indexOf('粤A') === -1) {
+										callback('车牌号为：粤AXXXXX')
+									}
+									return true
+								}
+							}]
 					},
 					carType: {
 						rules: [{
@@ -275,20 +282,29 @@
 								console.log(res)
 								const resData = JSON.parse(res.data)
 								if (resData.code === 200) {
-									uni.showToast({
-										title: '上传成功',
-										icon: 'success',
-										duration: 1000
-									})
 									this.vehicleLicenseImageList.push(resData.data.imageUrl)
-									console.log(resData)
 									const frontInfo = resData.data.FrontInfo
+									
 									if (frontInfo) {
+								
 										this.formData.carId = frontInfo.PlateNo
 										this.formData.carNumber = frontInfo.Vin
 										this.formData.carname = frontInfo.Model
 										this.formData.carType = frontInfo.VehicleType
 										this.formData.engineNumber = frontInfo.EngineNo
+										
+										if (frontInfo.PlateNo.indexOf('粤A') === -1) {
+											uni.showToast({
+												title: '只支持粤A车辆办理业务',
+												icon: 'none',
+												duration: 2000
+											})
+										} else {
+											uni.showToast({
+												title: '上传成功',
+												icon: 'success',
+											})
+										}
 									}
 								} else {
 									uni.showToast({title: '图片有误，识别失败', icon:"none"})
@@ -362,14 +378,6 @@
 			submitForm(form) {
 				this.$refs[form].submit()
 					.then((res) => {
-						if (this.isCar(this.formData.carType) && !this.valicImageList.length) {
-							uni.showToast({
-								icon: 'none',
-								title: '请上传指标书图片'
-							})
-							return 
-						}
-						
 						if (this.id) {
 							this.update(form)
 						} else {

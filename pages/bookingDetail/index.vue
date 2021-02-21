@@ -1,17 +1,14 @@
 <template>
 	<view>
 		<uni-group v-if="detail.serviceType === '迁出提档'" title="原车主信息" top="0">
-			<view class="uni-center" style="background:#FFFFFF; font-size:0;">
-				<image class="image" mode="widthFix" :src="detail.oldIdCardUrl" />
-			</view>
 			<uni-list v-if="detail.serviceType === '迁出提档'">
 				<uni-list-item title="原车主姓名" :rightText="detail.oldCarOwner"/>
-				<uni-list-item title="原车主身份证号码" :rightText="detail.oldCarDocumentNumber"/>
+				<uni-list-item v-if="detail.oldCarDocumentNumber" title="原车主身份证号码" :rightText="detail.oldCarDocumentNumber"/>
 			</uni-list>
 		</uni-group>
 		
 		<uni-group v-if="detail.serviceType === '迁出提档'" title="新车主信息" top="0">
-			<view class="uni-center" style="background:#FFFFFF; font-size:0;">
+			<view v-if="detail.newIdCardUrl" class="uni-center" style="background:#FFFFFF; font-size:0;">
 				<image class="image" mode="widthFix" :src="detail.newIdCardUrl" />
 			</view>
 			<uni-list v-if="detail.serviceType === '迁出提档'">
@@ -21,7 +18,7 @@
 		</uni-group>
 		
 		<uni-group title="行驶证信息" top="0">
-			<view class="uni-center" style="background:#FFFFFF; font-size:0;">
+			<view v-if="detail.vehicleLicenseUrl" class="uni-center" style="background:#FFFFFF; font-size:0;">
 				<image class="image" mode="widthFix" :src="detail.vehicleLicenseUrl" />
 			</view>
 			<uni-list>
