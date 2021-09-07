@@ -2,12 +2,12 @@
 	"pages": [{
 		"path": "pages/index/index",
 		"style": {
-			"navigationBarTitleText": "空港服务站"
+			"navigationBarTitleText": "空港汽车城"
 		}
 	},{
 		"path": "pages/invoiceList/index",
 		"style": {
-			"navigationBarTitleText": "空港服务站",
+			"navigationBarTitleText": "空港汽车城",
 			"enablePullDownRefresh": true
 		}
 	},{
@@ -23,13 +23,13 @@
 	},{
 		"path": "pages/bookingList/index",
 		"style": {
-			"navigationBarTitleText": "空港服务站",
+			"navigationBarTitleText": "空港汽车城",
 			"enablePullDownRefresh": true
 		}
 	},{
 		"path": "pages/user/index",
 		"style": {
-			"navigationBarTitleText": "空港服务站"
+			"navigationBarTitleText": "空港汽车城"
 		}
 	},{
 		"path": "pages/register/index",
@@ -39,7 +39,7 @@
 	},{
 		"path": "pages/schedul/index",
 		"style": {
-			"navigationBarTitleText": "空港服务站"
+			"navigationBarTitleText": "空港汽车城"
 		}
 	},{
 		"path": "pages/qianchu/index",
@@ -64,12 +64,12 @@
 	},{
 		"path": "pages/login/index",
 		"style": {
-			"navigationBarTitleText": "空港服务站"
+			"navigationBarTitleText": "空港汽车城"
 		}
 	},{
 		"path": "pages/payment/index",
 		"style": {
-			"navigationBarTitleText": "空港服务站"
+			"navigationBarTitleText": "空港汽车城"
 		}
 	},{
 		"path": "pages/noticeRegister/index",

@@ -129,6 +129,7 @@
 		},
 		
 		onPullDownRefresh() {
+			current = 1
 			this.fetchData(true, () => {
 				uni.stopPullDownRefresh()
 			})
@@ -140,7 +141,7 @@
 				return;
 			}
 			setTimeout(() => {
-				current += 1
+				current = +current + 1
 				this.status = 'loading'
 				this.fetchData(false, () => {
 				});
@@ -191,7 +192,8 @@
 						current: current,
 						createBy: this.openid,
 						carId: this.searchCarIdValue,
-						carname: this.searchCarNameValue
+						carname: this.searchCarNameValue,
+						order: 'createAt'
 					}
 				}).then((res) => {
 					if (res.code === 200) {

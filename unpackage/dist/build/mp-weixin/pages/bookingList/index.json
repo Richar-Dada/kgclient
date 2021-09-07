@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "空港服务站",
+  "navigationBarTitleText": "空港汽车城",
   "enablePullDownRefresh": true,
   "usingComponents": {
     "uni-search-bar": "/components/uni-search-bar/uni-search-bar",

@@ -53,21 +53,7 @@
 				this.login('weixin')
 			}
 		},
-		onReady() {
-			// if (!this.hasLogin) {
-			// 	uni.navigateTo({
-			// 		url: '../login/index'
-			// 	})
-			// }
-			// const that = this
-			// uni.getUserInfo({
-			// 	provider: 'weixin',
-			// 	success: function(infoRes) {				
-			// 		that.setWeixinUserInfo(infoRes.userInfo)
-			// 		console.log(infoRes.userInfo)
-			// 	}
-			// })
-		},
+		onReady() {},
 		mounted() {
 			console.log('mounted')
 			this.$request({
@@ -94,10 +80,10 @@
 			})
 		},
 		computed: {
-			...mapState(['openid', 'hasLogin'])
+			...mapState(['openid', 'hasLogin', 'userInfo'])
 		},
 		methods: {
-			...mapMutations(['setOpenid', 'setUserInfo', 'login', 'setWeixinUserInfo']),
+			...mapMutations(['setOpenid', 'setUserInfo', 'login']),
 			goInvoice() {
 				console.log('ddd')
 				uni.navigateTo({
@@ -116,6 +102,15 @@
 				if (!this.hasLogin) {
 					uni.showToast({
 						title: '请登录',
+						icon: 'none'
+					})
+					
+					return
+				}
+				
+				if(!this.userInfo) {
+					uni.showToast({
+						title: '请先关联账号',
 						icon: 'none'
 					})
 					

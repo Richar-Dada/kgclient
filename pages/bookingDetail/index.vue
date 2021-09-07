@@ -1,5 +1,19 @@
 <template>
 	<view>
+		<uni-group title="其他信息" top="0">
+			<view v-if="detail.valicUrl" class="uni-center" style="background:#FFFFFF; font-size:0;">
+				<image class="image" mode="widthFix" :src="detail.valicUrl" />
+			</view>
+			<uni-list>
+				<uni-list-item title="状态" :rightText="detail.status"/>
+				<uni-list-item v-if="detail.failReason" title="失败原因" :rightText="detail.failReason"/>
+				<uni-list-item title="业务类型" :rightText="detail.serviceType"/>
+				<uni-list-item title="预约时间" :rightText="detail.bookingDate + detail.bookingTime"/>
+				<uni-list-item v-if="detail.serviceType === '迁出提档'" title="迁入地" :rightText="detail.immigrationAddress"/>
+				<uni-list-item title="备注" :rightText="detail.remark"/>
+			</uni-list>
+		</uni-group>
+		
 		<uni-group v-if="detail.serviceType === '迁出提档'" title="原车主信息" top="0">
 			<uni-list v-if="detail.serviceType === '迁出提档'">
 				<uni-list-item title="原车主姓名" :rightText="detail.oldCarOwner"/>
@@ -29,19 +43,6 @@
 			</uni-list>
 		</uni-group>
 		
-		<uni-group title="其他信息" top="0">
-			<view v-if="detail.valicUrl" class="uni-center" style="background:#FFFFFF; font-size:0;">
-				<image class="image" mode="widthFix" :src="detail.valicUrl" />
-			</view>
-			<uni-list>
-				<uni-list-item title="业务类型" :rightText="detail.serviceType"/>
-				<uni-list-item title="预约时间" :rightText="detail.bookingDate + detail.bookingTime"/>
-				<uni-list-item v-if="detail.serviceType === '迁出提档'" title="迁入地" :rightText="detail.immigrationAddress"/>
-				<uni-list-item title="状态" :rightText="detail.status"/>
-				<uni-list-item v-if="detail.failReason" title="失败原因" :rightText="detail.failReason"/>
-				<uni-list-item title="备注" :rightText="detail.remark"/>
-			</uni-list>
-		</uni-group>
 	</view>
 </template>
 

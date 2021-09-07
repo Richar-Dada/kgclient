@@ -58,10 +58,18 @@
 				</uni-group>
 				
 				<view class="uni-list list-pd">
+					<view v-if="oldCarBusinessType === 'personal'" style="padding-top: 20rpx;">
+						<uni-forms-item required name="sex" label="证件类型">
+							<uni-data-checkbox v-model="formData.oldCarDocumentType" :localdata="documentType"></uni-data-checkbox>
+						</uni-forms-item>
+						
+						<text class="upload-tip">其他证件类型请手动填写信息</text>
+					</view>
+					
 					<view class="uni-list-cell cell-pd">
 						<view class="uni-uploader">
 							<view class="uni-uploader-head upload-header">
-								<view class="uni-uploader-title">点击上传原车主{{oldCarBusinessType === 'personal' ? '身份证(正面)' : '营业执照'}}</view>
+								<view class="uni-uploader-title">上传原车主{{oldCarBusinessType === 'personal' ? formData.oldCarDocumentType === '1' ? '身份证(正面)' : '港澳通行证(正面)' : '营业执照'}}</view>
 								<view class="uni-uploader-info">1/1</view>
 							</view>
 							<view class="uni-uploader-body upload-body">
@@ -90,7 +98,7 @@
 						<uni-easyinput type="text" v-model="formData.oldCarOwner" class="uni-input-border" placeholder="请输入原车主企业名称"></uni-easyinput>
 					</uni-forms-item>
 					
-					<uni-forms-item name="oldCarDocumentNumber" required label="身份证号码" v-if="oldCarBusinessType === 'personal'">
+					<uni-forms-item name="oldCarDocumentNumber" required :label="formData.oldCarDocumentType === '1' ? '身份证号码' : '通行证号码'" v-if="oldCarBusinessType === 'personal'">
 						<uni-easyinput type="text" v-model="formData.oldCarDocumentNumber" class="uni-input-border" placeholder="请输入证件号码"></uni-easyinput>
 					</uni-forms-item>
 					<uni-forms-item name="oldCarDocumentNumber" required label="统一社会代码" v-if="oldCarBusinessType === 'company'">
@@ -102,10 +110,17 @@
 				</uni-group>
 				
 				<view class="uni-list list-pd">
+					<view v-if="newCarBusinessType === 'personal'" style="padding-top: 20rpx;">
+						<uni-forms-item required name="sex" label="证件类型">
+							<uni-data-checkbox v-model="formData.newCarDocumentType" :localdata="documentType"></uni-data-checkbox>
+						</uni-forms-item>
+						
+						<text class="upload-tip">其他证件类型请手动填写信息</text>
+					</view>
 					<view class="uni-list-cell cell-pd">
 						<view class="uni-uploader">
 							<view class="uni-uploader-head upload-header">
-								<view class="uni-uploader-title">点击上传新车主{{newCarBusinessType === 'personal' ? '身份证(正面)' : '营业执照'}}</view>
+								<view class="uni-uploader-title">上传新车主{{newCarBusinessType === 'personal' ? formData.newCarDocumentType === '1' ? '身份证(正面)' : '港澳通行证(正面)' : '营业执照'}}</view>
 								<view class="uni-uploader-info">1/1</view>
 							</view>
 							<view class="uni-uploader-body upload-body">
@@ -134,7 +149,7 @@
 						<uni-easyinput type="text" v-model="formData.newCarOwner" class="uni-input-border" placeholder="请输入新车主企业名称"></uni-easyinput>
 					</uni-forms-item>
 					
-					<uni-forms-item name="newCarDocumentNumber" v-if="newCarBusinessType === 'personal'" required label="身份证号码">
+					<uni-forms-item name="newCarDocumentNumber" v-if="newCarBusinessType === 'personal'" required :label="formData.newCarDocumentType === '1' ? '身份证号码' : '通行证号码'">
 						<uni-easyinput type="text" v-model="formData.newCarDocumentNumber" class="uni-input-border" placeholder="请输入证件号码"></uni-easyinput>
 					</uni-forms-item>
 					<uni-forms-item name="newCarDocumentNumber" v-if="newCarBusinessType === 'company'" required label="统一社会代码">
@@ -158,8 +173,11 @@
 							:value="multiIndex"
 							:range="multiArray"
 						>
-							<view class="picker picker-immigrant">
+							<view v-if="formData.immigrationAddress" class="picker picker-immigrant">
 								{{multiArray[0][multiIndex[0]]}} > {{multiArray[1][multiIndex[1]]}}
+							</view>
+							<view v-if="!formData.immigrationAddress" class="picker picker-immigrant">
+								-- --
 							</view>
 						</picker>
 					</uni-forms-item>
@@ -177,7 +195,7 @@
 					<view class="uni-list-cell cell-pd">
 						<view class="uni-uploader">
 							<view class="uni-uploader-head upload-header">
-								<view class="uni-uploader-title">点击上传登记证(1-2页 原车主页)
+								<view class="uni-uploader-title">点击上传登记证(有打印内容页面)
 									<text style="color: red;">*</text>
 								</view>
 								<view class="uni-uploader-info">{{registerImageList.length}}/9</view>
@@ -235,7 +253,7 @@
 					</view>
 				</view>
 				
-				<view class="uni-list list-pd">
+				<view class="uni-list list-pd" v-if="oldCarBusinessType === 'company'">
 					<view class="uni-list-cell cell-pd">
 						<view class="uni-uploader">
 							<view class="uni-uploader-head upload-header">
@@ -296,6 +314,13 @@
 				multiIndex: [18, 0],
 				oneId: 0,
 				twoId: 0,
+				documentType: [{
+					text: '身份证',
+					value: '1'
+				}, {
+					text: '港澳通行证',
+					value: '2'
+				}],
 				
 				oldOwnerImageList: [],
 				newOwnerImageList: [],
@@ -311,7 +336,7 @@
 					oldOwnerPhone: '',
 					newOwnerPhone: '',
 					carname: '',
-					carId: "",
+					carId: "粤A",
 					carType: '',
 					carNumber: '',
 					engineNumber: '',
@@ -319,11 +344,13 @@
 					newCarOwner: '',
 					price: '',
 					remark: '',
-					immigrationAddress: '广东省,广州市',
+					immigrationAddress: '',
 					oldCarDocumentNumber: '',
 					newCarDocumentNumber: '',
 					oldCarOwnerAddress: '广东省,广州市',
-					newCarOwnerAddress: ''
+					newCarOwnerAddress: '',
+					oldCarDocumentType: '1', // 1 身份证/营业执照  2 港澳通行证  3 其他
+					newCarDocumentType: '1'
 				},
 				businessType: [{
 					text: '个人',
@@ -408,9 +435,6 @@
 						rules: [{
 							required: false,
 							errorMessage: '请输入新车主手机号码',
-						}, {
-							pattern: /^[1][3,4,5,7,8][0-9]{9}$/,
-							errorMessage: '必须是11位手机号码',
 						}]
 					},
 					newCarOwnerAddress: {
@@ -428,7 +452,7 @@
 					
 					price: {
 						rules: [{
-							required: true,
+							required: false,
 							errorMessage: '请输入发票金额',
 						}]
 					},
@@ -468,6 +492,8 @@
 				this.formData.newCarDocumentNumber = detail.newOwnerCardDocument
 				this.formData.oldCarOwnerAddress = detail.oldOwnerAddress
 				this.formData.newCarOwnerAddress = detail.newOwnerAddress
+				this.formData.oldCarDocumentType = detail.oldOwnerDocumentType
+				this.formData.newCarDocumentType = detail.newOwnerDocumentType
 				
 				this.oldCarBusinessType = detail.oldOwnerBusinessType
 				this.newCarBusinessType = detail.newOwnerBusinessType
@@ -483,6 +509,7 @@
 			}
 			this.$refs.form.setRules(this.rules)
 			this.initData()
+			console.log('onLoad')
 		},
 		mounted() {
 			if (!this.oldCarBusinessType || !this.newCarBusinessType) {
@@ -630,7 +657,6 @@
 	
 			//滚动时候触发,
 			bindMultiPickerColumnChange(e) {
-				console.log(e.detail.column, "e.detail.column表示是第几列表示是第几列")
 				if (e.detail.column === 0) {
 					this.initSelect(e.detail.value);
 					this.multiIndex[0] = e.detail.value;
@@ -640,8 +666,6 @@
 						this.multiIndex[1]
 					].name;
 				}
-				console.log('this.oneId', this.oneId) 
-				console.log('this.twoId', this.twoId)
 				this.$refs.form.setValue('immigrationAddress', this.oneId + ',' + this.twoId)
 				this.formData.immigrationAddress = this.oneId + ',' + this.twoId
 			},
@@ -663,9 +687,8 @@
 			},
 			// 点击确定时触发,这里点击处理自己的业务,应该就是拿到两个个id去请求
 			bindMultiPickerChange(e) {
-				// uni.request({
-				//     url: ``,
-				// })
+				this.$refs.form.setValue('immigrationAddress', this.oneId + ',' + this.twoId)
+				this.formData.immigrationAddress = this.oneId + ',' + this.twoId
 			},
 			deleteImage(index, imageList) {
 				imageList.splice(index, 1)
@@ -674,7 +697,14 @@
 			
 			chooseImageOldOwner: function() {
 				const that = this
-				const url = this.oldCarBusinessType === 'personal' ? '/api/v1/upload/idcard' : '/api/v1/upload/bizlicense'
+				let url = ''
+				if (this.oldCarBusinessType === 'personal' && this.formData.oldCarDocumentType === '1') {
+					url = '/api/v1/upload/idcard'
+				} else if (this.oldCarBusinessType === 'personal' && this.formData.oldCarDocumentType === '2') {
+					url = '/api/v1/upload/permit'
+				} else {
+					url = '/api/v1/upload/bizlicense'
+				}
 				uni.chooseImage({
 					count: 1,
 					sizeType: [],
@@ -699,8 +729,10 @@
 									})
 									this.oldOwnerImageList.push(resData.data.imageUrl)
 									this.formData.oldCarOwner = resData.data.Name
-									if (this.oldCarBusinessType === 'personal') {
+									if (this.oldCarBusinessType === 'personal' && this.formData.oldCarDocumentType === '1') {
 										this.formData.oldCarDocumentNumber = resData.data.IdNum
+									} else if (this.oldCarBusinessType === 'personal' && this.formData.oldCarDocumentType === '2') {
+										this.formData.oldCarDocumentNumber = resData.data.Number
 									} else {
 										this.formData.oldCarDocumentNumber = resData.data.RegNum
 									}
@@ -726,7 +758,14 @@
 			
 			chooseImageNewOwner: function() {
 				const that = this
-				const url = this.newCarBusinessType === 'personal' ? '/api/v1/upload/idcard' : '/api/v1/upload/bizlicense'
+				let url = ''
+				if (this.newCarBusinessType === 'personal' && this.formData.newCarDocumentType === '1') {
+					url = '/api/v1/upload/idcard'
+				} else if (this.newCarBusinessType === 'personal' && this.formData.newCarDocumentType === '2') {
+					url = '/api/v1/upload/permit'
+				} else {
+					url = '/api/v1/upload/bizlicense'
+				}
 				uni.chooseImage({
 					count: 1,
 					sizeType: [],
@@ -740,7 +779,6 @@
 							filePath: imageSrc,
 							name: 'image',
 							success: (res) => {
-								console.log(res)
 								uni.hideLoading()
 								const resData = JSON.parse(res.data)
 								if (resData.code === 200) {
@@ -751,9 +789,11 @@
 									})
 									this.newOwnerImageList.push(resData.data.imageUrl)
 									this.formData.newCarOwner = resData.data.Name
-									if (this.newCarBusinessType === 'personal') {
+									if (this.newCarBusinessType === 'personal' && this.formData.newCarDocumentType === '1') {
 										this.formData.newCarDocumentNumber = resData.data.IdNum
-									} else {
+									} else if (this.newCarBusinessType === 'personal' && this.formData.newCarDocumentType === '2') {
+										this.formData.newCarDocumentNumber = resData.data.Number
+									} else  {
 										this.formData.newCarDocumentNumber = resData.data.RegNum
 									}
 									this.formData.newCarOwnerAddress = resData.data.Address
@@ -977,6 +1017,11 @@
 				
 				this.$refs[form].submit()
 					.then((res) => {
+						if (this.oldCarBusinessType === 'personal' && !this.formData.price) {
+							uni.showToast({ title: '请输入发票金额', icon: "none" })
+							return
+						}
+						
 						if(!this.registerImageList.length) {
 							uni.showToast({ title: '请上传登记证图片', icon: "none" }) 
 							return
@@ -984,6 +1029,11 @@
 						
 						if(!this.statementImageList.length) {
 							uni.showToast({ title: '请上传声明照', icon: "none" }) 
+							return
+						}
+						
+						if(this.oldCarBusinessType === 'company' && !this.taxImageList.length) {
+							uni.showToast({ title: '请上传增值税发票照片', icon: "none" })
 							return
 						}
 						
@@ -1001,6 +1051,7 @@
 					})
 			},
 			create() {
+				console.log(this.formData)
 				uni.showLoading({
 					mask: true
 				})
@@ -1011,15 +1062,15 @@
 						immigrationAddress: this.formData.immigrationAddress,
 						newOwner: this.formData.newCarOwner,
 						newOwnerCardDocument: this.formData.newCarDocumentNumber,
-						newOwnerPhone: +this.formData.newOwnerPhone,
+						newOwnerPhone: this.formData.newOwnerPhone ? +this.formData.newOwnerPhone : '',
 						oldOwner: this.formData.oldCarOwner,
 						oldOwnerCardDocument: this.formData.oldCarDocumentNumber,
-						oldOwnerPhone: +this.formData.oldOwnerPhone,
+						oldOwnerPhone: this.formData.oldOwnerPhone ? +this.formData.oldOwnerPhone : '',
 						carType: this.formData.carType,
 						carId: this.formData.carId,
 						carNumber: this.formData.carNumber,
 						carname: this.formData.carname,
-						price: this.formData.price,
+						price: this.oldCarBusinessType != 'company' ? this.formData.price : '单位车金额根据增值税发票',
 						remark: this.formData.remark,
 						oldIdCardUrl: this.oldOwnerImageList[0],
 						newIdCardUrl: this.newOwnerImageList[0],
@@ -1031,7 +1082,9 @@
 						oldOwnerBusinessType: this.oldCarBusinessType,
 						newOwnerBusinessType: this.newCarBusinessType,
 						oldOwnerAddress: this.formData.oldCarOwnerAddress,
-						newOwnerAddress: this.formData.newCarOwnerAddress
+						newOwnerAddress: this.formData.newCarOwnerAddress,
+						oldOwnerDocumentType: this.formData.oldCarDocumentType,
+						newOwnerDocumentType: this.formData.newCarDocumentType
 					}
 				}).then((res) => {
 					uni.hideLoading()
@@ -1192,5 +1245,13 @@
 	.statementTipText {
 		color: red;
 		font-size: 24rpx;
+	}
+	
+	.upload-tip {
+		position: absolute;
+		left: 300rpx;
+		top: 90rpx;
+		font-size: 24rpx;
+		color: red;
 	}
 </style>

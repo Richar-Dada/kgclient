@@ -110,8 +110,11 @@
 						:value="multiIndex"
 						:range="multiArray"
 					>
-						<view class="picker picker-immigrant">
+						<view v-if="formData.immigrationAddress" class="picker picker-immigrant">
 							{{multiArray[0][multiIndex[0]]}} > {{multiArray[1][multiIndex[1]]}}
+						</view>
+						<view v-if="!formData.immigrationAddress" class="picker picker-immigrant">
+							-- --
 						</view>
 					</picker>
 				</uni-forms-item>
@@ -164,14 +167,14 @@
 					contactName: '',
 					contactPhone: '',
 					carname: '',
-					carId: "",
+					carId: "粤A",
 					carType: '',
 					carNumber: '',
 					engineNumber: '',
 					oldCarOwner: "",
 					newCarOwner: '',
 					remark: '',
-					immigrationAddress: '广东省,广州市',
+					immigrationAddress: '',
 					oldCarDocumentNumber: '',
 					newCarDocumentNumber: ''
 				},
@@ -410,7 +413,6 @@
 				
 			//滚动时候触发,
 			bindMultiPickerColumnChange(e) {
-				console.log(e.detail.column, "e.detail.column表示是第几列表示是第几列")
 				if (e.detail.column === 0) {
 					this.initSelect(e.detail.value);
 					this.multiIndex[0] = e.detail.value;
@@ -420,8 +422,6 @@
 						this.multiIndex[1]
 					].name;
 				}
-				console.log(this.oneId, "打印第一列id");
-				console.log(this.twoId, "打印第二列id");
 				this.formData.immigrationAddress = this.oneId + ',' + this.twoId
 			},
 			// 定义一个传入对应的'下标'为了拿到第一列id 和 第二列的name和id的方法
@@ -442,9 +442,8 @@
 			},
 			// 点击确定时触发,这里点击处理自己的业务,应该就是拿到两个个id去请求
 			bindMultiPickerChange(e) {
-				// uni.request({
-				//     url: ``,
-				// })
+				this.$refs.form.setValue('immigrationAddress', this.oneId + ',' + this.twoId)
+				this.formData.immigrationAddress = this.oneId + ',' + this.twoId
 			},
 			
 			goNotice() {
@@ -584,17 +583,20 @@
 			 * @param {Object} form
 			 */
 			submitForm(form) {
-				if (this.id) {
-					this.update(form)
-				} else {
-					const that = this
-					wx.requestSubscribeMessage({
-					  tmplIds: ['ZpSyU9MfuwmZryCO6UdkEOwd-YdHnRMdxY4SxEy-j5w'],
-					  complete () {
-						  that.create(form)
-					  }
+				this.$refs[form].submit()
+					.then((res) => {
+						if (this.id) {
+							this.update(form)
+						} else {
+							const that = this
+							wx.requestSubscribeMessage({
+							  tmplIds: ['ZpSyU9MfuwmZryCO6UdkEMirCIqSfMClD7HelhGjH_M'],
+							  complete () {
+								  that.create(form)
+							  }
+							})
+						}
 					})
-				}
 			},
 			change(name, value) {
 				this.formData.checked = value

@@ -1,5 +1,15 @@
 <template>
 	<view>
+		<uni-group title="其他信息" top="0">
+			<uni-list>
+				<uni-list-item title="状态" :rightText="detail.status"/>
+				<uni-list-item v-if="detail.failReason" title="失败原因" :rightText="detail.failReason"/>
+				<uni-list-item title="金额" :rightText="detail.price + '元'"/>
+				<uni-list-item title="支付状态" :rightText="detail.isPay === '0' ? '未支付' : '已支付'"/>
+				<uni-list-item title="备注" :rightText="detail.remark"/>
+			</uni-list>
+		</uni-group >
+			
 		<uni-group title="原车主信息" top="0">
 			<view class="uni-center" style="background:#FFFFFF; font-size:0;">
 				<image class="image" mode="widthFix" :src="detail.oldIdCardUrl" />
@@ -59,14 +69,7 @@
 			</view>
 		</uni-group >
 		
-		<uni-group title="其他信息" top="0">	
-			<uni-list>
-				<uni-list-item title="金额" :rightText="detail.price + '元'"/>
-				<uni-list-item title="状态" :rightText="detail.status"/>
-				<uni-list-item title="支付状态" :rightText="detail.isPay === '0' ? '未支付' : '已支付'"/>
-				<uni-list-item title="备注" :rightText="detail.remark"/>
-			</uni-list>
-		</uni-group >
+		
 	</view>
 </template>
 

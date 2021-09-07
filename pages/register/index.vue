@@ -18,7 +18,7 @@
 				</view>
 				<view >
 					<view class="icon-wrapper">
-						<uni-icons v-if="!isAgress" type="circle" color="#8f8f94" size="22" style="display: inline-block;" />
+						<uni-icons v-if="!isAgress" @click="goNotice" type="circle" color="#8f8f94" size="22" style="display: inline-block;" />
 						<uni-icons v-if="isAgress" @click="resetAgress" type="circle-filled" color="#007aff" size="22" style="display: inline-block;" />
 					</view>
 					<text class="notice-text" style="font-size: 36rpx;" @click="goNotice">同意用户服务协议</text>

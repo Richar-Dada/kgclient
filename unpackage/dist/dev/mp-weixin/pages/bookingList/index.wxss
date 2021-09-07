@@ -20,7 +20,8 @@
 	margin-right: 20rpx;
 	background-color: #FFFFFF;
 	height: 320rpx;
-	border-radius: 10rpx;
+	-webkit-border-radius: 10rpx;
+	        border-radius: 10rpx;
 	margin-bottom: 20rpx;
 }
 .list_item_header {
@@ -62,7 +63,8 @@
 }
 .btn {
 	background-color: #FFFFFF;
-	border-radius: 15px;
+	-webkit-border-radius: 15px;
+	        border-radius: 15px;
 	margin-left: 20rpx;
 	font-size: 20rpx;
 	margin-right: 0;
@@ -72,5 +74,10 @@
 }
 .status_text {
 	color: #007aff;
+}
+.date-clear-button {
+	position: absolute;
+	right: 40rpx;
+	top: 10rpx;
 }
 

@@ -73,11 +73,12 @@
 		},
 		onLoad() {
 			const that = this
-			uni.getUserInfo({
-				provider: 'weixin',
+			console.log('get')
+			uni.getUserProfile({
+				desc: '获取微信头像',
 				success: function(infoRes) {				
 					that.setWeixinUserInfo(infoRes.userInfo)
-					console.log(infoRes.userInfo)
+					console.log('333', infoRes.userInfo)
 				}
 			})
 			

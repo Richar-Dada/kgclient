@@ -7,6 +7,21 @@
 			<view>
 				<uni-search-bar  placeholder="品牌搜索" @confirm="searchCarName" cancelButton="none" clearButton="none" />
 			</view>
+			<view>
+				<view class="uni-list">
+					<view class="uni-list-cell">
+						<view class="uni-list-cell-left">
+							办理日期:
+						</view>
+						<view class="uni-list-cell-db">
+							<picker mode="date" :value="bookingDate" :start="startDate" :end="endDate" @change="bindDateChange">
+								<view class="uni-input">{{bookingDate}}</view>
+							</picker>
+							<button class="date-clear-button" type="default" size="mini" @click="clearDate">清除</button>
+						</view>
+					</view>
+				</view>
+			</view>
 		</view>
 		<block v-if="list.length">
 			<view v-for="(item, index) in list" :key="index" class="list-item">
@@ -58,13 +73,34 @@
 	let pageSize = 15
 	let current = 1
 	
+	function getDate(type) {
+		const date = new Date();
+
+		let year = date.getFullYear();
+		let month = date.getMonth() + 1;
+		let day = date.getDate();
+
+		if (type === 'start') {
+			year = year - 10;
+		} else if (type === 'end') {
+			year = year + 10;
+		}
+		month = month > 9 ? month : '0' + month;;
+		day = day > 9 ? day : '0' + day;
+
+		return `${year}-${month}-${day}`;
+	}
+	
 	export default {
 		data () {
 			return {
 				list: [],
 				status: 'more',
 				searchCarIdValue: '',
-				searchCarNameValue: ''
+				searchCarNameValue: '',
+				bookingDate: '请选择日期',
+				startDate: getDate('start'),
+				endDate: getDate('end'),
 			}
 		},
 		computed: {
@@ -101,6 +137,7 @@
 			})
 		},
 		onPullDownRefresh() {
+			current = 1
 			this.fetchData(true, () => {
 				uni.stopPullDownRefresh()
 			})
@@ -113,7 +150,8 @@
 			}
 			setTimeout(() => {
 				this.status = 'loading'
-				current += 1
+				current = +current + 1
+				console.log('current', current)
 				this.fetchData(false, () => {
 				});
 			}, 300);
@@ -128,6 +166,17 @@
 				this.searchCarNameValue = res.value
 				this.fetchData(true)
 			},
+			bindDateChange: function(e) {
+				this.bookingDate = e.detail.value
+				current = 1
+				this.fetchData(true)
+			},
+			clearDate(e) {
+				e.stopPropagation()
+				this.bookingDate = '请选择日期'
+				current = 1
+				this.fetchData(true)
+			},
 			fetchData(refresh, callback) {
 				this.$request({
 					url: '/api/v1/booking/query/wx',
@@ -137,7 +186,8 @@
 						current: current,
 						createBy: this.openid,
 						carId: this.searchCarIdValue,
-						carname: this.searchCarNameValue
+						carname: this.searchCarNameValue,
+						bookingDate: this.bookingDate === '请选择日期' ? '' : this.bookingDate
 					}
 				}).then((res) => {
 					if (res.code === 200) {
@@ -304,5 +354,11 @@
 	
 	.status_text {
 		color: #007aff;
+	}
+	
+	.date-clear-button {
+		position: absolute;
+		right: 40rpx;
+		top: 10rpx;
 	}
 </style>

@@ -383,7 +383,7 @@
 						} else {
 							const that = this
 							wx.requestSubscribeMessage({
-							  tmplIds: ['ZpSyU9MfuwmZryCO6UdkEOwd-YdHnRMdxY4SxEy-j5w'],
+							  tmplIds: ['ZpSyU9MfuwmZryCO6UdkEMirCIqSfMClD7HelhGjH_M'],
 							  complete () {
 								  that.create(form)
 							  }
