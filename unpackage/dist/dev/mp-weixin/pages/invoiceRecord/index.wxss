@@ -59,8 +59,7 @@
 	border-bottom: 1px solid #CCCCCC;
 }
 .business-panel {
-	-webkit-border-radius: 5px;
-	        border-radius: 5px;
+	border-radius: 5px;
 	background-color: #FFFFFF;
 }
 .example-info {

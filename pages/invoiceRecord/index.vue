@@ -336,7 +336,7 @@
 					oldOwnerPhone: '',
 					newOwnerPhone: '',
 					carname: '',
-					carId: "粤A",
+					carId: "",
 					carType: '',
 					carNumber: '',
 					engineNumber: '',
@@ -368,17 +368,9 @@
 					},
 					carId: {
 						rules: [{
-								format: "string"
-							},
-							{
-								validateFunction: function(rule, value, data, callback) {
-									console.log(value)
-									if (value.length < 6 || value.indexOf('粤A') === -1) {
-										callback('车牌号为：粤AXXXXX')
-									}
-									return true
-								}
-							}]
+							required: true,
+							errorMessage: '请输入车牌号',
+						}]
 					},
 					carType: {
 						rules: [{
@@ -844,18 +836,10 @@
 										this.formData.carname = frontInfo.Model
 										this.formData.carType = frontInfo.VehicleType
 										
-										if (frontInfo.PlateNo.indexOf('粤A') === -1) {
-											uni.showToast({
-												title: '只支持粤A车辆办理业务',
-												icon: 'none',
-												duration: 2000
-											})
-										} else {
-											uni.showToast({
-												title: '上传成功',
-												icon: 'success',
-											})
-										}
+										uni.showToast({
+											title: '上传成功',
+											icon: 'success',
+										})
 									}
 								} else {
 									uni.showToast({title: '图片有误，识别失败', icon:"none"})

@@ -50,8 +50,7 @@ image {
 	height: 20rpx;
 }
 .business-panel {
-	-webkit-border-radius: 5px;
-	        border-radius: 5px;
+	border-radius: 5px;
 	background-color: #FFFFFF;
 }
 .notice-wrapper {
