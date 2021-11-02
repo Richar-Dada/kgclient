@@ -321,7 +321,8 @@ var _vuex = __webpack_require__(/*! vuex */ 16);
 
 
 
-var _request = __webpack_require__(/*! ../../utils/request.js */ 18);function _toConsumableArray(arr) {return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();}function _nonIterableSpread() {throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}function _unsupportedIterableToArray(o, minLen) {if (!o) return;if (typeof o === "string") return _arrayLikeToArray(o, minLen);var n = Object.prototype.toString.call(o).slice(8, -1);if (n === "Object" && o.constructor) n = o.constructor.name;if (n === "Map" || n === "Set") return Array.from(o);if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);}function _iterableToArray(iter) {if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);}function _arrayWithoutHoles(arr) {if (Array.isArray(arr)) return _arrayLikeToArray(arr);}function _arrayLikeToArray(arr, len) {if (len == null || len > arr.length) len = arr.length;for (var i = 0, arr2 = new Array(len); i < len; i++) {arr2[i] = arr[i];}return arr2;}function ownKeys(object, enumerableOnly) {var keys = Object.keys(object);if (Object.getOwnPropertySymbols) {var symbols = Object.getOwnPropertySymbols(object);if (enumerableOnly) symbols = symbols.filter(function (sym) {return Object.getOwnPropertyDescriptor(object, sym).enumerable;});keys.push.apply(keys, symbols);}return keys;}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};if (i % 2) {ownKeys(Object(source), true).forEach(function (key) {_defineProperty(target, key, source[key]);});} else if (Object.getOwnPropertyDescriptors) {Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));} else {ownKeys(Object(source)).forEach(function (key) {Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));});}}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}var _default =
+var _request = __webpack_require__(/*! ../../utils/request.js */ 18);function _toConsumableArray(arr) {return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();}function _nonIterableSpread() {throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}function _unsupportedIterableToArray(o, minLen) {if (!o) return;if (typeof o === "string") return _arrayLikeToArray(o, minLen);var n = Object.prototype.toString.call(o).slice(8, -1);if (n === "Object" && o.constructor) n = o.constructor.name;if (n === "Map" || n === "Set") return Array.from(o);if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);}function _iterableToArray(iter) {if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);}function _arrayWithoutHoles(arr) {if (Array.isArray(arr)) return _arrayLikeToArray(arr);}function _arrayLikeToArray(arr, len) {if (len == null || len > arr.length) len = arr.length;for (var i = 0, arr2 = new Array(len); i < len; i++) {arr2[i] = arr[i];}return arr2;}function ownKeys(object, enumerableOnly) {var keys = Object.keys(object);if (Object.getOwnPropertySymbols) {var symbols = Object.getOwnPropertySymbols(object);if (enumerableOnly) symbols = symbols.filter(function (sym) {return Object.getOwnPropertyDescriptor(object, sym).enumerable;});keys.push.apply(keys, symbols);}return keys;}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};if (i % 2) {ownKeys(Object(source), true).forEach(function (key) {_defineProperty(target, key, source[key]);});} else if (Object.getOwnPropertyDescriptors) {Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));} else {ownKeys(Object(source)).forEach(function (key) {Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));});}}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}
+var addressArr = __webpack_require__(/*! ./address.js */ 286);var _default =
 
 {
   data: function data() {
@@ -535,55 +536,49 @@ var _request = __webpack_require__(/*! ../../utils/request.js */ 18);function _t
         urls: this.newOwnerImageList });
 
     },
-    initData: function initData() {var _this2 = this; //首次加载渲染 第一列 和 第二列数据
-      this.$request({
-        url: '/api/vi/address',
-        method: 'GET' }).
-      then(function (res) {
-        console.log('dd', res);
-        if (res.code === 200) {
-          _this2.address = res.data;
-          var arrOne = res.data.map(function (item) {
-            return item.name; // 此方法将第一列 '名称'分到一个新数组中
-          });
-          var arrTwo = res.data[18].children.map(function (item) {
-            return item.name; // 此方法将第二列'名称'分到一个新数组中
-          });
-          _this2.multiArray[0] = arrOne;
-          _this2.multiArray[1] = arrTwo;
+    initData: function initData() {//首次加载渲染 第一列 和 第二列数据
 
-          if (!_this2.id) {
-            var _arrTwo = res.data[18].children.map(function (item) {
-              return item.name; // 此方法将第二列'名称'分到一个新数组中
-            });
-            _this2.multiArray[0] = arrOne;
-            _this2.multiArray[1] = _arrTwo;
-            _this2.oneId = res.data[18].name;
-            _this2.twoId = res.data[18].children[0].name;
-          } else {
-            var imAddress = _this2.formData.immigrationAddress.split(',');
-
-            var firstIndex = res.data.findIndex(function (item) {
-              return item.name === imAddress[0];
-            });
-
-            var children = res.data[firstIndex].children;
-            var secondIndex = children.findIndex(function (item) {
-              return item.name === imAddress[1];
-            });
-
-            var _arrTwo2 = res.data[firstIndex].children.map(function (item) {
-              return item.name; // 此方法将第二列'名称'分到一个新数组中
-            });
-            _this2.multiArray[0] = arrOne;
-            _this2.multiArray[1] = _arrTwo2;
-
-            _this2.multiIndex = [firstIndex, secondIndex];
-            _this2.oneId = imAddress[0];
-            _this2.twoId = imAddress[1];
-          }
-        }
+      this.address = addressArr;
+      var arrOne = addressArr.map(function (item) {
+        return item.name; // 此方法将第一列 '名称'分到一个新数组中
       });
+      var arrTwo = addressArr[18].children.map(function (item) {
+        return item.name; // 此方法将第二列'名称'分到一个新数组中
+      });
+      this.multiArray[0] = arrOne;
+      this.multiArray[1] = arrTwo;
+
+      if (!this.id) {
+        var _arrTwo = addressArr[18].children.map(function (item) {
+          return item.name; // 此方法将第二列'名称'分到一个新数组中
+        });
+        this.multiArray[0] = arrOne;
+        this.multiArray[1] = _arrTwo;
+        this.oneId = addressArr[18].name;
+        this.twoId = addressArr[18].children[0].name;
+      } else {
+        var imAddress = this.formData.immigrationAddress.split(',');
+
+        var firstIndex = addressArr.findIndex(function (item) {
+          return item.name === imAddress[0];
+        });
+
+        var children = addressArr[firstIndex].children;
+        var secondIndex = children.findIndex(function (item) {
+          return item.name === imAddress[1];
+        });
+
+        var _arrTwo2 = addressArr[firstIndex].children.map(function (item) {
+          return item.name; // 此方法将第二列'名称'分到一个新数组中
+        });
+        this.multiArray[0] = arrOne;
+        this.multiArray[1] = _arrTwo2;
+
+        this.multiIndex = [firstIndex, secondIndex];
+        this.oneId = imAddress[0];
+        this.twoId = imAddress[1];
+      }
+
 
     },
 
@@ -636,7 +631,7 @@ var _request = __webpack_require__(/*! ../../utils/request.js */ 18);function _t
       }
     },
 
-    chooseImageNewOwner: function chooseImageNewOwner() {var _this3 = this;
+    chooseImageNewOwner: function chooseImageNewOwner() {var _this2 = this;
       var that = this;
       var url = this.newCarBusinessType === 'personal' ? '/api/v1/upload/idcard' : '/api/v1/upload/bizlicense';
       uni.chooseImage({
@@ -661,13 +656,13 @@ var _request = __webpack_require__(/*! ../../utils/request.js */ 18);function _t
                   icon: 'success',
                   duration: 1000 });
 
-                _this3.newOwnerImageList.push(resData.data.imageUrl);
-                _this3.formData.newCarOwner = resData.data.Name;
+                _this2.newOwnerImageList.push(resData.data.imageUrl);
+                _this2.formData.newCarOwner = resData.data.Name;
                 console.log('resData', resData);
-                if (_this3.newCarBusinessType === 'personal') {
-                  _this3.formData.newCarDocumentNumber = resData.data.IdNum;
+                if (_this2.newCarBusinessType === 'personal') {
+                  _this2.formData.newCarDocumentNumber = resData.data.IdNum;
                 } else {
-                  _this3.formData.newCarDocumentNumber = resData.data.RegNum;
+                  _this2.formData.newCarDocumentNumber = resData.data.RegNum;
                 }
               } else {
                 uni.showToast({ title: '图片有误，识别失败', icon: "none" });
@@ -688,7 +683,7 @@ var _request = __webpack_require__(/*! ../../utils/request.js */ 18);function _t
 
     },
 
-    chooseImageVehicleLicense: function chooseImageVehicleLicense() {var _this4 = this;
+    chooseImageVehicleLicense: function chooseImageVehicleLicense() {var _this3 = this;
       var that = this;
       uni.chooseImage({
         count: 1,
@@ -707,15 +702,15 @@ var _request = __webpack_require__(/*! ../../utils/request.js */ 18);function _t
               console.log(res);
               var resData = JSON.parse(res.data);
               if (resData.code === 200) {
-                _this4.vehicleLicenseImageList.push(resData.data.imageUrl);
+                _this3.vehicleLicenseImageList.push(resData.data.imageUrl);
                 var frontInfo = resData.data.FrontInfo;
                 if (frontInfo) {
-                  _this4.formData.carId = frontInfo.PlateNo;
-                  _this4.formData.carNumber = frontInfo.Vin;
-                  _this4.formData.carname = frontInfo.Model;
-                  _this4.formData.carType = frontInfo.VehicleType;
-                  _this4.formData.engineNumber = frontInfo.EngineNo;
-                  _this4.formData.oldCarOwner = frontInfo.Owner;
+                  _this3.formData.carId = frontInfo.PlateNo;
+                  _this3.formData.carNumber = frontInfo.Vin;
+                  _this3.formData.carname = frontInfo.Model;
+                  _this3.formData.carType = frontInfo.VehicleType;
+                  _this3.formData.engineNumber = frontInfo.EngineNo;
+                  _this3.formData.oldCarOwner = frontInfo.Owner;
 
                   if (frontInfo.PlateNo.indexOf('粤A') === -1) {
                     uni.showToast({
@@ -758,13 +753,13 @@ var _request = __webpack_require__(/*! ../../utils/request.js */ 18);function _t
         * 手动提交
         * @param {Object} form
         */
-    submitForm: function submitForm(form) {var _this5 = this;
+    submitForm: function submitForm(form) {var _this4 = this;
       this.$refs[form].submit().
       then(function (res) {
-        if (_this5.id) {
-          _this5.update(form);
+        if (_this4.id) {
+          _this4.update(form);
         } else {
-          var that = _this5;
+          var that = _this4;
           wx.requestSubscribeMessage({
             tmplIds: ['ZpSyU9MfuwmZryCO6UdkEMirCIqSfMClD7HelhGjH_M'],
             complete: function complete() {
@@ -778,40 +773,40 @@ var _request = __webpack_require__(/*! ../../utils/request.js */ 18);function _t
       this.formData.checked = value;
       this.$refs.form.setValue(name, value);
     },
-    create: function create(form) {var _this6 = this;
+    create: function create(form) {var _this5 = this;
       uni.showLoading({
         mask: true });
 
       this.$refs[form].submit().
       then(function (res) {
-        var dataArr = _this6.date.split(' ');
-        _this6.$request({
+        var dataArr = _this5.date.split(' ');
+        _this5.$request({
           url: '/api/v1/booking/create/wx',
           method: 'POST',
           data: {
             serviceType: '迁出提档',
             bookingDate: dataArr[0],
             bookingTime: dataArr[1],
-            contactName: _this6.formData.contactName,
-            contactPhone: _this6.formData.contactPhone,
-            carNumber: _this6.formData.carNumber,
-            carname: _this6.formData.carname,
-            carId: _this6.formData.carId,
-            carType: _this6.formData.carType,
-            engineNumber: _this6.formData.engineNumber,
-            oldCarOwner: _this6.formData.oldCarOwner,
-            newCarOwner: _this6.formData.newCarOwner,
-            immigrationAddress: _this6.formData.immigrationAddress,
-            newCarDocumentNumber: _this6.formData.newCarDocumentNumber,
-            oldCarDocumentType: _this6.oldCarBusinessType,
-            newCarDocumentType: _this6.newCarBusinessType,
-            remark: _this6.formData.remark,
+            contactName: _this5.formData.contactName,
+            contactPhone: _this5.formData.contactPhone,
+            carNumber: _this5.formData.carNumber,
+            carname: _this5.formData.carname,
+            carId: _this5.formData.carId,
+            carType: _this5.formData.carType,
+            engineNumber: _this5.formData.engineNumber,
+            oldCarOwner: _this5.formData.oldCarOwner,
+            newCarOwner: _this5.formData.newCarOwner,
+            immigrationAddress: _this5.formData.immigrationAddress,
+            newCarDocumentNumber: _this5.formData.newCarDocumentNumber,
+            oldCarDocumentType: _this5.oldCarBusinessType,
+            newCarDocumentType: _this5.newCarBusinessType,
+            remark: _this5.formData.remark,
             createTime: new Date().getTime(),
-            createBy: _this6.openid,
-            newIdCardUrl: _this6.newOwnerImageList.length && _this6.newOwnerImageList[0],
-            oldIdCardUrl: _this6.oldOwnerImageList.length && _this6.oldOwnerImageList[0],
-            vehicleLicenseUrl: _this6.vehicleLicenseImageList && _this6.vehicleLicenseImageList[0],
-            invoiceId: _this6.invoiceId } }).
+            createBy: _this5.openid,
+            newIdCardUrl: _this5.newOwnerImageList.length && _this5.newOwnerImageList[0],
+            oldIdCardUrl: _this5.oldOwnerImageList.length && _this5.oldOwnerImageList[0],
+            vehicleLicenseUrl: _this5.vehicleLicenseImageList && _this5.vehicleLicenseImageList[0],
+            invoiceId: _this5.invoiceId } }).
 
         then(function (res) {
           uni.hideLoading();
@@ -840,30 +835,30 @@ var _request = __webpack_require__(/*! ../../utils/request.js */ 18);function _t
         console.error('验证失败：', errors);
       });
     },
-    update: function update(form) {var _this7 = this;
+    update: function update(form) {var _this6 = this;
       uni.showLoading({
         mask: true });
 
       this.$refs[form].submit().
       then(function (res) {
-        _this7.$request({
-          url: '/api/v1/booking/update/wx/' + _this7.id,
+        _this6.$request({
+          url: '/api/v1/booking/update/wx/' + _this6.id,
           method: 'POST',
           data: {
-            carNumber: _this7.formData.carNumber,
-            carname: _this7.formData.carname,
-            carId: _this7.formData.carId,
-            carType: _this7.formData.carType,
-            engineNumber: _this7.formData.engineNumber,
-            oldCarOwner: _this7.formData.oldCarOwner,
-            newCarOwner: _this7.formData.newCarOwner,
-            immigrationAddress: _this7.formData.immigrationAddress,
-            oldCarDocumentNumber: _this7.formData.newCarDocumentNumber,
-            newCarDocumentNumber: _this7.formData.newCarDocumentNumber,
-            remark: _this7.formData.remark,
-            newIdCardUrl: _this7.newOwnerImageList.length && _this7.newOwnerImageList[0],
-            oldIdCardUrl: _this7.oldOwnerImageList.length && _this7.oldOwnerImageList[0],
-            vehicleLicenseUrl: _this7.vehicleLicenseImageList && _this7.vehicleLicenseImageList[0] } }).
+            carNumber: _this6.formData.carNumber,
+            carname: _this6.formData.carname,
+            carId: _this6.formData.carId,
+            carType: _this6.formData.carType,
+            engineNumber: _this6.formData.engineNumber,
+            oldCarOwner: _this6.formData.oldCarOwner,
+            newCarOwner: _this6.formData.newCarOwner,
+            immigrationAddress: _this6.formData.immigrationAddress,
+            oldCarDocumentNumber: _this6.formData.newCarDocumentNumber,
+            newCarDocumentNumber: _this6.formData.newCarDocumentNumber,
+            remark: _this6.formData.remark,
+            newIdCardUrl: _this6.newOwnerImageList.length && _this6.newOwnerImageList[0],
+            oldIdCardUrl: _this6.oldOwnerImageList.length && _this6.oldOwnerImageList[0],
+            vehicleLicenseUrl: _this6.vehicleLicenseImageList && _this6.vehicleLicenseImageList[0] } }).
 
         then(function (res) {
           uni.hideLoading();

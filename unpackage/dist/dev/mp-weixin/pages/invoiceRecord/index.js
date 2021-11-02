@@ -780,46 +780,40 @@ var graceChecker = __webpack_require__(/*! ../../common/graceChecker.js */ 41);v
               scope: 'scope.writePhotosAlbum', success: function success() {_this.saveImageToPhotosAlbum();}, fail: function fail() {uni.showToast({ title: "请打开保存相册权限，再点击保存相册分享", icon: "none", duration: 3000 });setTimeout(function () {uni.openSetting({ //调起客户端小程序设置界面,让用户开启访问相册
                     success: function success(res2) {// console.log(res2.authSetting)
                     } });}, 3000);} });}} });}, saveImageToPhotosAlbum: function saveImageToPhotosAlbum() {var url = this.newCarBusinessType === 'personal' ? '/static/statement_pensonal.png' : '/static/statement_company.png';uni.saveImageToPhotosAlbum({ filePath: url, success: function success(res2) {uni.hideLoading();uni.showToast({ title: '保存成功，请从相册查看', icon: "none", duration: 5000 });}, fail: function fail(err) {uni.hideLoading(); // console.log(err.errMsg);
-        } });}, showStatementExample: function showStatementExample() {var url = this.oldCarBusinessType === 'personal' ? 'https://carbase.oss-cn-shenzhen.aliyuncs.com/statement1.jpg' : 'https://carbase.oss-cn-shenzhen.aliyuncs.com/statement2.jpg';uni.previewImage({ urls: [url] });}, previewImageVehicleLicense: function previewImageVehicleLicense(e) {uni.previewImage({ urls: this.vehicleLicenseImageList });}, previewImageveOldOwner: function previewImageveOldOwner(e) {uni.previewImage({ urls: this.oldOwnerImageList });}, previewImageveNewOwner: function previewImageveNewOwner(e) {uni.previewImage({ urls: this.newOwnerImageList });}, previewImageveRegister: function previewImageveRegister(e) {uni.previewImage({ urls: this.registerImageList });}, previewImageveStatement: function previewImageveStatement(e) {uni.previewImage({ urls: this.statementImageList });}, previewImageveTax: function previewImageveTax(e) {uni.previewImage({ urls: this.taxImageList });}, initData: function initData() {var _this2 = this; //首次加载渲染 第一列 和 第二列数据
-      this.$request({ url: '/api/vi/address', method: 'GET' }).then(function (res) {console.log('dd', res);if (res.code === 200) {_this2.address = res.data;var arrOne = res.data.map(function (item) {return item.name; // 此方法将第一列 '名称'分到一个新数组中
-          });var arrTwo = res.data[18].children.map(function (item) {
-            return item.name; // 此方法将第二列'名称'分到一个新数组中
-          });
-          _this2.multiArray[0] = arrOne;
-          _this2.multiArray[1] = arrTwo;
+        } });}, showStatementExample: function showStatementExample() {var url = this.oldCarBusinessType === 'personal' ? 'https://carbase.oss-cn-shenzhen.aliyuncs.com/statement1.jpg' : 'https://carbase.oss-cn-shenzhen.aliyuncs.com/statement2.jpg';uni.previewImage({ urls: [url] });}, previewImageVehicleLicense: function previewImageVehicleLicense(e) {uni.previewImage({ urls: this.vehicleLicenseImageList });}, previewImageveOldOwner: function previewImageveOldOwner(e) {uni.previewImage({ urls: this.oldOwnerImageList });}, previewImageveNewOwner: function previewImageveNewOwner(e) {uni.previewImage({ urls: this.newOwnerImageList });}, previewImageveRegister: function previewImageveRegister(e) {uni.previewImage({ urls: this.registerImageList });}, previewImageveStatement: function previewImageveStatement(e) {uni.previewImage({ urls: this.statementImageList });}, previewImageveTax: function previewImageveTax(e) {uni.previewImage({ urls: this.taxImageList });}, initData: function initData() {//首次加载渲染 第一列 和 第二列数据
+      this.address = addressArr;var arrOne = addressArr.map(function (item) {return item.name; // 此方法将第一列 '名称'分到一个新数组中
+      });var arrTwo = addressArr[18].children.map(function (item) {return item.name; // 此方法将第二列'名称'分到一个新数组中
+      });this.multiArray[0] = arrOne;this.multiArray[1] = arrTwo;if (!this.id) {
+        var _arrTwo = addressArr[18].children.map(function (item) {
+          return item.name; // 此方法将第二列'名称'分到一个新数组中
+        });
+        this.multiArray[0] = arrOne;
+        this.multiArray[1] = _arrTwo;
+        this.oneId = addressArr[18].name;
+        this.twoId = addressArr[18].children[0].name;
+      } else {
+        var imAddress = this.formData.immigrationAddress.split(',');
 
-          if (!_this2.id) {
-            var _arrTwo = res.data[18].children.map(function (item) {
-              return item.name; // 此方法将第二列'名称'分到一个新数组中
-            });
-            _this2.multiArray[0] = arrOne;
-            _this2.multiArray[1] = _arrTwo;
-            _this2.oneId = res.data[18].name;
-            _this2.twoId = res.data[18].children[0].name;
-          } else {
-            var imAddress = _this2.formData.immigrationAddress.split(',');
+        var firstIndex = addressArr.findIndex(function (item) {
+          return item.name === imAddress[0];
+        });
 
-            var firstIndex = res.data.findIndex(function (item) {
-              return item.name === imAddress[0];
-            });
+        var children = addressArr[firstIndex].children;
+        var secondIndex = children.findIndex(function (item) {
+          return item.name === imAddress[1];
+        });
 
-            var children = res.data[firstIndex].children;
-            var secondIndex = children.findIndex(function (item) {
-              return item.name === imAddress[1];
-            });
+        var _arrTwo2 = addressArr[firstIndex].children.map(function (item) {
+          return item.name; // 此方法将第二列'名称'分到一个新数组中
+        });
+        this.multiArray[0] = arrOne;
+        this.multiArray[1] = _arrTwo2;
 
-            var _arrTwo2 = res.data[firstIndex].children.map(function (item) {
-              return item.name; // 此方法将第二列'名称'分到一个新数组中
-            });
-            _this2.multiArray[0] = arrOne;
-            _this2.multiArray[1] = _arrTwo2;
+        this.multiIndex = [firstIndex, secondIndex];
+        this.oneId = imAddress[0];
+        this.twoId = imAddress[1];
+      }
 
-            _this2.multiIndex = [firstIndex, secondIndex];
-            _this2.oneId = imAddress[0];
-            _this2.twoId = imAddress[1];
-          }
-        }
-      });
 
     },
 
@@ -863,7 +857,7 @@ var graceChecker = __webpack_require__(/*! ../../common/graceChecker.js */ 41);v
       imageList = _toConsumableArray(imageList);
     },
 
-    chooseImageOldOwner: function chooseImageOldOwner() {var _this3 = this;
+    chooseImageOldOwner: function chooseImageOldOwner() {var _this2 = this;
       var that = this;
       var url = '';
       if (this.oldCarBusinessType === 'personal' && this.formData.oldCarDocumentType === '1') {
@@ -895,16 +889,16 @@ var graceChecker = __webpack_require__(/*! ../../common/graceChecker.js */ 41);v
                   icon: 'success',
                   duration: 1000 });
 
-                _this3.oldOwnerImageList.push(resData.data.imageUrl);
-                _this3.formData.oldCarOwner = resData.data.Name;
-                if (_this3.oldCarBusinessType === 'personal' && _this3.formData.oldCarDocumentType === '1') {
-                  _this3.formData.oldCarDocumentNumber = resData.data.IdNum;
-                } else if (_this3.oldCarBusinessType === 'personal' && _this3.formData.oldCarDocumentType === '2') {
-                  _this3.formData.oldCarDocumentNumber = resData.data.Number;
+                _this2.oldOwnerImageList.push(resData.data.imageUrl);
+                _this2.formData.oldCarOwner = resData.data.Name;
+                if (_this2.oldCarBusinessType === 'personal' && _this2.formData.oldCarDocumentType === '1') {
+                  _this2.formData.oldCarDocumentNumber = resData.data.IdNum;
+                } else if (_this2.oldCarBusinessType === 'personal' && _this2.formData.oldCarDocumentType === '2') {
+                  _this2.formData.oldCarDocumentNumber = resData.data.Number;
                 } else {
-                  _this3.formData.oldCarDocumentNumber = resData.data.RegNum;
+                  _this2.formData.oldCarDocumentNumber = resData.data.RegNum;
                 }
-                _this3.formData.oldCarOwnerAddress = resData.data.Address;
+                _this2.formData.oldCarOwnerAddress = resData.data.Address;
               } else {
                 uni.showToast({ title: '图片有误，识别失败', icon: "none" });
               }
@@ -924,7 +918,7 @@ var graceChecker = __webpack_require__(/*! ../../common/graceChecker.js */ 41);v
 
     },
 
-    chooseImageNewOwner: function chooseImageNewOwner() {var _this4 = this;
+    chooseImageNewOwner: function chooseImageNewOwner() {var _this3 = this;
       var that = this;
       var url = '';
       if (this.newCarBusinessType === 'personal' && this.formData.newCarDocumentType === '1') {
@@ -955,16 +949,16 @@ var graceChecker = __webpack_require__(/*! ../../common/graceChecker.js */ 41);v
                   icon: 'success',
                   duration: 1000 });
 
-                _this4.newOwnerImageList.push(resData.data.imageUrl);
-                _this4.formData.newCarOwner = resData.data.Name;
-                if (_this4.newCarBusinessType === 'personal' && _this4.formData.newCarDocumentType === '1') {
-                  _this4.formData.newCarDocumentNumber = resData.data.IdNum;
-                } else if (_this4.newCarBusinessType === 'personal' && _this4.formData.newCarDocumentType === '2') {
-                  _this4.formData.newCarDocumentNumber = resData.data.Number;
+                _this3.newOwnerImageList.push(resData.data.imageUrl);
+                _this3.formData.newCarOwner = resData.data.Name;
+                if (_this3.newCarBusinessType === 'personal' && _this3.formData.newCarDocumentType === '1') {
+                  _this3.formData.newCarDocumentNumber = resData.data.IdNum;
+                } else if (_this3.newCarBusinessType === 'personal' && _this3.formData.newCarDocumentType === '2') {
+                  _this3.formData.newCarDocumentNumber = resData.data.Number;
                 } else {
-                  _this4.formData.newCarDocumentNumber = resData.data.RegNum;
+                  _this3.formData.newCarDocumentNumber = resData.data.RegNum;
                 }
-                _this4.formData.newCarOwnerAddress = resData.data.Address;
+                _this3.formData.newCarOwnerAddress = resData.data.Address;
               } else {
                 uni.showToast({ title: '图片有误，识别失败', icon: "none" });
               }
@@ -984,7 +978,7 @@ var graceChecker = __webpack_require__(/*! ../../common/graceChecker.js */ 41);v
 
     },
 
-    chooseImageVehicleLicense: function chooseImageVehicleLicense() {var _this5 = this;
+    chooseImageVehicleLicense: function chooseImageVehicleLicense() {var _this4 = this;
       var that = this;
       uni.chooseImage({
         count: 1,
@@ -1003,14 +997,14 @@ var graceChecker = __webpack_require__(/*! ../../common/graceChecker.js */ 41);v
               uni.hideLoading();
               var resData = JSON.parse(res.data);
               if (resData.code === 200) {
-                _this5.vehicleLicenseImageList.push(resData.data.imageUrl);
+                _this4.vehicleLicenseImageList.push(resData.data.imageUrl);
                 console.log(resData);
                 var frontInfo = resData.data.FrontInfo;
                 if (frontInfo) {
-                  _this5.formData.carId = frontInfo.PlateNo;
-                  _this5.formData.carNumber = frontInfo.Vin;
-                  _this5.formData.carname = frontInfo.Model;
-                  _this5.formData.carType = frontInfo.VehicleType;
+                  _this4.formData.carId = frontInfo.PlateNo;
+                  _this4.formData.carNumber = frontInfo.Vin;
+                  _this4.formData.carname = frontInfo.Model;
+                  _this4.formData.carType = frontInfo.VehicleType;
 
                   uni.showToast({
                     title: '上传成功',
@@ -1035,7 +1029,7 @@ var graceChecker = __webpack_require__(/*! ../../common/graceChecker.js */ 41);v
         } });
 
     },
-    chooseImageRegister: function chooseImageRegister() {var _this6 = this;
+    chooseImageRegister: function chooseImageRegister() {var _this5 = this;
       var that = this;
       uni.chooseImage({
         count: 9,
@@ -1059,7 +1053,7 @@ var graceChecker = __webpack_require__(/*! ../../common/graceChecker.js */ 41);v
                     icon: 'success',
                     duration: 1000 });
 
-                  _this6.registerImageList.push(resData.data[0]);
+                  _this5.registerImageList.push(resData.data[0]);
                 } else {
                   uni.showToast({ title: '图片上传失败', icon: "none" });
                 }
@@ -1078,7 +1072,7 @@ var graceChecker = __webpack_require__(/*! ../../common/graceChecker.js */ 41);v
         } });
 
     },
-    chooseImageStatement: function chooseImageStatement() {var _this7 = this;
+    chooseImageStatement: function chooseImageStatement() {var _this6 = this;
       var that = this;
       uni.chooseImage({
         count: 1,
@@ -1103,7 +1097,7 @@ var graceChecker = __webpack_require__(/*! ../../common/graceChecker.js */ 41);v
                   duration: 1000 });
 
                 console.log(resData);
-                _this7.statementImageList.push(resData.data[0]);
+                _this6.statementImageList.push(resData.data[0]);
               } else {
                 uni.showToast({ title: '图片上传失败', icon: "none" });
               }
@@ -1121,7 +1115,7 @@ var graceChecker = __webpack_require__(/*! ../../common/graceChecker.js */ 41);v
         } });
 
     },
-    chooseImageTax: function chooseImageTax() {var _this8 = this;
+    chooseImageTax: function chooseImageTax() {var _this7 = this;
       var that = this;
       uni.chooseImage({
         count: 1,
@@ -1146,7 +1140,7 @@ var graceChecker = __webpack_require__(/*! ../../common/graceChecker.js */ 41);v
                   duration: 1000 });
 
                 console.log(resData);
-                _this8.taxImageList.push(resData.data[0]);
+                _this7.taxImageList.push(resData.data[0]);
               } else {
                 uni.showToast({ title: '图片上传失败', icon: "none" });
               }
@@ -1173,34 +1167,34 @@ var graceChecker = __webpack_require__(/*! ../../common/graceChecker.js */ 41);v
       }
     },
 
-    submitForm: function submitForm(form) {var _this9 = this;
+    submitForm: function submitForm(form) {var _this8 = this;
 
       this.$refs[form].submit().
       then(function (res) {
-        if (_this9.oldCarBusinessType === 'personal' && !_this9.formData.price) {
+        if (_this8.oldCarBusinessType === 'personal' && !_this8.formData.price) {
           uni.showToast({ title: '请输入发票金额', icon: "none" });
           return;
         }
 
-        if (!_this9.registerImageList.length) {
+        if (!_this8.registerImageList.length) {
           uni.showToast({ title: '请上传登记证图片', icon: "none" });
           return;
         }
 
-        if (!_this9.statementImageList.length) {
+        if (!_this8.statementImageList.length) {
           uni.showToast({ title: '请上传声明照', icon: "none" });
           return;
         }
 
-        if (_this9.oldCarBusinessType === 'company' && !_this9.taxImageList.length) {
+        if (_this8.oldCarBusinessType === 'company' && !_this8.taxImageList.length) {
           uni.showToast({ title: '请上传增值税发票照片', icon: "none" });
           return;
         }
 
-        if (_this9.id) {
-          _this9.update();
+        if (_this8.id) {
+          _this8.update();
         } else {
-          var that = _this9;
+          var that = _this8;
           wx.requestSubscribeMessage({
             tmplIds: ['fjkHU8-cHQ5o6BEND7EQVfvEThwepPQ74ESoXcALWCo'],
             complete: function complete() {

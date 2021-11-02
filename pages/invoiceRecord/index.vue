@@ -596,54 +596,48 @@
 				})
 			},
 			initData() { //首次加载渲染 第一列 和 第二列数据
-				this.$request({
-					url: '/api/vi/address',
-					method: 'GET'
-				}).then((res) => {
-					console.log('dd', res)
-					if (res.code === 200) {
-						this.address = res.data
-						const arrOne = res.data.map(item => {
-							return item.name; // 此方法将第一列 '名称'分到一个新数组中
-						});
-						const arrTwo = res.data[18].children.map(item => {
-							return item.name; // 此方法将第二列'名称'分到一个新数组中
-						});
-						this.multiArray[0] = arrOne;
-						this.multiArray[1] = arrTwo;
-						
-						if (!this.id) {
-							const arrTwo = res.data[18].children.map(item => {
-								return item.name; // 此方法将第二列'名称'分到一个新数组中
-							});
-							this.multiArray[0] = arrOne;
-							this.multiArray[1] = arrTwo;
-							this.oneId = res.data[18].name;
-							this.twoId = res.data[18].children[0].name;
-						} else {
-							const imAddress = this.formData.immigrationAddress.split(',')
-							
-							const firstIndex = res.data.findIndex((item) => {
-								return item.name === imAddress[0]
-							})
-							
-							const children = res.data[firstIndex].children
-							const secondIndex = children.findIndex((item) => {
-								return item.name === imAddress[1]
-							})
-							
-							const arrTwo = res.data[firstIndex].children.map(item => {
-								return item.name; // 此方法将第二列'名称'分到一个新数组中
-							});
-							this.multiArray[0] = arrOne;
-							this.multiArray[1] = arrTwo;
-							
-							this.multiIndex = [firstIndex, secondIndex]
-							this.oneId = imAddress[0]
-							this.twoId = imAddress[1]
-						}
-					}
-				})
+				
+				this.address = addressArr
+				const arrOne = addressArr.map(item => {
+					return item.name; // 此方法将第一列 '名称'分到一个新数组中
+				});
+				const arrTwo = addressArr[18].children.map(item => {
+					return item.name; // 此方法将第二列'名称'分到一个新数组中
+				});
+				this.multiArray[0] = arrOne;
+				this.multiArray[1] = arrTwo;
+				
+				if (!this.id) {
+					const arrTwo = addressArr[18].children.map(item => {
+						return item.name; // 此方法将第二列'名称'分到一个新数组中
+					});
+					this.multiArray[0] = arrOne;
+					this.multiArray[1] = arrTwo;
+					this.oneId = addressArr[18].name;
+					this.twoId = addressArr[18].children[0].name;
+				} else {
+					const imAddress = this.formData.immigrationAddress.split(',')
+					
+					const firstIndex = addressArr.findIndex((item) => {
+						return item.name === imAddress[0]
+					})
+					
+					const children = addressArr[firstIndex].children
+					const secondIndex = children.findIndex((item) => {
+						return item.name === imAddress[1]
+					})
+					
+					const arrTwo = addressArr[firstIndex].children.map(item => {
+						return item.name; // 此方法将第二列'名称'分到一个新数组中
+					});
+					this.multiArray[0] = arrOne;
+					this.multiArray[1] = arrTwo;
+					
+					this.multiIndex = [firstIndex, secondIndex]
+					this.oneId = imAddress[0]
+					this.twoId = imAddress[1]
+				}
+				
 				
 			},
 	
