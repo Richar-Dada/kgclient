@@ -110,7 +110,7 @@
 							uni.$emit('BandSuccess')
 							setTimeout(() => { uni.navigateBack() }, 2000)
 						} else {
-							uni.showToast({title: res.msg, icon:"none", duration: 3000});
+							uni.showToast({title: res.msg, duration: 3000});
 						}
 					})
 				}else{
