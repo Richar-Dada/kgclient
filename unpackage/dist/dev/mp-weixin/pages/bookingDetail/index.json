@@ -1,8 +1,0 @@
-{
-  "navigationBarTitleText": "预约详情",
-  "usingComponents": {
-    "uni-group": "/components/uni-group/uni-group",
-    "uni-list": "/components/uni-list/uni-list",
-    "uni-list-item": "/components/uni-list-item/uni-list-item"
-  }
-}
