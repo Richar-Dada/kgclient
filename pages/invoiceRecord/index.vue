@@ -186,16 +186,19 @@
 						<uni-easyinput type="digit" v-model="formData.price" :disabled="oldCarBusinessType === 'company'" :placeholder="oldCarBusinessType != 'company' ? '请填写发票金额':'单位车金额根据增值税发票'"></uni-easyinput>
 					</uni-forms-item>
 					
+					
+					
 					<uni-forms-item name="remark" label="备注">
 						<uni-easyinput type="text" v-model="formData.remark" placeholder="如有特殊情况请备注"></uni-easyinput>
 					</uni-forms-item>
+					
 				</uni-group>
 				
 				<view class="uni-list list-pd">
 					<view class="uni-list-cell cell-pd">
 						<view class="uni-uploader">
 							<view class="uni-uploader-head upload-header">
-								<view class="uni-uploader-title">点击上传登记证(有打印内容页面)
+								<view class="uni-uploader-title">上传登记证(有打印内容页面)
 									<text style="color: red;">*</text>
 								</view>
 								<view class="uni-uploader-info">{{registerImageList.length}}/9</view>
@@ -223,8 +226,8 @@
 					<view class="uni-list-cell cell-pd">
 						<view class="uni-uploader">
 							<view class="uni-uploader-head upload-header">
-								<view class="uni-uploader-title">点击上传声明照
-									<text style="color: red;">*</text>
+								<view class="uni-uploader-title">上传声明照
+								<text style="color: red;">*</text>
 								</view>
 								<view class="uni-uploader-info">1/1</view>
 							</view>
@@ -234,7 +237,9 @@
 								<text class="statementTipText" style="margin-left: 50rpx;" @click="savePoster">下载模板</text>
 							</view>
 							
-							<view class="uni-uploader-body upload-body">
+							<uni-data-checkbox v-model="formData.hasStatement" :localdata="statementType" />
+														
+							<view class="uni-uploader-body upload-body"  v-if="formData.hasStatement === 'false'">
 								<view class="uni-uploader__files">
 									<block v-for="(image,index) in statementImageList" :key="index">
 										<view class="uni-uploader__file">
@@ -258,7 +263,7 @@
 						<view class="uni-uploader">
 							<view class="uni-uploader-head upload-header">
 								<view class="uni-uploader-title">
-									点击上传增值税发票(公司车需要)
+									上传增值税发票(公司车需要)
 									<text style="color: red;">*</text>
 								</view>
 								<view class="uni-uploader-info">1/1</view>
@@ -348,10 +353,19 @@
 					oldCarDocumentNumber: '',
 					newCarDocumentNumber: '',
 					oldCarOwnerAddress: '广东省,广州市',
+
 					newCarOwnerAddress: '',
 					oldCarDocumentType: '1', // 1 身份证/营业执照  2 港澳通行证  3 其他
-					newCarDocumentType: '1'
+					newCarDocumentType: '1',
+					hasStatement: ''
 				},
+				statementType:[{
+					text: '已通过人脸核身',
+					value: 'true'
+				}, {
+					text: '未通过人脸核身，上传声明照',
+					value: 'false'
+				}],
 				businessType: [{
 					text: '个人',
 					value: 'personal'
@@ -450,6 +464,12 @@
 					},
 					remark: {
 						rules: []
+					},
+					hasStatement: {
+						rules: [{
+							required: true,
+							errorMessage: '请选择人脸核身情况',
+						}]
 					}
 				}
 			}
@@ -479,6 +499,7 @@
 				this.formData.newCarOwner = detail.newOwner
 				this.formData.price = detail.price
 				this.formData.remark = detail.remark
+				this.formData.hasStatement = detail.hasStatement
 				this.formData.immigrationAddress = detail.immigrationAddress
 				this.formData.oldCarDocumentNumber = detail.oldOwnerCardDocument
 				this.formData.newCarDocumentNumber = detail.newOwnerCardDocument
@@ -1005,7 +1026,8 @@
 							return
 						}
 						
-						if(!this.statementImageList.length) {
+						console.log('submitForm', this.formData.hasStatement)
+						if(this.formData.hasStatement === 'false' && !this.statementImageList.length) {
 							uni.showToast({ title: '请上传声明照', icon: "none" }) 
 							return
 						}
@@ -1050,6 +1072,7 @@
 						carname: this.formData.carname,
 						price: this.oldCarBusinessType != 'company' ? this.formData.price : '单位车金额根据增值税发票',
 						remark: this.formData.remark,
+						hasStatement: this.formData.hasStatement,
 						oldIdCardUrl: this.oldOwnerImageList[0],
 						newIdCardUrl: this.newOwnerImageList[0],
 						vehicleLicenseUrl: this.vehicleLicenseImageList[0],
@@ -1103,6 +1126,7 @@
 						carname: this.formData.carname,
 						price: this.formData.price,
 						remark: this.formData.remark,
+						hasStatement: this.formData.hasStatement,
 						oldIdCardUrl: this.oldOwnerImageList[0],
 						newIdCardUrl: this.newOwnerImageList[0],
 						vehicleLicenseUrl: this.vehicleLicenseImageList[0],
