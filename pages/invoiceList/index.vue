@@ -24,7 +24,7 @@
 				</view>
 				<view class="list_item_footer">
 					<button class="btn btn-delete" v-if="item.status === '未完成' && item.isPay === '0'"  size="mini" @click="deleteConfirm(item.id)">删除</button>
-					<button class="btn btn-pay" v-if="item.isPay === '0'" size="mini" @click="goPayment(item.pid)">支付</button>
+					<button class="btn btn-pay" v-if="item.isPay === '0'" size="mini" @click="goPayment(item.pid, item.carId)">支付</button>
 					<button class="btn btn-detail" type="default" v-if="!item.booking"  size="mini" @click="gobooking(item.id)">预约</button>
 					<button class="btn btn-update" v-if="item.status === '未完成'" size="mini" @click="goUpdate(index)">修改</button>
 					<button class="btn btn-detail"  size="mini" @click="goDetail(item.id)">详情</button>
@@ -135,7 +135,6 @@
 			})
 		},
 		onReachBottom() {
-			console.log("onReachBottom");
 			if (this.list.length >= count) {
 				this.loadMoreText = "没有更多数据了!"
 				return;
@@ -149,7 +148,6 @@
 		},
 		methods: {
 			searchCarId(res) {
-				console.log(res)
 				this.searchCarIdValue = res.value
 				this.fetchData(true)
 			},
@@ -203,7 +201,6 @@
 						current = res.data.current
 						count = res.data.count
 						this.status = list.length < count ? 'more' : 'noMore'
-						console.log(this.status)
 					} else {
 						uni.showToast({title: res.msg, icon: "none", duration: 3000})
 					}
@@ -256,9 +253,10 @@
 					}
 				})
 			},
-			goPayment(pid) {
+			goPayment(pid, carId) {
+				const payPrice = carId.indexOf('粤A') > -1 ? 50 : 150
 				uni.navigateTo({
-					url: '../payment/index?pid=' + pid
+					url: '../payment/index?pid=' + pid + '&payPrice=' +  payPrice
 				})
 			},
 		}

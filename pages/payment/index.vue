@@ -30,7 +30,7 @@
 			return {
 				title: 'request-payment',
 				loading: false,
-				price: process.env.NODE_ENV === 'development' ? 0.1 : 50,
+				price: 0,
 				providerList: [],
 				id: ''
 			}
@@ -40,6 +40,11 @@
 		},
 		onLoad: function(option) {
 			this.id = option.pid
+			if (process.env.NODE_ENV === 'development') {
+				this.price = option.payPrice === 50 ? 0.1 : 0.2
+			} else {
+				this.price = option.payPrice
+			}
 		},
 		methods: {
 			async weixinPay() {
@@ -86,6 +91,7 @@
 						reject(new Error('请输入金额'))
 					}
 					//这里服务端基于uniCloud unipay云函数实现，详情参考：https://uniapp.dcloud.net.cn/uniCloud/unipay
+					
 					uni.request({
 						method: 'POST',
 						url: baseUrl + '/api/v1/wechatpay/createorder',
@@ -97,7 +103,6 @@
 						},
 						success(res) {
 							if (res.data.code === 200) {
-								console.log('--',res)
 								resolve(res.data.data)
 							} else {
 								reject(new Error('获取支付信息失败' + res.data.msg))
@@ -110,7 +115,6 @@
 				})
 			},
 			priceChange(e) {
-				console.log(e.detail.value)
 				this.price = e.detail.value;
 			}
 		}

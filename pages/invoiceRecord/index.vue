@@ -1070,8 +1070,10 @@
 						uni.showToast({title:"登记成功", icon:"success"});
 						uni.$emit('inoviceCreate')
 						setTimeout(() => {
+							const payPrice = this.formData.carId.indexOf('粤A') > -1 ? 50 : 150
+							console.log('dd', this.formData.carId, this.formData.carId.indexOf('粤A') > -1)
 							uni.redirectTo({
-								url: '../payment/index?pid=' + res.data.pid
+								url: '../payment/index?pid=' + res.data.pid + '&payPrice=' +  payPrice
 							})
 						}, 1000)
 					} else {
