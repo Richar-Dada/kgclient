@@ -1026,8 +1026,7 @@
 							return
 						}
 						
-						console.log('submitForm', this.formData.hasStatement)
-						if(this.formData.hasStatement === 'false' && !this.statementImageList.length) {
+						if(this.formData.hasStatement === '' || this.formData.hasStatement === 'false' && !this.statementImageList.length) {
 							uni.showToast({ title: '请上传声明照', icon: "none" }) 
 							return
 						}
