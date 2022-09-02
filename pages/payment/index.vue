@@ -30,7 +30,7 @@
 			return {
 				title: 'request-payment',
 				loading: false,
-				price: 0,
+				price: 1000000,
 				providerList: [],
 				id: ''
 			}
@@ -40,11 +40,9 @@
 		},
 		onLoad: function(option) {
 			this.id = option.pid
-			if (process.env.NODE_ENV === 'development') {
-				this.price = option.payPrice === 50 ? 0.1 : 0.2
-			} else {
-				this.price = option.payPrice
-			}
+		},
+		mounted() {
+			this.getPrice(this.id)
 		},
 		methods: {
 			async weixinPay() {
@@ -112,6 +110,31 @@
 							reject(new Error('请求支付接口失败' + err))
 						}
 					})
+				})
+			},
+			
+			getPrice(pid) {
+				const that = this
+				uni.showLoading()
+				
+				uni.request({
+					method: 'GET',
+					url: baseUrl + '/api/v1/payprice/invoice?pid=' + pid,
+					success(res) {
+						uni.hideLoading()
+						if (res.data.code === 200) {
+							that.price = res.data.data.price
+						} else {
+							uni.showToast({
+								icon: 'none',
+								content: res.data.msg,
+								duration: 3000
+							})
+						}
+					},
+					fail(err) {
+						uni.hideLoading()
+					}
 				})
 			},
 			priceChange(e) {

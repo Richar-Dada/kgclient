@@ -13,7 +13,7 @@
 			<form bindsubmit="formSubmit">
 				<button type="default" @click="handleButtonClick('guohu')" :disabled="!guohuOpen">市内过户</button>
 				<button type="default" @click="handleButtonClick('qianchu')" :disabled="!qianchuOpen" >迁出提档</button>
-				<button type="default" @click="handleButtonClick('invoice')" :disabled="!invoiceOpen">发票服务</button>
+				<button type="default" @click="handleButtonClick('invoice')" :disabled="!invoiceOpen">车辆鉴定评估 <view class="fapiao_sub">(交易发票)</view> </button>
 			</form>
 		</view>
 	</view>
@@ -145,5 +145,11 @@
 	}
 	image {
 		width: 100%;
+	}
+	
+	.fapiao_sub {
+		margin-top: -20rpx;
+		padding-bottom: 20rpx;
+		color: red;
 	}
 </style>
