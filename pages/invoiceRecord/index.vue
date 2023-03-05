@@ -1044,18 +1044,13 @@
 					if (res.code === 200) {
 						uni.showToast({title:"登记成功", icon:"success"});
 						uni.$emit('inoviceCreate')
-						// 暂时屏蔽
-						// setTimeout(() => {
-						// 	const payPrice = this.formData.carId.indexOf('粤A') > -1 ? 50 : 150
-						// 	console.log('dd', this.formData.carId, this.formData.carId.indexOf('粤A') > -1)
-						// 	uni.redirectTo({
-						// 		url: '../payment/index?pid=' + res.data.pid + '&payPrice=' +  payPrice
-						// 	})
-						// }, 1000)
-						
-						uni.redirectTo({
-							url: '../invoiceList/index'
-						})
+						setTimeout(() => {
+							const payPrice = this.formData.carId.indexOf('粤A') > -1 ? 50 : 150
+							console.log('dd', this.formData.carId, this.formData.carId.indexOf('粤A') > -1)
+							uni.redirectTo({
+								url: '../payment/index?pid=' + res.data.pid + '&payPrice=' +  payPrice
+							})
+						}, 1000)
 					} else {
 						uni.showToast({title: res.msg, icon:"none"});
 					}
