@@ -24,7 +24,7 @@
 				</view>
 				<view class="list_item_footer">
 					<button class="btn btn-delete" v-if="item.status === '未完成' && item.isPay === '0'"  size="mini" @click="deleteConfirm(item.id)">删除</button>
-					<button class="btn btn-pay" v-if="item.isPay === '0'" size="mini" @click="goPayment(item.pid, item.carId)">支付</button>
+					<!-- <button class="btn btn-pay" v-if="item.isPay === '0'" size="mini" @click="goPayment(item.pid, item.carId)">支付</button> -->
 					<button class="btn btn-detail" type="default" v-if="!item.booking"  size="mini" @click="gobooking(item.id)">预约</button>
 					<button class="btn btn-update" v-if="item.status === '未完成'" size="mini" @click="goUpdate(index)">修改</button>
 					<button class="btn btn-detail"  size="mini" @click="goDetail(item.id)">详情</button>
