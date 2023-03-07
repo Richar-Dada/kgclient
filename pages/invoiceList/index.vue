@@ -254,7 +254,7 @@
 				})
 			},
 			goPayment(pid, carId) {
-				const payPrice = carId.indexOf('粤A') > -1 ? 50 : 150
+				const payPrice = carId.indexOf('粤A') > -1 ? 1 : 150
 				uni.navigateTo({
 					url: '../payment/index?pid=' + pid + '&payPrice=' +  payPrice
 				})

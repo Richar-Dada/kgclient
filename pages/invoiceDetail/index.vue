@@ -5,7 +5,8 @@
 				<uni-list-item title="状态" :rightText="detail.status"/>
 				<uni-list-item v-if="detail.failReason" title="失败原因" :rightText="detail.failReason"/>
 				<uni-list-item title="金额" :rightText="detail.price + '元'"/>
-				<uni-list-item title="支付状态" :rightText="detail.isPay === '0' ? '未支付' : '已支付'"/>
+				<uni-list-item title="支付状态" :rightText="detail.isPay === '0' ? '未支付' : detail.isPay === '1' ? '已支付' : '已退款'"/>
+				<uni-list-item v-if="detail.refundPrice" title="退款金额" :rightText="detail.refundPrice.slice(0, -2) + '元'"/>
 				<uni-list-item title="备注" :rightText="detail.remark"/>
 			</uni-list>
 		</uni-group >
