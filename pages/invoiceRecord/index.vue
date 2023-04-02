@@ -222,6 +222,42 @@
 					</view>
 				</view>
 				
+				<view class="uni-list list-pd">
+					<view class="uni-list-cell cell-pd">
+						<view class="uni-uploader">
+							<view class="uni-uploader-head upload-header">
+								<view class="uni-uploader-title">上传声明照
+								<text style="color: red;">*</text>
+								</view>
+								<view class="uni-uploader-info">1/1</view>
+							</view>
+							
+							<view class="statementTipWapper">
+								<text class="statementTipText" @click="showStatementExample">查看示例</text>
+								<text class="statementTipText" style="margin-left: 50rpx;" @click="savePoster">下载模板</text>
+							</view>
+							
+							<uni-data-checkbox v-model="formData.hasStatement" :localdata="statementType" />
+														
+							<view class="uni-uploader-body upload-body"  v-if="formData.hasStatement === 'false'">
+								<view class="uni-uploader__files">
+									<block v-for="(image,index) in statementImageList" :key="index">
+										<view class="uni-uploader__file">
+											<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImageveStatement"></image>
+											<view class="delete-btn" @click="deleteImage(index, statementImageList)">
+												<uni-icons type="clear" color="#dd524d" size="25" />
+											</view>
+										</view>
+									</block>
+									<view v-if="statementImageList.length === 0" class="uni-uploader__input-box">
+										<view class="uni-uploader__input" @tap="chooseImageStatement"></view>
+									</view>
+								</view>
+							</view>
+						</view>
+					</view>
+				</view>
+				
 				<view class="uni-list list-pd" v-if="oldCarBusinessType === 'company'">
 					<view class="uni-list-cell cell-pd">
 						<view class="uni-uploader">
@@ -428,6 +464,12 @@
 					},
 					remark: {
 						rules: []
+					},
+					hasStatement: {
+						rules: [{
+							required: true,
+							errorMessage: '请选择人脸核身情况',
+						}]
 					}
 				}
 			}
@@ -981,6 +1023,11 @@
 						
 						if(!this.registerImageList.length) {
 							uni.showToast({ title: '请上传登记证图片', icon: "none" }) 
+							return
+						}
+						
+						if(this.formData.hasStatement === '' || this.formData.hasStatement === 'false' && !this.statementImageList.length) {
+							uni.showToast({ title: '请上传声明照', icon: "none" }) 
 							return
 						}
 						
