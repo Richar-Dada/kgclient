@@ -57,7 +57,43 @@
 					</uni-forms-item>
 				</uni-group>
 				
-				<view class="uni-list list-pd">
+				<view class="uni-list list-pd statement">
+					<view class="uni-list-cell cell-pd">
+						<view class="uni-uploader">
+							<view class="uni-uploader-head upload-header">
+								<view class="uni-uploader-title">上传声明照
+								<text style="color: red;">*</text>
+								</view>
+								<view class="uni-uploader-info">1/1</view>
+							</view>
+							
+							<!-- <view class="statementTipWapper">
+								<text class="statementTipText" @click="showStatementExample">查看示例</text>
+								<text class="statementTipText" style="margin-left: 50rpx;" @click="savePoster">下载模板</text>
+							</view> -->
+							
+							<uni-data-checkbox v-model="formData.hasStatement" :localdata="statementType" />
+														
+							<view class="uni-uploader-body upload-body"  v-if="formData.hasStatement === 'true'">
+								<view class="uni-uploader__files">
+									<block v-for="(image,index) in statementImageList" :key="index">
+										<view class="uni-uploader__file">
+											<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImageveStatement"></image>
+											<view class="delete-btn" @click="deleteImage(index, statementImageList)">
+												<uni-icons type="clear" color="#dd524d" size="25" />
+											</view>
+										</view>
+									</block>
+									<view v-if="statementImageList.length === 0" class="uni-uploader__input-box">
+										<view class="uni-uploader__input" @tap="chooseImageStatement"></view>
+									</view>
+								</view>
+							</view>
+						</view>
+					</view>
+				</view>
+				
+				<view class="uni-list list-pd" v-if="formData.hasStatement === 'false'">
 					<view v-if="oldCarBusinessType === 'personal'" style="padding-top: 20rpx;">
 						<uni-forms-item required name="sex" label="证件类型">
 							<uni-data-checkbox v-model="formData.oldCarDocumentType" :localdata="documentType"></uni-data-checkbox>
@@ -90,7 +126,7 @@
 						</view>
 					</view>
 				</view>
-				<uni-group title="原车主信息" top="0">
+				<uni-group title="原车主信息" top="0" v-if="formData.hasStatement === 'false'">
 					<uni-forms-item name="oldCarOwner" v-if="oldCarBusinessType === 'personal'" required label="姓名">
 						<uni-easyinput type="text" v-model="formData.oldCarOwner" class="uni-input-border" placeholder="请输入原车主姓名"></uni-easyinput>
 					</uni-forms-item>
@@ -222,41 +258,7 @@
 					</view>
 				</view>
 				
-				<view class="uni-list list-pd">
-					<view class="uni-list-cell cell-pd">
-						<view class="uni-uploader">
-							<view class="uni-uploader-head upload-header">
-								<view class="uni-uploader-title">上传声明照
-								<text style="color: red;">*</text>
-								</view>
-								<view class="uni-uploader-info">1/1</view>
-							</view>
-							
-							<view class="statementTipWapper">
-								<text class="statementTipText" @click="showStatementExample">查看示例</text>
-								<text class="statementTipText" style="margin-left: 50rpx;" @click="savePoster">下载模板</text>
-							</view>
-							
-							<uni-data-checkbox v-model="formData.hasStatement" :localdata="statementType" />
-														
-							<view class="uni-uploader-body upload-body"  v-if="formData.hasStatement === 'false'">
-								<view class="uni-uploader__files">
-									<block v-for="(image,index) in statementImageList" :key="index">
-										<view class="uni-uploader__file">
-											<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImageveStatement"></image>
-											<view class="delete-btn" @click="deleteImage(index, statementImageList)">
-												<uni-icons type="clear" color="#dd524d" size="25" />
-											</view>
-										</view>
-									</block>
-									<view v-if="statementImageList.length === 0" class="uni-uploader__input-box">
-										<view class="uni-uploader__input" @tap="chooseImageStatement"></view>
-									</view>
-								</view>
-							</view>
-						</view>
-					</view>
-				</view>
+				
 				
 				<view class="uni-list list-pd" v-if="oldCarBusinessType === 'company'">
 					<view class="uni-list-cell cell-pd">
@@ -360,10 +362,10 @@
 					hasStatement: ''
 				},
 				statementType:[{
-					text: '已通过人脸核身',
+					text: '已通过人脸核身，上传授权码图片',
 					value: 'true'
 				}, {
-					text: '未通过人脸核身，上传声明照',
+					text: '未通过人脸核身，现场办理',
 					value: 'false'
 				}],
 				businessType: [{
@@ -398,33 +400,33 @@
 							errorMessage: '请输入车架号',
 						}]
 					},
-					oldCarOwner: {
-						rules: [{
-							required: true,
-							errorMessage: '请输入原车主姓名',
-						}]
-					},
-					oldCarDocumentNumber: {
-						rules: [{
-							required: true,
-							errorMessage: '请输入证件号码',
-						}]
-					},
-					oldOwnerPhone: {
-						rules: [{
-							required: false,
-							errorMessage: '请输入原车主手机号码',
-						}, {
-							pattern: /^[1][3,4,5,7,8][0-9]{9}$/,
-							errorMessage: '必须是11位手机号码',
-						}]
-					},
-					oldCarOwnerAddress: {
-						rules: [{
-							required: true,
-							errorMessage: '请输入原车主地址',
-						}]
-					},
+					// oldCarOwner: {
+					// 	rules: [{
+					// 		required: this.hasStatement === 'false',
+					// 		errorMessage: '请输入原车主姓名',
+					// 	}]
+					// },
+					// oldCarDocumentNumber: {
+					// 	rules: [{
+					// 		required: this.hasStatement === 'false',
+					// 		errorMessage: '请输入证件号码',
+					// 	}]
+					// },
+					// oldOwnerPhone: {
+					// 	rules: [{
+					// 		required: false,
+					// 		errorMessage: '请输入原车主手机号码',
+					// 	}, {
+					// 		pattern: /^[1][3,4,5,7,8][0-9]{9}$/,
+					// 		errorMessage: '必须是11位手机号码',
+					// 	}]
+					// },
+					// oldCarOwnerAddress: {
+					// 	rules: [{
+					// 		required: this.hasStatement === 'false',
+					// 		errorMessage: '请输入原车主地址',
+					// 	}]
+					// },
 					newCarOwner: {
 						rules: [{
 							required: true,
@@ -1014,8 +1016,32 @@
 			
 			submitForm: function(form) {
 				
+				if(this.formData.hasStatement === '' || this.formData.hasStatement === 'true' && !this.statementImageList.length) {
+					uni.showToast({ title: '请上传声明照', icon: "none" }) 
+					return
+				}
+				
+				// 原车主信息校验
+				if(this.formData.oldCarOwner === '' && this.formData.hasStatement === 'false') {
+					uni.showToast({ title: '请输入原车主姓名', icon: "none" }) 
+					return
+				}
+				
+				if(this.formData.oldCarDocumentNumber === '' && this.formData.hasStatement === 'false') {
+					uni.showToast({ title: '请输入原车主证件号码', icon: "none" }) 
+					return
+				}
+				
+				if(this.formData.hasStatement === '' && this.formData.hasStatement === 'false') {
+					uni.showToast({ title: '请上传声明照', icon: "none" }) 
+					return
+				}
+				
 				this.$refs[form].submit()
 					.then((res) => {
+						
+						
+						
 						if (this.oldCarBusinessType === 'personal' && !this.formData.price) {
 							uni.showToast({ title: '请输入发票金额', icon: "none" })
 							return
@@ -1023,11 +1049,6 @@
 						
 						if(!this.registerImageList.length) {
 							uni.showToast({ title: '请上传登记证图片', icon: "none" }) 
-							return
-						}
-						
-						if(this.formData.hasStatement === '' || this.formData.hasStatement === 'false' && !this.statementImageList.length) {
-							uni.showToast({ title: '请上传声明照', icon: "none" }) 
 							return
 						}
 						
@@ -1237,6 +1258,14 @@
 		padding-bottom: 10rpx;
 		color: red;
 		background: #ffffff;
+	}
+	
+	.statement {
+		padding: 10px 0px;
+	}
+	
+	.statement::after {
+		height: 0;
 	}
 	
 	.statementTipWapper {
