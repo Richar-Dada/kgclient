@@ -1,6 +1,6 @@
 <template>
 	<view class="invoiceRecord">
-		<uni-notice-bar :scrollable="true" :single="true" text="请选择所有权!   选择完成后上传证件照自动填写相关信息!" />
+		<uni-notice-bar :scrollable="true" color="red" :single="true" text="即日起开具交易发票必须填写详细地址及手机号码" />
 		<uni-popup id="dialogInput" ref="dialogInput" type="center" :maskClick="false">
 			<view class="business-panel">
 				<uni-forms labelWidth="105">
@@ -54,6 +54,9 @@
 					</uni-forms-item>
 					<uni-forms-item name="carNumber" required label="车架号">
 						<uni-easyinput type="text" v-model="formData.carNumber" class="uni-input-border" placeholder="请输入车架号"></uni-easyinput>
+					</uni-forms-item>
+					<uni-forms-item name="carAddress" required label="地址">
+						<uni-easyinput type="text" v-model="formData.carAddress" class="uni-input-border" placeholder="请输入地址"></uni-easyinput>
 					</uni-forms-item>
 				</uni-group>
 				
@@ -144,6 +147,12 @@
 						<uni-easyinput type="number" v-model="formData.oldOwnerPhone" class="uni-input-border" placeholder="请输入原车主手机号码"></uni-easyinput>
 					</uni-forms-item>
 				</uni-group>
+				<uni-group title="原车主信息" top="0" v-if="formData.hasStatement !== 'false'">
+					
+					<uni-forms-item name="oldOwnerPhone" required label="手机号码">
+						<uni-easyinput type="number" v-model="formData.oldOwnerPhone" class="uni-input-border" placeholder="请输入原车主手机号码"></uni-easyinput>
+					</uni-forms-item>
+				</uni-group>
 				
 				<view class="uni-list list-pd">
 					<view v-if="newCarBusinessType === 'personal'" style="padding-top: 20rpx;">
@@ -191,7 +200,7 @@
 					<uni-forms-item name="newCarDocumentNumber" v-if="newCarBusinessType === 'company'" required label="统一社会代码">
 						<uni-easyinput type="text" v-model="formData.newCarDocumentNumber" class="uni-input-border" placeholder="请输入证件号码"></uni-easyinput>
 					</uni-forms-item>
-					<uni-forms-item name="newOwnerPhone" label="手机号码">
+					<uni-forms-item name="newOwnerPhone" required label="手机号码">
 						<uni-easyinput type="number" v-model="formData.newOwnerPhone" class="uni-input-border" placeholder="请输入新车主手机号码"></uni-easyinput>
 					</uni-forms-item>
 					<uni-forms-item name="newCarOwnerAddress" required label="地址">
@@ -346,6 +355,7 @@
 					carId: "",
 					carType: '',
 					carNumber: '',
+					carAddress: '',
 					engineNumber: '',
 					oldCarOwner: "",
 					newCarOwner: '',
@@ -394,6 +404,12 @@
 							errorMessage: '请输入汽车类型',
 						}]
 					},
+					carAddress: {
+						rules: [{
+							required: true,
+							errorMessage: '请输入地址',
+						}]
+					},
 					carNumber: {
 						rules: [{
 							required: true,
@@ -412,15 +428,15 @@
 					// 		errorMessage: '请输入证件号码',
 					// 	}]
 					// },
-					// oldOwnerPhone: {
-					// 	rules: [{
-					// 		required: false,
-					// 		errorMessage: '请输入原车主手机号码',
-					// 	}, {
-					// 		pattern: /^[1][3,4,5,7,8][0-9]{9}$/,
-					// 		errorMessage: '必须是11位手机号码',
-					// 	}]
-					// },
+					oldOwnerPhone: {
+						rules: [{
+							required: true,
+							errorMessage: '请输入原车主手机号码',
+						}, {
+							pattern: /^[1][3,4,5,7,8][0-9]{9}$/,
+							errorMessage: '必须是11位手机号码',
+						}]
+					},
 					// oldCarOwnerAddress: {
 					// 	rules: [{
 					// 		required: this.hasStatement === 'false',
@@ -441,7 +457,7 @@
 					},
 					newOwnerPhone: {
 						rules: [{
-							required: false,
+							required: true,
 							errorMessage: '请输入新车主手机号码',
 						}]
 					},
@@ -496,6 +512,7 @@
 				this.formData.carId = detail.carId
 				this.formData.carType = detail.carType
 				this.formData.carNumber = detail.carNumber
+				this.formData.carAddress = detail.carAddress
 				this.formData.engineNumber = detail.engineNumber
 				this.formData.oldCarOwner = detail.oldOwner
 				this.formData.newCarOwner = detail.newOwner
@@ -564,7 +581,7 @@
 			},
 			saveImageToPhotosAlbum() {
 				const url = this.newCarBusinessType === 'personal' ? 
-					'/static/statement_pensonal.png' : '/static/statement_company.png'
+					'https://konggang.oss-cn-beijing.aliyuncs.com/statement_pensonal.png' : 'https://konggang.oss-cn-beijing.aliyuncs.com/statement_company.png'
 				uni.saveImageToPhotosAlbum({
 					filePath: url,
 					success: function(res2) {
@@ -848,10 +865,12 @@
 									console.log(resData)
 									const frontInfo = resData.data.FrontInfo
 									if (frontInfo) {
+										
 										this.formData.carId = frontInfo.PlateNo
 										this.formData.carNumber = frontInfo.Vin
 										this.formData.carname = frontInfo.Model
 										this.formData.carType = frontInfo.VehicleType
+										this.formData.carAddress = frontInfo.Address
 										
 										uni.showToast({
 											title: '上传成功',
@@ -1039,7 +1058,7 @@
 				
 				this.$refs[form].submit()
 					.then((res) => {
-						
+						console.log('res', res)
 						
 						
 						if (this.oldCarBusinessType === 'personal' && !this.formData.price) {
@@ -1090,6 +1109,7 @@
 						carId: this.formData.carId,
 						carNumber: this.formData.carNumber,
 						carname: this.formData.carname,
+						carAddress: this.formData.carAddress,
 						price: this.oldCarBusinessType != 'company' ? this.formData.price : '单位车金额根据增值税发票',
 						remark: this.formData.remark,
 						hasStatement: this.formData.hasStatement,
@@ -1144,6 +1164,7 @@
 						carId: this.formData.carId,
 						carNumber: this.formData.carNumber,
 						carname: this.formData.carname,
+						carAddress: this.formData.carAddress,
 						price: this.formData.price,
 						remark: this.formData.remark,
 						hasStatement: this.formData.hasStatement,
